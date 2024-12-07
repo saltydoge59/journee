@@ -4,7 +4,7 @@ import { SparklesCore } from "@/components/ui/sparkles";
 import { SignInButton, SignUpButton } from "@clerk/nextjs";
 
 
-export default function Home() {
+export default function Landing() {
   return (
     <div className="h-screen relative w-full bg-black flex flex-col items-center justify-center overflow-hidden">
       <div className="w-full absolute inset-0 h-screen">
