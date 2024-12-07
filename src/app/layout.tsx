@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
+import { Varela_Round } from 'next/font/google';
 import localFont from "next/font/local";
 import "./globals.css";
+
+const varelaRound = Varela_Round({
+  subsets:['latin'],
+  weight:"400"
+});
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -26,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${varelaRound.className} antialiased`}
       >
         {children}
       </body>
