@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Varela_Round } from 'next/font/google';
 import localFont from "next/font/local";
 import "./globals.css";
+import { ClerkProvider } from '@clerk/nextjs';
 
 const varelaRound = Varela_Round({
   subsets:['latin'],
@@ -30,12 +31,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} ${varelaRound.className} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} ${varelaRound.className} antialiased`}
+        >
+          {children}
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
