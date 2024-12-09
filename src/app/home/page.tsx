@@ -1,6 +1,6 @@
 "use client"
 
-import { useAuth, useUser } from "@clerk/nextjs";
+import { SignOutButton, useAuth, useUser } from "@clerk/nextjs";
 import { useEffect } from "react";
 import { insertUser } from "../../../utils/supabaseRequest";
 
@@ -32,6 +32,8 @@ export default function Home() {
 
     }, [userId, getToken, username]); // Add userId and getToken as dependencies to the effect
     return (
-        <div>Hello!</div>
+        <div className="bg-gray-950 h-screen flex items-center">
+            <h1 className="text-white text-6xl text-bold">Welcome!</h1>
+        </div>
     )
 }
