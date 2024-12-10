@@ -3,7 +3,6 @@
 import { useAuth, useUser } from "@clerk/nextjs";
 import { useEffect } from "react";
 import { insertUser } from "../../../utils/supabaseRequest";
-import { IconCat } from "@tabler/icons-react";
 import Link from "next/link";
 
 
@@ -34,7 +33,7 @@ export default function Trips() {
 
     }, [userId, getToken, username]); // Add userId and getToken as dependencies to the effect
     return (
-        <div className="h-screen w-screen flex justify-center items-center">
+        <div className="h-screen w-full flex justify-center items-center">
             <div className="flex flex-col items-center">
                 <span className="text-4xl">😴</span>
                 <h4 className="mt-1">No Trips yet...</h4>

@@ -10,7 +10,7 @@ export default function Navbar(){
     
     return (
         <div>
-            <NavigationMenu className="flex justify-between min-w-full list-none hidden sm:flex sticky top-0 p-5 h-[60px]">
+            <NavigationMenu className="flex justify-between min-w-full list-none hidden sm:flex absolute top-0 p-5 h-[60px]">
                 <div className="flex items-center">
                     <h1 className="mr-4 font-bold text-2xl bg-gradient-to-b from-neutral-200 via-neutral-400 to-neutral-800 bg-clip-text text-transparent">Journee</h1>
                     <NavigationMenuItem className="mx-4 hover:underline">
