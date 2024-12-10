@@ -1,4 +1,5 @@
 
+import { AuroraBackground } from "@/components/ui/aurora-background";
 import BlurFade from "@/components/ui/blur-fade";
 import { SparklesCore } from "@/components/ui/sparkles";
 import { SignInButton, SignUpButton } from "@clerk/nextjs";
@@ -6,7 +7,8 @@ import { SignInButton, SignUpButton } from "@clerk/nextjs";
 
 export default function Landing() {
   return (
-    <div className="h-screen relative w-full bg-black flex flex-col items-center justify-center overflow-hidden">
+    <AuroraBackground className="h-screen w-full relative">
+    {/* <div className="h-screen relative w-full bg-black flex flex-col items-center justify-center overflow-hidden">
       <div className="w-full absolute inset-0 h-screen">
         <SparklesCore
           id="tsparticlesfullpage"
@@ -17,9 +19,9 @@ export default function Landing() {
           className="w-full h-full"
           particleColor="#FFFFFF"
         />
-      </div>
+      </div> */}
       <BlurFade delay={0.25} inView>
-        <h1 className="md:text-9xl text-7xl font-bold text-center relative z-20 text-transparent bg-gradient-to-b from-neutral-800 via-white to-white bg-clip-text">Journee.</h1>
+        <h1 className="md:text-9xl text-7xl font-bold text-center relative z-20 text-transparent bg-gradient-to-b from-neutral-200 via-neutral-400 to-neutral-800 bg-clip-text">Journee.</h1>
       </BlurFade>
       <BlurFade delay={0.25*2} inView>
         <SignInButton>
@@ -34,8 +36,7 @@ export default function Landing() {
           <a href="sign-up" className="text-gray-400 text-sm z-20 hover:underline text-center block mt-3">Don't have an account?</a>        
         </SignUpButton>
       </BlurFade>
-      
-
-    </div>
+    {/* </div> */}
+    </AuroraBackground>
   );
 }

@@ -33,6 +33,7 @@ export default function Home() {
     }, [userId, getToken, username]); // Add userId and getToken as dependencies to the effect
     return (
         <div className="bg-gray-950 h-screen flex items-center">
+            <div className="fixed top-0 right-0 text-white"><SignOutButton/></div>
             <h1 className="text-white text-6xl text-bold">Welcome!</h1>
         </div>
     )

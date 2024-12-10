@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { Varela_Round } from 'next/font/google';
 import localFont from "next/font/local";
 import "./globals.css";
-import { ClerkProvider } from '@clerk/nextjs';
+import { ClerkProvider, SignedIn } from '@clerk/nextjs';
+import Navbar from "@/components/navbar/navigation-menu";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const varelaRound = Varela_Round({
   subsets:['latin'],
@@ -36,7 +38,17 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} ${varelaRound.className} antialiased`}
         >
-          {children}
+        <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+        >
+          <SignedIn>
+            <Navbar></Navbar>
+          </SignedIn>
+            {children}
+        </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>
