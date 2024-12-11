@@ -17,6 +17,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DateRange } from "react-day-picker"
 import { DatePickerWithRange } from "@/components/daterange/date-picker-with-range";
+import { createTrip, uploadImageToSupabase } from "../../../utils/supabaseRequest";
+import { useAuth } from "@clerk/nextjs";
 
 const formSchema = z.object({
   trip_name: z.string().min(1, {
@@ -30,10 +32,12 @@ const formSchema = z.object({
         required_error:"Please select an end date!"
       }
       ),
-    })
+    }),
+  image: z.instanceof(FileList).optional(),
 });
 
 export default function AddTrip() {
+  const { userId, getToken } = useAuth(); // Destructure userId and getToken from useAuth
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -41,14 +45,45 @@ export default function AddTrip() {
       date_range: { from: undefined, to: undefined }, // Initial date range
     },
   });
+  const fileRef = form.register("image");
 
   // Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try{
+      const token = await getToken({template:"supabase"});
+
+      let imageURL = null;
+      
+      if(userId && token && values.image?.length){
+      const imageFile = values.image[0];
+      imageURL = await uploadImageToSupabase(token,userId,imageFile,"backgrounds");
+
+      const error = await createTrip({
+        userId, 
+        token, 
+        trip_name: values.trip_name, 
+        daterange: values.date_range,
+        image_url: imageURL,
+      });
+        if(error){
+          form.setError("trip_name",{message:"Failed to create trip. Try again."})
+        } else{
+          form.reset()
+          console.log('Trip created successfully!');
+        }
+
+
+      }else{
+        console.error("User ID or token is missing.");
+      }
+    } catch (error){
+      console.error("Unexpected error:",error);
+
+    }
   }
 
   return (
-    <div>
+    <div className="relative">
       <h1 className="justify-center font-bold text-3xl h-[60px] items-center flex">
         New Trip
       </h1>
@@ -63,7 +98,7 @@ export default function AddTrip() {
                 <FormItem>
                   <FormLabel>Trip Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Japan Family Trip" {...field} />
+                    <Input placeholder="e.g.Japan Family Trip" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -85,10 +120,22 @@ export default function AddTrip() {
                 </FormItem>
               )}
             />
-
-            
-
-            <Button type="submit">Submit</Button>
+            <FormField
+              control={form.control}
+              name="image"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Trip Cover Picture</FormLabel>
+                  <FormControl>
+                    <Input type="file" {...fileRef} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div>
+              <Button type="submit">Add</Button>
+            </div>
           </form>
         </Form>
       </div>
