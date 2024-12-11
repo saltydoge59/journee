@@ -70,7 +70,7 @@ export default function Trips() {
         <BlurFade delay={0.25} inView className="h-screen">
         <div className="flex flex-wrap justify-center h-screen">
             {trips.map((trip, index) => (
-            <div key={index} className="mx-auto rounded-full w-11/12 sm:w-5/6 my-3 h-1/3">
+            <div key={index} className="mx-auto rounded-full w-11/12 sm:w-5/6 mt-3 h-1/2">
                 <div style={{backgroundImage:`url(${trip.image_url})`}}
                 className={cn(
                     "group w-full cursor-pointer overflow-hidden relative card h-full rounded-md shadow-xl mx-auto flex flex-col justify-end p-4 border",
@@ -78,7 +78,7 @@ export default function Trips() {
                 )}
                 >
                 <div className="text relative z-50 h-full flex items-center">
-                    <h1 className="font-bold text-3xl md:text-3xl text-gray-50 relative">
+                    <h1 className="font-black text-4xl text-gray-50 relative">
                         {trip.trip_name}
                     </h1>
                 </div>
@@ -86,11 +86,11 @@ export default function Trips() {
             </div>
             ))}
         </div>
-            <div className="fixed bottom-96">
+            {/* <div className="fixed bottom-96">
                 <Link href="/add_trip">
                     Add Trip
                 </Link>
-            </div>
+            </div> */}
         </BlurFade>
     </div>
     )

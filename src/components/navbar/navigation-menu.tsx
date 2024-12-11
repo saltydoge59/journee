@@ -4,9 +4,11 @@ import { UserButton } from "@clerk/nextjs";
 import { ModeToggle } from "../mode-toggle/toggle";
 import { IconMapQuestion, IconPlaneDeparture } from "@tabler/icons-react";
 import { useState } from "react";
+import { useTheme } from "next-themes";
 
 export default function Navbar(){
     const [page, setPage] = useState<string>('Trips')
+    const { theme } = useTheme();
     
     return (
         <div>
@@ -35,13 +37,13 @@ export default function Navbar(){
                 </div>
             </NavigationMenu>
 
-            <NavigationMenu className="flex sm:hidden relative top-0 h-[60px] p-5 justify-end min-w-full list-none">
+            <NavigationMenu className="flex sm:hidden sticky top-0 h-[60px] p-5 justify-end min-w-full list-none">
                 <NavigationMenuItem>
                     <ModeToggle/>
                 </NavigationMenuItem>
             </NavigationMenu>
             
-            <NavigationMenu className="flex sm:hidden absolute bottom-0 h-[60px] p-5 justify-between min-w-full list-none">
+            <NavigationMenu className={`flex sm:hidden fixed ${theme==='dark'?"bg-black":"bg-white"} bottom-0 h-[60px] p-5 justify-between min-w-full list-none`}>
                 <NavigationMenuItem className="mx-4">
                     <div className={`flex flex-col items-center ${page=="Trips"?"text-indigo-400":""}`}>
                         <Link href='/trips' onClick={()=>setPage('Trips')}>
