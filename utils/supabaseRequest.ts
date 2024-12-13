@@ -45,8 +45,10 @@ export const insertUser = async ({ userId, token, username }: { userId: string, 
   };
   export const createTrip = async ({ userId, token, trip_name, daterange, image_url }: { userId: string, token: string,trip_name:string, daterange: {from:Date, to:Date}, image_url:string }) => {
     const supabase = await supabaseClient(token);
-    let start = daterange.from.toDateString();
-    let end = daterange.to.toDateString();
+    // let start = daterange.from.toDateString();
+    // let end = daterange.to.toDateString();
+    let start = daterange.from;
+    let end = daterange.to;
     
     try {
       
@@ -97,7 +99,7 @@ export const insertUser = async ({ userId, token, username }: { userId: string, 
     try {
       const { data: trips, error: fetchError } = await supabase
         .from('trips')
-        .select('trip_name,image_url')
+        .select('trip_name,image_url,start_date,end_date')
         .eq('id', userId)
       
       if (fetchError && fetchError.code !== 'PGRST116') {

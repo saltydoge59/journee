@@ -19,6 +19,8 @@ import { DateRange } from "react-day-picker"
 import { DatePickerWithRange } from "@/components/daterange/date-picker-with-range";
 import { createTrip, uploadImageToSupabase } from "../../../utils/supabaseRequest";
 import { useAuth } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+import { ToastContainer, toast } from 'react-toastify';
 
 const formSchema = z.object({
   trip_name: z.string().min(1, {
@@ -46,6 +48,7 @@ export default function AddTrip() {
     },
   });
   const fileRef = form.register("image");
+  const router = useRouter();
 
   // Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -67,17 +70,24 @@ export default function AddTrip() {
       });
         if(error){
           form.setError("trip_name",{message:"Failed to create trip. Try again."})
+          toast.error('Failed to create trip. Try again.')
         } else{
           form.reset()
           console.log('Trip created successfully!');
+          toast("Trip created successfully! Redirecting...");
+          setTimeout(() => {
+            router.push('/trips');
+          }, 3000);
         }
 
 
       }else{
         console.error("User ID or token is missing.");
+        toast.error('Failed to create trip. Try again.')
       }
     } catch (error){
       console.error("Unexpected error:",error);
+      toast.error('Failed to create trip. Try again.')
 
     }
   }
@@ -139,6 +149,7 @@ export default function AddTrip() {
           </form>
         </Form>
       </div>
+      <ToastContainer position="bottom-left" />
     </div>
   );
 }
