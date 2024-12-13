@@ -10,8 +10,8 @@ export default function Dates(){
     const router = useRouter();
     const searchParams = useSearchParams()
     const name = searchParams.get('name');
-    const start_date = new Date(searchParams.get('start').split(' ')[0]);
-    const end_date = new Date(searchParams.get('end').split(' ')[0]);
+    const start_date = new Date((searchParams.get('start')||"").split(' ')[0]);
+    const end_date = new Date((searchParams.get('end')||"").split(' ')[0]);
     const daysArray = [];
     let temp_date = new Date(start_date);
     while(temp_date<=end_date){
