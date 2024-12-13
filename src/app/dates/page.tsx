@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import BlurFade from "@/components/ui/blur-fade";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Suspense } from "react";
 
 
 export default function Dates(){
@@ -20,7 +21,7 @@ export default function Dates(){
     }
 
     return(
-        <div>
+        <Suspense fallback={<div>Loading...</div>}>
             <h1 className="text-4xl text-center">{name}</h1>
             <h3 className="text-xl text-center text-slate-400">{start_date.toLocaleDateString("en-us",{month:"long",year:"numeric",day:"numeric"})} - {end_date.toLocaleDateString('en-us',{month:"long",year:"numeric",day:"numeric"})}</h3>
             <div className="h-screen w-full">
@@ -40,6 +41,6 @@ export default function Dates(){
                     ))}
                 </div>
             </div>
-        </div>
+        </Suspense>
     )
 }
