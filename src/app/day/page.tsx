@@ -4,7 +4,7 @@ import BlurFade from "@/components/ui/blur-fade"
 import { IconArrowLeft, IconPencil } from "@tabler/icons-react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-import { Suspense, useState, useEffect } from "react"
+import { Suspense, useState, useEffect, useCallback, useRef } from "react";
 import { useMediaQuery } from "@custom-react-hooks/use-media-query"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
@@ -17,6 +17,7 @@ import Tiptap from "@/components/Tiptap"
 import { useAuth } from "@clerk/nextjs"
 import { editLog, getLog } from "../../../utils/supabaseRequest"
 import { useToast } from "@/hooks/use-toast";
+import EditLog from "./editlog"
 
 function DaysContent() {
     const { userId, getToken } = useAuth();
@@ -33,18 +34,19 @@ function DaysContent() {
     const isDesktop = useMediaQuery("(min-width: 640px)")
     const [log, setLog] = useState<{entry:any,title:any}|null>();
     const [logPresent,setLogPresent] = useState(true);
-    const [submit,setSubmit] = useState(false);
     const { toast } = useToast();
-    let files:File[] = [];
+    const [files, setFiles] = useState<File[]>([]);
+    const [submit, setSubmit] = useState(false);
 
     useEffect(()=>{
         const fetchLog = async () => {
             try{
+                setSubmit(false);
                 const token = await getToken({ template: "supabase" });
                 if(userId && token){
                     const res = await getLog({userId,token,day,trip_name});
                     setLog(res);
-                    setSubmit(false);
+                    // setSubmit(false);
                     if(res===null || res.entry===null || res.title===null){
                         setLogPresent(false);
                     }
@@ -63,61 +65,36 @@ function DaysContent() {
 
     // Handle file selection
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      if (event.target.files) {
-        files = Array.from(event.target.files);
-        console.log(files);
-      }
+        if (event.target.files) {
+        const uploadedFiles = Array.from(event.target.files);
+        setFiles(uploadedFiles); // Update state instead of a `let` variable
+        console.log(uploadedFiles);
+        }
     };
-    const handleSubmit = async ( userId: string|undefined|null, getToken: any, trip_name:string, day:number, entry:string, title:string ) => {
-        console.log('submitted')
-        setSubmit(true);
-        try{
+
+    const handleSubmit = useCallback(
+        async (entry: string, title: string) => {
+          console.log("submitted");
+          try {
+            setSubmit(true);
             const token = await getToken({ template: "supabase" });
-            await editLog({userId, token, trip_name, day, entry, title });
-            toast({duration:2000,
-                title:"Log edited successfully! Redirecting..."
-              });
-            setTimeout(() => {
+            if(token){
+                await editLog({ userId, token, trip_name, day, entry, title });
+                toast({ duration: 2000, title: "Log edited successfully! Redirecting..." });
+                setTimeout(() => {
                 setDrawerOpen(false);
                 setDialogueOpen(false);
-              }, 2000);
-        }
-        catch(error){
-            console.error('Error in updating log:',error)
-            toast({
-                variant:"destructive",
-                title:"Failed to edit log. Try again."
-              })
-        }
-    }
+                }, 2000); 
+            }
 
-    let content = `${log?.entry===null?"":log?.entry}`;
-    const handleContentChange = (reason:any)=>{
-        content=reason;
-    }
+          } catch (error) {
+            console.error("Error in updating log:", error);
+            toast({ variant: "destructive", title: "Failed to edit log. Try again." });
+          }
+        },
+        [userId, getToken, trip_name, day, toast]
+      );
 
-
-    function EditLog({className}:React.ComponentProps<"form">){
-        const title = `Day ${day}`;
-        return (
-            <div className={cn("grid items-start gap-5",className)}>
-                <div className="grid gap-2">
-                    <Label className="text-start" htmlFor="title">Title</Label>
-                    <input className="border p-2 rounded" type="text" id="title" defaultValue={title} />
-                </div>
-                <div className="grid gap-2">
-                    <Label className="text-start" htmlFor="Entry">Entry</Label>
-                    <Tiptap content={content} onChange={(newContent:string)=>handleContentChange(newContent)}/>
-                </div>
-                <div className="grid gap-2">
-                    <Label className="text-start" htmlFor="Photos">Photos</Label>
-                    <Input multiple type="file" onChange={handleFileChange} />
-                </div>
-
-                <Button onClick={()=>handleSubmit(userId,getToken,trip_name,day,content,title)} type="submit" className=" bg-gradient-to-r from-indigo-500 to-purple-500 font-bold text-white hover:brightness-90">Save Changes</Button>
-            </div>
-        )
-    }
 
     return(
         <div>
@@ -160,7 +137,13 @@ function DaysContent() {
                     <DialogContent className="h-3/4 max-w-[80vw]" aria-describedby="content">
                         <DialogHeader>
                             <DialogTitle className="mb-3">Edit Log</DialogTitle>
-                            <EditLog/>
+                            <EditLog
+                                day={day}
+                                logContent={log?.entry||""}
+                                title={log?.title|| `Day ${day}`}
+                                onSubmit={handleSubmit}
+                                handleFileChange={handleFileChange}
+                                />
                         </DialogHeader>
                     </DialogContent>
                 </Dialog>
@@ -175,7 +158,13 @@ function DaysContent() {
                     <DrawerContent className="h-full w-full">
                         <DrawerHeader>
                             <DrawerTitle >Edit Log</DrawerTitle>
-                            <EditLog/>
+                            <EditLog
+                                day={day}
+                                logContent={log?.entry||""}
+                                title={log?.title|| `Day ${day}`}
+                                onSubmit={handleSubmit}
+                                handleFileChange={handleFileChange}
+                                />
                         </DrawerHeader>
                     </DrawerContent>
                 </Drawer>
