@@ -6,6 +6,7 @@ import "./globals.css";
 import { ClerkProvider, SignedIn } from '@clerk/nextjs';
 import Navbar from "@/components/navbar/navigation-menu";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from '@/components/ui/toaster';
 
 const varelaRound = Varela_Round({
   subsets:['latin'],
@@ -45,6 +46,7 @@ export default function RootLayout({
             <Navbar/>
           </SignedIn>
             {children}
+            <Toaster/>
         </ThemeProvider>
         </body>
       </html>

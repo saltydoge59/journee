@@ -20,7 +20,7 @@ import { DatePickerWithRange } from "@/components/daterange/date-picker-with-ran
 import { createTrip, uploadImageToSupabase } from "../../../utils/supabaseRequest";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { ToastContainer, toast } from "react-toastify";
+import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   trip_name: z.string().min(1, {
@@ -38,6 +38,7 @@ const formSchema = z.object({
 });
 
 export default function AddTrip() {
+  const { toast } = useToast();
   const { userId, getToken } = useAuth();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -77,20 +78,28 @@ export default function AddTrip() {
 
         if (error) {
           form.setError("trip_name", { message: "Failed to create trip. Try again." });
-          toast.error("Failed to create trip. Try again.");
+          toast({
+            variant:"destructive",
+            title:"Failed to create trip. Try again."
+          })
         } else {
           form.reset();
-          toast.success("Trip created successfully! Redirecting...");
+          toast({duration:2000,
+            title:"Trip created successfully! Redirecting..."
+          })
           setTimeout(() => {
             router.push("/trips");
           }, 2000);
         }
       } else {
-        toast.error("User ID or token is missing.");
+        console.error("User ID or token is missing.");
       }
     } catch (error) {
       console.error("Unexpected error:", error);
-      toast.error("Failed to create trip. Try again.");
+      toast({
+        variant:"destructive",
+        title:"Failed to create trip. Try again."
+      })
     }
   }
 
@@ -153,7 +162,6 @@ export default function AddTrip() {
           </form>
         </Form>
       </div>
-      <ToastContainer position="bottom-left" autoClose={2000}/>   
     </div>
   );
 }

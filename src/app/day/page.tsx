@@ -16,7 +16,7 @@ import * as React from "react";
 import Tiptap from "@/components/Tiptap"
 import { useAuth } from "@clerk/nextjs"
 import { editLog, getLog } from "../../../utils/supabaseRequest"
-import { ToastContainer, toast } from "react-toastify";
+import { useToast } from "@/hooks/use-toast";
 
 function DaysContent() {
     const { userId, getToken } = useAuth();
@@ -33,6 +33,7 @@ function DaysContent() {
     const isDesktop = useMediaQuery("(min-width: 640px)")
     const [log, setLog] = useState<{entry:any,title:any}|null>();
     const [logPresent,setLogPresent] = useState(true);
+    const { toast } = useToast();
     let files:File[] = [];
 
     useEffect(()=>{
@@ -70,7 +71,9 @@ function DaysContent() {
         try{
             const token = await getToken({ template: "supabase" });
             await editLog({userId, token, trip_name, day, entry, title });
-            toast.success("Log edited successfully! Redirecting...");
+            toast({duration:2000,
+                title:"Log edited successfully! Redirecting..."
+              });
             setTimeout(() => {
                 setDrawerOpen(false);
                 setDialogueOpen(false);
@@ -78,7 +81,10 @@ function DaysContent() {
         }
         catch(error){
             console.error('Error in updating log:',error)
-            toast.error("Failed to edit log. Try again.");
+            toast({
+                variant:"destructive",
+                title:"Failed to edit log. Try again."
+              })
         }
     }
 
@@ -165,13 +171,12 @@ function DaysContent() {
                     </DrawerTrigger>
                     <DrawerContent className="h-full w-full">
                         <DrawerHeader>
-                            <DrawerTitle className="mb-1">Edit Log</DrawerTitle>
+                            <DrawerTitle >Edit Log</DrawerTitle>
                             <EditLog/>
                         </DrawerHeader>
                     </DrawerContent>
                 </Drawer>
             </div>
-        <ToastContainer position="bottom-left" autoClose={2000}/>    
         </div>
     )
 }
