@@ -33,6 +33,7 @@ function DaysContent() {
     const isDesktop = useMediaQuery("(min-width: 640px)")
     const [log, setLog] = useState<{entry:any,title:any}|null>();
     const [logPresent,setLogPresent] = useState(true);
+    const [submit,setSubmit] = useState(false);
     const { toast } = useToast();
     let files:File[] = [];
 
@@ -43,6 +44,7 @@ function DaysContent() {
                 if(userId && token){
                     const res = await getLog({userId,token,day,trip_name});
                     setLog(res);
+                    setSubmit(false);
                     if(res===null || res.entry===null || res.title===null){
                         setLogPresent(false);
                     }
@@ -57,7 +59,7 @@ function DaysContent() {
             }
         };
         fetchLog();
-    },[getToken, userId, day, trip_name, dialogueOpen, drawerOpen])
+    },[getToken, userId, day, trip_name, submit])
 
     // Handle file selection
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,6 +70,7 @@ function DaysContent() {
     };
     const handleSubmit = async ( userId: string|undefined|null, getToken: any, trip_name:string, day:number, entry:string, title:string ) => {
         console.log('submitted')
+        setSubmit(true);
         try{
             const token = await getToken({ template: "supabase" });
             await editLog({userId, token, trip_name, day, entry, title });
