@@ -119,7 +119,7 @@ function DaysContent() {
                     <div>
                         <h1 className="text-3xl font-bold text-center">{log?.title}</h1>
                         <h4 className="text-md text-center">{new Date(datestring).toDateString()}</h4>
-                        <div className="p-2" dangerouslySetInnerHTML={{__html:`${log?.entry}`}}/>
+                        <div className="p-2 pb-20" dangerouslySetInnerHTML={{__html:`${log?.entry}`}}/>
                     </div> 
                     )}
 
