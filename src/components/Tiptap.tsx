@@ -19,7 +19,7 @@ const Tiptap = ({onChange,content}:any) => {
     extensions: [StarterKit, Underline],
     editorProps:{
       attributes:{
-        class:"flex flex-col px-4 py-3 justify-start items-start w-full gap-3 text-[16px] pt-4  border p-2 rounded h-[30vh] overflow-y-auto"
+        class:"flex flex-col px-4 py-3 justify-start items-start w-full gap-3 text-[16px] pt-4  border p-2 rounded h-auto"
       }
     },
     onUpdate:({editor})=>{

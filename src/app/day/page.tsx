@@ -120,7 +120,7 @@ function DaysContent() {
                     </button>
                     {!logPresent ?(
                     <div>
-                        <h1 className="text-3xl text-center font-bold">{new Date(datestring).toDateString()}</h1>
+                        <h1 className="text-xl text-center font-bold">{new Date(datestring).toDateString()}</h1>
                         <div className="h-full w-full flex justify-center items-center" style={{height:"calc(100vh - 90px)"}}>
                             <div className="flex flex-col items-center">
                                 <span className="text-4xl">😴</span>
@@ -163,9 +163,9 @@ function DaysContent() {
                             <IconPencil/>
                         </Link>
                     </DrawerTrigger>
-                    <DrawerContent className="h-3/4 w-full">
+                    <DrawerContent className="h-full w-full">
                         <DrawerHeader>
-                            <DrawerTitle className="mb-3">Edit Log</DrawerTitle>
+                            <DrawerTitle className="mb-1">Edit Log</DrawerTitle>
                             <EditLog/>
                         </DrawerHeader>
                     </DrawerContent>
