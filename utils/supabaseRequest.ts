@@ -66,6 +66,14 @@ export const insertUser = async ({ userId, token, username }: { userId: string, 
       }
   
       if (!trips) {
+        const dayArray = [];
+        let temp = new Date(start);
+        while (temp <= end) {
+          dayArray.push(new Date(temp).toLocaleDateString("en-us"));
+          temp.setDate(temp.getDate() + 1);
+        }
+        generateDays({userId,token,trip_name,dayArray});
+
         const { error: insertError } = await supabase
           .from('trips')
           .insert({
@@ -140,6 +148,80 @@ export const insertUser = async ({ userId, token, username }: { userId: string, 
       return imageURL;
     } catch (error) {
       console.error("Unexpected error during image upload:", error);
+      throw error;
+    }
+  };
+
+  export const generateDays = async ({ userId, token, trip_name, dayArray}: { userId: string, token: string,trip_name:string, dayArray:string[] }) => {
+    const supabase = await supabaseClient(token);
+    try {
+      for(let index in dayArray){
+        const { error: insertError } = await supabase
+          .from('logs')
+          .insert({
+            id: userId,
+            trip: trip_name,
+            date: dayArray[index],
+            day: Number(index)+1,
+          })
+
+        if (insertError){
+          console.log(`Error creating day ${index+1}`, insertError);
+          return insertError
+        }
+        console.log(`Day ${index+1} created successfully!`)
+      }
+    } catch (error) {
+      console.error('Error creating days:', error);
+      return error;
+    }
+  };
+
+  export const editLog = async ({ userId, token, trip_name, day, entry, title}: { userId: string|undefined|null, token: string,trip_name:string, day:number, entry:string, title:string }) => {
+    const supabase = await supabaseClient(token);
+    try {
+      const { error: insertError } = await supabase
+        .from('logs')
+        .update({
+          entry:entry,
+          title:title,
+        })
+        .eq('id',userId)
+        .eq('day',day)
+        .eq('trip',trip_name)
+
+      if (insertError){
+        console.log(`Error updating day ${day}`, insertError);
+        return insertError
+      }
+      console.log(`Day ${day} updated successfully!`)
+      
+    } catch (error) {
+      console.error('Error creating days:', error);
+      return error;
+    }
+  };
+
+  export const getLog = async ({ userId, token, day, trip_name }: { userId: string|undefined|null, token: string, day:number, trip_name:string }) => {
+    const supabase = await supabaseClient(token);
+    try {
+      const { data: log, error: fetchError } = await supabase
+        .from('logs')
+        .select('entry,title')
+        .eq('id', userId)
+        .eq('day',day)
+        .eq('trip',trip_name)
+        .single()
+      
+      if (fetchError && fetchError.code !== 'PGRST116') {
+        // Handle any error other than 'PGRST116' (which is Supabase's "No Rows Found" error code)
+        console.error('Error fetching log:', fetchError);
+        throw fetchError;
+      }
+      return log;
+  
+    } catch (error) {
+      console.error('Unexpected Error:', error);
       throw error;
     }
   };

@@ -67,7 +67,7 @@ export default function Trips() {
                 </div>
             </div>
         </BlurFade>
-        <BlurFade delay={0.25} inView className="h-screen w-screen">
+        <BlurFade delay={0.25} inView className="h-screen w-screen mb-20">
             <div className="flex flex-wrap justify-center h-screen">
               {trips.map((trip, index) => (
               <Link href={{

@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import BlurFade from "@/components/ui/blur-fade";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import Link from "next/link";
 
 function DatesContent() {
   const searchParams = useSearchParams();
@@ -26,9 +27,10 @@ function DatesContent() {
   let temp_date = new Date(start_date);
 
   while (temp_date <= end_date) {
-    daysArray.push(temp_date.getDate());
+    daysArray.push(new Date(temp_date));
     temp_date.setDate(temp_date.getDate() + 1);
   }
+
 
   return (
     <div>
@@ -49,21 +51,29 @@ function DatesContent() {
         </h3>
         <div className="h-screen w-full">
           <BlurFade inView delay={0.5}>
-            <div className="grid grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-4 mt-5 mx-2">
+            <div className="grid grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-4 mt-10 mx-2" key={1}>
               {daysArray.map((day, index) => (
-                <div
-                  key={index}
-                  style={{ backgroundImage: "" }}
-                  className={cn(
-                    "group cursor-pointer overflow-hidden relative card h-full rounded-md shadow-xl mx-auto flex flex-row justify-end p-4 sm:p-8 md:p-12 lg:p-14 border bg-cover"
-                  )}
-                >
-                  <div className="text relative z-50 h-full flex items-center">
-                    <h1 className="font-black text-lg drop-shadow-2xl relative">
-                      {day}
-                    </h1>
-                  </div>
-                </div>
+                <Link href={{
+                    pathname:'/day',
+                    query:{
+                        day:day.toLocaleDateString("en-us"),
+                        trip:name,
+                        num:Number(index)+1,
+                    }
+                }} className={cn(
+                    "group cursor-pointer overflow-hidden relative card h-full rounded-md shadow-xl mx-auto flex flex-row justify-end p-6 sm:p-8 md:p-12 lg:p-14 border bg-cover"
+                )}>
+                    <div
+                    key={index}
+                    style={{ backgroundImage: "" }}
+                    >
+                    <div className="text relative z-50 h-full flex items-center">
+                        <h1 className="font-black text-lg drop-shadow-2xl relative">
+                            {index+1}
+                        </h1>
+                    </div>
+                    </div>
+                </Link>
               ))}
             </div>
           </BlurFade>
