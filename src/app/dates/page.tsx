@@ -3,14 +3,16 @@
 import { cn } from "@/lib/utils";
 import BlurFade from "@/components/ui/blur-fade";
 import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
+import { useAuth } from "@clerk/nextjs"
+import { getAllLogs } from "../../../utils/supabaseRequest";
 
 function DatesContent() {
   const searchParams = useSearchParams();
 
   // Safely extract query parameters
-  const name = searchParams.get("name") || "Unnamed Trip";
+  const trip_name = searchParams.get("name") || "Unnamed Trip";
   const start = searchParams.get("start") || "";
   const end = searchParams.get("end") || "";
 
@@ -31,11 +33,33 @@ function DatesContent() {
     temp_date.setDate(temp_date.getDate() + 1);
   }
 
+  const { userId, getToken } = useAuth();
+  const [logs, setLogs] = useState<{entry:any,title:any, day:any}[]>([])
+  useEffect(()=>{
+    const fetchLog = async () => {
+        try{
+            const token = await getToken({ template: "supabase" });
+            if(userId && token){
+                const res = await getAllLogs({userId,token,trip_name})||[];
+                setLogs(res);
+                console.log(res);
+            }
+            else{
+                console.error("User ID or token is missing.")
+            }
+        }
+        catch (error){
+            console.error("Error fetching log from page.")
+        }
+    };
+    fetchLog();
+},[getToken, userId, trip_name])
+
 
   return (
     <div>
       <BlurFade inView delay={0.25}>
-        <h1 className="text-4xl text-center">{name}</h1>
+        <h1 className="text-4xl text-center">{trip_name}</h1>
         <h3 className="text-xl text-center text-slate-400">
           {start_date.toLocaleDateString("en-us", {
             month: "long",
@@ -57,21 +81,20 @@ function DatesContent() {
                     pathname:'/day',
                     query:{
                         day:day.toLocaleDateString("en-us"),
-                        trip:name,
+                        trip:trip_name,
                         num:Number(index)+1,
                     }
                 }} className={cn(
-                    "group cursor-pointer overflow-hidden relative card h-full rounded-md shadow-xl mx-auto flex flex-row justify-end p-6 sm:p-8 md:p-12 lg:p-14 border bg-cover"
+                    "group cursor-pointer overflow-hidden relative card h-full rounded-md shadow-xl mx-auto flex flex-row justify-center items-center border bg-cover w-20 h-20 sm:w-28 sm:h-28 md:w-36 md:h-36 lg:w-44 lg:h-44",
+                    `${logs[index]?.entry==null ? "bg-slate-100 text-zinc-300":""}`
                 )}>
                     <div
                     key={index}
                     style={{ backgroundImage: "" }}
                     >
-                    <div className="text relative z-50 h-full flex items-center">
-                        <h1 className="font-black text-lg drop-shadow-2xl relative">
-                            {index+1}
-                        </h1>
-                    </div>
+                      <h1 className="font-black text-lg sm:text-xl md:text-2xl drop-shadow-2xl">
+                          {index+1}
+                      </h1>
                     </div>
                 </Link>
               ))}

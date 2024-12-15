@@ -8,7 +8,7 @@ import {
     Italic,
     List,
     ListOrdered,
-    Heading2,
+    Heading1,
     Underline,
     Quote,
     Undo,
@@ -33,7 +33,7 @@ const Toolbar = ({editor,content}:Props)=>{
                     editor.chain().focus().toggleBold().run();
                 }}
                 className={
-                    editor.isActive("bold")?"bg-sky-700 text-white p-2 rounded-lg":"text-sky-400"
+                    editor.isActive("bold")?"bg-indigo-500 text-white rounded-lg":"text-purple-500"
                 }>
                     <Bold className='w-5 h-5'/>
                 </button>
@@ -43,7 +43,7 @@ const Toolbar = ({editor,content}:Props)=>{
                     editor.chain().focus().toggleItalic().run();
                 }}
                 className={
-                    editor.isActive("italic")?"bg-sky-700 text-white p-2 rounded-lg":"text-sky-400"
+                    editor.isActive("italic")?"bg-indigo-500 text-white rounded-lg":"text-purple-500"
                 }>
                     <Italic className='w-5 h-5'/>
                 </button>
@@ -53,7 +53,7 @@ const Toolbar = ({editor,content}:Props)=>{
                     editor.chain().focus().toggleUnderline().run();
                 }}
                 className={
-                    editor.isActive("underline")?"bg-sky-700 text-white p-2 rounded-lg":"text-sky-400"
+                    editor.isActive("underline")?"bg-indigo-500 text-white rounded-lg":"text-purple-500"
                 }>
                     <Underline className='w-5 h-5'/>
                 </button>
@@ -63,49 +63,9 @@ const Toolbar = ({editor,content}:Props)=>{
                     editor.chain().focus().toggleStrike().run();
                 }}
                 className={
-                    editor.isActive("strikethrough")?"bg-sky-700 text-white p-2 rounded-lg":"text-sky-400"
+                    editor.isActive("strike")?"bg-indigo-500 text-white rounded-lg":"text-purple-500"
                 }>
                     <Strikethrough className='w-5 h-5'/>
-                </button>
-            {/* List */}
-                <button onClick={(e) => {
-                    e.preventDefault();
-                    editor.chain().focus().toggleBulletList().run();
-                }}
-                className={
-                    editor.isActive("bulletList")?"bg-sky-700 text-white p-2 rounded-lg":"text-sky-400"
-                }>
-                    <List className='w-5 h-5'/>
-                </button>
-            {/* Header */}
-                <button onClick={(e) => {
-                    e.preventDefault();
-                    editor.chain().focus().toggleHeading({level:2}).run();
-                }}
-                className={
-                    editor.isActive("heading")?"bg-sky-700 text-white p-2 rounded-lg":"text-sky-400"
-                }>
-                    <Heading2 className='w-5 h-5'/>
-                </button>
-            {/* Ordered List */}
-                <button onClick={(e) => {
-                    e.preventDefault();
-                    editor.chain().focus().toggleOrderedList().run();
-                }}
-                className={
-                    editor.isActive("orderedList")?"bg-sky-700 text-white p-2 rounded-lg":"text-sky-400"
-                }>
-                    <ListOrdered className='w-5 h-5'/>
-                </button>
-            {/* Blockquote */}
-                <button onClick={(e) => {
-                    e.preventDefault();
-                    editor.chain().focus().toggleBlockquote().run();
-                }}
-                className={
-                    editor.isActive("blockquote")?"bg-sky-700 text-white p-2 rounded-lg":"text-sky-400"
-                }>
-                    <Quote className='w-5 h-5'/>
                 </button>
             {/* Undo */}
                 <button onClick={(e) => {
@@ -113,7 +73,7 @@ const Toolbar = ({editor,content}:Props)=>{
                     editor.chain().focus().undo().run();
                 }}
                 className={
-                    editor.isActive("undo")?"bg-sky-700 text-white p-2 rounded-lg":"text-sky-400"
+                    editor.isActive("undo")?"bg-indigo-500 text-white rounded-lg":"text-purple-500"
                 }>
                     <Undo className='w-5 h-5'/>
                 </button>
@@ -123,7 +83,7 @@ const Toolbar = ({editor,content}:Props)=>{
                     editor.chain().focus().redo().run();
                 }}
                 className={
-                    editor.isActive("redo")?"bg-sky-700 text-white p-2 rounded-lg":"text-sky-400"
+                    editor.isActive("redo")?"bg-indigo-500 text-white rounded-lg":"text-purple-500"
                 }>
                     <Redo className='w-5 h-5'/>
                 </button>

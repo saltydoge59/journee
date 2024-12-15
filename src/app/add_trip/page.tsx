@@ -83,7 +83,7 @@ export default function AddTrip() {
           toast.success("Trip created successfully! Redirecting...");
           setTimeout(() => {
             router.push("/trips");
-          }, 3000);
+          }, 2000);
         }
       } else {
         toast.error("User ID or token is missing.");
@@ -153,7 +153,7 @@ export default function AddTrip() {
           </form>
         </Form>
       </div>
-      <ToastContainer position="bottom-left" />
+      <ToastContainer position="bottom-left" autoClose={2000}/>   
     </div>
   );
 }

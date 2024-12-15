@@ -225,3 +225,26 @@ export const insertUser = async ({ userId, token, username }: { userId: string, 
       throw error;
     }
   };
+
+  export const getAllLogs = async ({ userId, token, trip_name }: { userId: string|undefined|null, token: string, trip_name:string }) => {
+    const supabase = await supabaseClient(token);
+    try {
+      const { data: logs, error: fetchError } = await supabase
+        .from('logs')
+        .select('entry,title,day')
+        .eq('id', userId)
+        .eq('trip',trip_name)
+        .order('day',{ascending:true})
+      
+      if (fetchError && fetchError.code !== 'PGRST116') {
+        // Handle any error other than 'PGRST116' (which is Supabase's "No Rows Found" error code)
+        console.error('Error fetching log:', fetchError);
+        throw fetchError;
+      }
+      return logs;
+  
+    } catch (error) {
+      console.error('Unexpected Error:', error);
+      throw error;
+    }
+  };

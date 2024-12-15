@@ -16,6 +16,7 @@ import * as React from "react";
 import Tiptap from "@/components/Tiptap"
 import { useAuth } from "@clerk/nextjs"
 import { editLog, getLog } from "../../../utils/supabaseRequest"
+import { ToastContainer, toast } from "react-toastify";
 
 function DaysContent() {
     const { userId, getToken } = useAuth();
@@ -31,6 +32,7 @@ function DaysContent() {
     const [drawerOpen, setDrawerOpen] = useState(false)
     const isDesktop = useMediaQuery("(min-width: 640px)")
     const [log, setLog] = useState<{entry:any,title:any}|null>();
+    const [logPresent,setLogPresent] = useState(true);
     let files:File[] = [];
 
     useEffect(()=>{
@@ -40,6 +42,9 @@ function DaysContent() {
                 if(userId && token){
                     const res = await getLog({userId,token,day,trip_name});
                     setLog(res);
+                    if(res===null || res.entry===null || res.title===null){
+                        setLogPresent(false);
+                    }
                     console.log(res);
                 }
                 else{
@@ -51,8 +56,8 @@ function DaysContent() {
             }
         };
         fetchLog();
-    },[getToken, userId, day, trip_name])
-    
+    },[getToken, userId, day, trip_name, dialogueOpen, drawerOpen])
+
     // Handle file selection
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       if (event.target.files) {
@@ -64,16 +69,20 @@ function DaysContent() {
         console.log('submitted')
         try{
             const token = await getToken({ template: "supabase" });
-            await editLog({userId, token, trip_name, day, entry, title })
+            await editLog({userId, token, trip_name, day, entry, title });
+            toast.success("Log edited successfully! Redirecting...");
+            setTimeout(() => {
+                setDrawerOpen(false);
+                setDialogueOpen(false);
+              }, 2000);
         }
         catch(error){
             console.error('Error in updating log:',error)
+            toast.error("Failed to edit log. Try again.");
         }
     }
 
-
-
-    let content = "";
+    let content = `${log?.entry===null?"":log?.entry}`;
     const handleContentChange = (reason:any)=>{
         content=reason;
     }
@@ -104,19 +113,32 @@ function DaysContent() {
     return(
         <div>
             <BlurFade delay={0.25} inView>
-                <div className="sm:pt-3" style={{height:"calc(100vh - 90px)"}}>
-                    <button className="fixed flex flex-row" onClick={handleBackClick}>
+                <div className="sm:p-3" style={{height:"calc(100vh - 90px)"}}>
+                    <button className="fixed flex flex-row pl-2" onClick={handleBackClick}>
                         <IconArrowLeft className="inline"/>
                         <span>Back</span>
                     </button>
-                    <h1 className="text-3xl text-center font-bold">{new Date(datestring).toDateString()}</h1>
-
-                    <div className="h-full w-full flex justify-center items-center">
-                        <div className="flex flex-col items-center">
-                            <span className="text-4xl">😴</span>
-                            <h4 className="mt-1">Nothing to see yet...</h4>
+                    {!logPresent ?(
+                    <div>
+                        <h1 className="text-3xl text-center font-bold">{new Date(datestring).toDateString()}</h1>
+                        <div className="h-full w-full flex justify-center items-center" style={{height:"calc(100vh - 90px)"}}>
+                            <div className="flex flex-col items-center">
+                                <span className="text-4xl">😴</span>
+                                <h4 className="mt-1">Nothing to see yet...</h4>
+                            </div>
                         </div>
                     </div>
+                    ):
+                    (
+                    <div>
+                        <h1 className="text-3xl font-bold text-center">{log?.title}</h1>
+                        <h4 className="text-md text-center">{new Date(datestring).toDateString()}</h4>
+                        <div className="p-2" dangerouslySetInnerHTML={{__html:`${log?.entry}`}}/>
+                    </div> 
+                    )}
+
+
+
                 </div>
             </BlurFade>
             <div className={isDesktop?"":"hidden"}>
@@ -149,7 +171,7 @@ function DaysContent() {
                     </DrawerContent>
                 </Drawer>
             </div>
-
+        <ToastContainer position="bottom-left" autoClose={2000}/>    
         </div>
     )
 }
