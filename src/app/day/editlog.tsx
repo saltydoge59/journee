@@ -60,7 +60,7 @@ const onTemplateRemove = (file:any, callback:any) => {
 
     return (
       <div
-        className="flex items-center p-3 border rounded bg-gray-100"
+        className="flex items-center p-3 border rounded"
         style={{ gap: "1rem" }}
       >
         <div>{chooseButton}</div> {/* Custom Choose Button */}
