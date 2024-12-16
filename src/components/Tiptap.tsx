@@ -4,9 +4,8 @@ import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Toolbar from './Toolbar';
 import Underline from "@tiptap/extension-underline"
-import { useEffect, useState } from "react";
-import { useAuth } from "@clerk/nextjs"
-import { getLog } from '../../utils/supabaseRequest';
+import HardBreak from '@tiptap/extension-hard-break';
+
 
 
 const Tiptap = ({onChange,content}:any) => {
@@ -14,9 +13,18 @@ const Tiptap = ({onChange,content}:any) => {
   const handleChange = (newContent:string)=>{
     onChange(newContent);
   };
+  
 
   const editor = useEditor({
-    extensions: [StarterKit, Underline],
+    autofocus:true,
+    editable:true,
+    extensions: [StarterKit, Underline, HardBreak.extend({
+      addKeyboardShortcuts(){
+        return {
+          Enter:()=> this.editor.commands.setHardBreak()
+        }
+      }
+    })],
     editorProps:{
       attributes:{
         class:"flex flex-col px-4 py-3 justify-start items-start w-full gap-3 text-[16px] pt-4 border p-2 rounded h-auto"
@@ -32,7 +40,7 @@ const Tiptap = ({onChange,content}:any) => {
   return(
     <div className='w-full'>
       <Toolbar editor={editor} content={content}/>
-      <EditorContent style={{whiteSpace:"pre-line"}} editor={editor}/>
+      <EditorContent className='text-start' style={{whiteSpace:"pre-line"}} editor={editor}/>
     </div>
   )
 }
