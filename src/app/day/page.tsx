@@ -1,7 +1,7 @@
 "use client"
 
 import BlurFade from "@/components/ui/blur-fade"
-import { IconArrowLeft, IconPencil } from "@tabler/icons-react"
+import { IconArrowLeft, IconDotsVertical, IconPencil } from "@tabler/icons-react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Suspense, useState, useEffect, useCallback, useRef } from "react";
@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input"
 import * as React from "react";
 import Tiptap from "@/components/Tiptap"
 import { useAuth } from "@clerk/nextjs"
-import { editLog, getLog } from "../../../utils/supabaseRequest"
+import { deletePhotos, editLog, getLog,getPhotos } from "../../../utils/supabaseRequest"
 import { useToast } from "@/hooks/use-toast";
 import EditLog from "./editlog"
 
@@ -37,6 +37,8 @@ function DaysContent() {
     const { toast } = useToast();
     const [files, setFiles] = useState<File[]>([]);
     const [submit, setSubmit] = useState(false);
+    const [photos, setPhotos] = useState<{ imageURL: string }[] | null>(null);
+    const [deleteOpen, setDeleteOpen] = useState(false)
 
     useEffect(()=>{
         const fetchLog = async () => {
@@ -46,7 +48,6 @@ function DaysContent() {
                 if(userId && token){
                     const res = await getLog({userId,token,day,trip_name});
                     setLog(res);
-                    // setSubmit(false);
                     if(res===null || res.entry===null || res.title===null){
                         setLogPresent(false);
                     }
@@ -63,13 +64,30 @@ function DaysContent() {
         fetchLog();
     },[getToken, userId, day, trip_name, submit])
 
+
+    useEffect(()=>{
+        const fetchPhotos = async () => {
+            try{
+                const token = await getToken({ template: "supabase" });
+                if(userId && token){
+                    const photos = await getPhotos({token,userId,trip_name,day});
+                    setPhotos(photos);
+                    console.log('Photos preloaded:',photos)
+                }
+            }
+            catch(error){
+                console.error("Error fetching photos:", error);
+            }
+        };
+        fetchPhotos();
+    },[day,trip_name,getToken,userId,submit,deleteOpen])
+
     // Handle file selection
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files) {
-        const uploadedFiles = Array.from(event.target.files);
+    const handleFileUpload = (files:File[]) => {
+        const uploadedFiles = files;
         setFiles(uploadedFiles); // Update state instead of a `let` variable
         console.log(uploadedFiles);
-        }
+        
     };
 
     const handleSubmit = useCallback(
@@ -95,6 +113,29 @@ function DaysContent() {
         [userId, getToken, trip_name, day, toast]
       );
 
+    async function deleteImage(imageURL:string) {
+        try{
+            const token = await getToken({ template: "supabase" });
+            if(token && userId){
+                const error = await deletePhotos({userId,token,trip_name,day,imageURL});
+                if(error){
+                    console.error("Error in deleting photo.",error);
+                    toast({ variant: "destructive", title: "Failed to delete photo. Try again." });
+                }
+                else{
+                    console.log("Photo deleted")
+                    toast({ duration: 2000, title: "Photo deleted successfully!" });
+                    setDeleteOpen(false);
+                }
+            }
+        }
+        catch(error){
+            console.error("Unexpected Error:", error);
+            toast({ variant: "destructive", title: "An unexpected error occurred." });
+        }
+
+    }
+
 
     return(
         <div>
@@ -119,7 +160,36 @@ function DaysContent() {
                     <div>
                         <h1 className="text-3xl font-bold text-center">{log?.title}</h1>
                         <h4 className="text-md text-center">{new Date(datestring).toDateString()}</h4>
-                        <div className="p-2 pb-20" dangerouslySetInnerHTML={{__html:`${log?.entry}`}}/>
+                        <div className="p-2" dangerouslySetInnerHTML={{__html:`${log?.entry}`}}/>
+                        <div className="columns-2 gap-4 p-2">
+                            {photos?.map((photo,idx)=>(
+                                <BlurFade key={`${idx}`} inView delay={0.25+ idx * 0.05}>
+                                    <div className="relative">
+                                        <img src={photo.imageURL} className="mb-4 size-full rounded-lg object-contain" key={`Picture ${idx}`}/>
+                                    </div>
+                                    <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+                                        <DialogTrigger asChild>
+                                            <button className="fixed top-2 right-2 bg-slate-300/50 rounded drop-shadow-xl"><IconDotsVertical/></button>
+                                        </DialogTrigger>
+                                        <DialogContent className="w-[50vw] lg:w-[25vw]">
+                                            <DialogHeader>
+                                                <DialogTitle>Delete Picture</DialogTitle>
+                                                <DialogDescription>
+                                                    Are you sure you want to delete this picture? This action cannot be undone.
+                                                </DialogDescription>
+                                            </DialogHeader>
+                                            <div className="flex gap-3">
+                                                <Button onClick={()=>{setDeleteOpen(false)}} className="p-2 rounded bg-slate-300 font-bold w-full">Close</Button>
+                                                <Button onClick={()=>{deleteImage(photo.imageURL)}}  className="p-2 rounded bg-red-400 font-bold w-full">Delete</Button>
+                                            </div>
+                                        </DialogContent>
+                                    </Dialog>
+                                    
+                                </BlurFade>
+                            ))}
+                        </div>
+                        {/* <button className="ml-2 text-sm p-2 rounded bg-gradient-to-r from-indigo-500 to-purple-500 font-bold text-white tracking-widest transform hover:scale-105 transition-colors duration-200">Edit Photos</button> */}
+                        <div className="pb-20"></div>
                     </div> 
                     )}
 
@@ -139,10 +209,11 @@ function DaysContent() {
                             <DialogTitle className="mb-3">Edit Log</DialogTitle>
                             <EditLog
                                 day={day}
+                                trip_name={trip_name}
                                 logContent={log?.entry||""}
                                 title={log?.title|| `Day ${day}`}
                                 onSubmit={handleSubmit}
-                                handleFileChange={handleFileChange}
+                                handleFileUpload={handleFileUpload}
                                 />
                         </DialogHeader>
                     </DialogContent>
@@ -160,10 +231,11 @@ function DaysContent() {
                             <DrawerTitle >Edit Log</DrawerTitle>
                             <EditLog
                                 day={day}
+                                trip_name={trip_name}
                                 logContent={log?.entry||""}
                                 title={log?.title|| `Day ${day}`}
                                 onSubmit={handleSubmit}
-                                handleFileChange={handleFileChange}
+                                handleFileUpload={handleFileUpload}
                                 />
                         </DrawerHeader>
                     </DrawerContent>

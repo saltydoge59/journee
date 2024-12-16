@@ -123,7 +123,7 @@ export const insertUser = async ({ userId, token, username }: { userId: string, 
     }
   };
 
-  export const uploadImageToSupabase = async (
+  export const uploadBackgroundToSupabase = async (
     token:string,
     userId: string,
     file: File,
@@ -147,7 +147,7 @@ export const insertUser = async ({ userId, token, username }: { userId: string, 
   
       return imageURL;
     } catch (error) {
-      console.error("Unexpected error during image upload:", error);
+      console.error("Unexpected error during background upload:", error);
       throw error;
     }
   };
@@ -248,3 +248,111 @@ export const insertUser = async ({ userId, token, username }: { userId: string, 
       throw error;
     }
   };
+
+  export const uploadPhotosToSupabase = async (
+    token:string,
+    userId: string,
+    day:number,
+    trip_name:string,
+    file: File,
+    bucketName: string
+  ) => {
+    const supabase = await supabaseClient(token);
+    try {
+      const filePath = `${userId}/${trip_name}/${day}/${Date.now()}_${file.name}`;
+      let imageURL: string | null = null;
+  
+      // Upload the file to Supabase Storage
+      const { data, error } = await supabase.storage.from(bucketName).upload(filePath, file);
+  
+      if (error) {
+        console.error("Error uploading file to Supabase:", error);
+        throw new Error("Failed to upload file");
+      }
+  
+      // Get the public URL for the uploaded file
+      imageURL = supabase.storage.from(bucketName).getPublicUrl(filePath).data.publicUrl;
+  
+      return imageURL;
+    } catch (error) {
+      console.error("Unexpected error during photo upload:", error);
+      throw error;
+    }
+  };
+
+  export const insertPhotos = async ({ userId, token, trip_name, day, imageURL}: { userId: string|undefined|null, token: string,trip_name:string, day:number, imageURL:string }) => {
+    const supabase = await supabaseClient(token);
+    try {
+      const { error: insertError } = await supabase
+        .from('photos')
+        .insert({
+          id:userId,
+          day:day,
+          trip_name:trip_name,
+          imageURL:imageURL
+        })
+
+      if (insertError){
+        console.log(`Error inserting photos for day ${day}`, insertError);
+        return insertError
+      }
+      console.log(`Photo for Day ${day} inserted successfully!`)
+      
+    } catch (error) {
+      console.error(`Error inserting photos for Day ${day}:`, error);
+      return error;
+    }
+  };
+
+  export const getPhotos = async ({ userId, token, trip_name,day }: { userId: string|undefined|null, token: string, trip_name:string, day:number }) => {
+    const supabase = await supabaseClient(token);
+    try {
+      const { data: photos, error: fetchError } = await supabase
+        .from('photos')
+        .select('imageURL')
+        .eq('id', userId)
+        .eq('trip_name',trip_name)
+        .eq('day',day)
+      
+      if (fetchError && fetchError.code !== 'PGRST116') {
+        // Handle any error other than 'PGRST116' (which is Supabase's "No Rows Found" error code)
+        console.error('Error fetching photos:', fetchError);
+        throw fetchError;
+      }
+      return photos;
+  
+    } catch (error) {
+      console.error('Unexpected Error:', error);
+      throw error;
+    }
+  };
+
+  export const deletePhotos = async ({ userId, token, trip_name, day, imageURL }: { userId: string|undefined|null, token: string, trip_name:string, day:number,imageURL:string }) => {
+    const supabase = await supabaseClient(token);
+    try {
+      const {error: fetchError } = await supabase
+        .from('photos')
+        .delete()
+        .eq('id', userId)
+        .eq('trip_name',trip_name)
+        .eq('day',day)
+        .eq('imageURL',imageURL)
+      
+      // Handle specific Supabase errors
+      if (fetchError) {
+        if (fetchError.code === "PGRST116") {
+          console.warn("No matching rows found to delete.");
+          return { message: "No matching rows found.", success: false };
+        } else {
+          console.error("Error deleting photo:", fetchError.message);
+          return new Error(`Failed to delete photo: ${fetchError.message}`);
+        }
+      }
+  
+    } catch (error) {
+      console.error('Unexpected Error:', error);
+      return error;
+    }
+  };
+
+
