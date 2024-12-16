@@ -56,14 +56,13 @@ const Toolbar = ({editor,content}:Props)=>{
         <div className='px-4 py-3 rounded-tl-md ronuded-tr-md flex justify-between items-start gap-5 w-full flex-wrap border border-slate-300'>
             <div className='flex justify-start items-center gap-5 w-full lg:w-10/12 flex-wrap'>
             {/* Color */}
-            <div className='outline-gray-500 outline-1'>
                 <input
+                className='border-gray-400 border'
                 type="color"
                 onInput={(e) => editor.chain().focus().setColor((e.target as HTMLInputElement).value).run()}
                 value={editor.getAttributes('textStyle').color}
                 data-testid="setColor"
                 />
-            </div>
             {/* Bold */}
                 <button onClick={(e) => {
                     e.preventDefault();
