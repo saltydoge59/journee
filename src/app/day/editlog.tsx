@@ -178,7 +178,6 @@ const onTemplateRemove = (file:any, callback:any) => {
           name="photo_selector"
           multiple
           accept="image/*"
-          maxFileSize={1000000}
           onSelect={onFilesSelect} // Trigger on file selection
           customUpload
           uploadHandler={onFilesUpload}
