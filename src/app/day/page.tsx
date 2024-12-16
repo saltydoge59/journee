@@ -226,7 +226,7 @@ function DaysContent() {
                             <IconPencil/>
                         </Link>
                     </DrawerTrigger>
-                    <DrawerContent className="h-full w-full">
+                    <DrawerContent className="h-screen w-full">
                         <DrawerHeader>
                             <DrawerTitle >Edit Log</DrawerTitle>
                             <EditLog
