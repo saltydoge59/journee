@@ -79,7 +79,7 @@ const onTemplateRemove = (file:any, callback:any) => {
   // Custom Upload Button Options
   const uploadOptions = {
     icon: "pi pi-cloud-upload", // Custom icon
-    label: "Upload Files", // Custom label
+    label: "Upload", // Custom label
     className: "bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600", // Custom classes
   };
 

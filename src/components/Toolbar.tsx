@@ -57,6 +57,7 @@ const Toolbar = ({editor,content}:Props)=>{
             <div className='flex justify-start items-center gap-5 w-full lg:w-10/12 flex-wrap'>
             {/* Color */}
                 <input
+                className='outline-gray-500'
                 type="color"
                 onInput={(e) => editor.chain().focus().setColor((e.target as HTMLInputElement).value).run()}
                 value={editor.getAttributes('textStyle').color}
