@@ -62,7 +62,7 @@ function DaysContent() {
             }
         };
         fetchLog();
-    },[getToken, userId, day, trip_name, submit])
+    },[getToken, userId, day, trip_name, submit,drawerOpen, dialogueOpen])
 
 
     useEffect(()=>{
@@ -80,7 +80,7 @@ function DaysContent() {
             }
         };
         fetchPhotos();
-    },[day,trip_name,getToken,userId,submit,deleteOpen])
+    },[day,trip_name,getToken,userId,submit,deleteOpen,drawerOpen, dialogueOpen])
 
     // Handle file selection
     const handleFileUpload = (files:File[]) => {
