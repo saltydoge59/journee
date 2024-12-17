@@ -57,7 +57,7 @@ function DatesContent() {
 
 
   return (
-    <div>
+    <div className="w-screen h-screen">
       <BlurFade inView delay={0.25}>
         <h1 className="text-4xl text-center">{trip_name}</h1>
         <h3 className="text-xl text-center text-slate-400">
@@ -73,7 +73,7 @@ function DatesContent() {
             day: "numeric",
           })}
         </h3>
-        <div className="h-screen w-full">
+        <div className="">
           <BlurFade inView delay={0.5}>
             <div className="grid grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-4 mt-10 mx-2" key={1}>
               {daysArray.map((day, index) => (

@@ -45,7 +45,7 @@ export default function Navbar(){
             
             <NavigationMenu className={`flex sm:hidden fixed ${resolvedTheme==='dark'?"bg-black":"bg-white"} bottom-0 h-[60px] p-5 justify-between min-w-full list-none`}>
                 <NavigationMenuItem className="mx-4">
-                    <div className={`flex flex-col items-center ${page=="Trips"?"text-indigo-400":""}`}>
+                    <div className={`flex flex-col items-center ${page=="Trips"?"text-indigo-500":""}`}>
                         <Link href='/trips' onClick={()=>setPage('Trips')}>
                             <IconPlaneDeparture/>
                         </Link>  
@@ -53,7 +53,7 @@ export default function Navbar(){
                     </div>
                 </NavigationMenuItem>
                 <NavigationMenuItem className="mx-4">
-                    <div className={`flex flex-col items-center ${page=="Explore"?"text-indigo-400":""}`}>
+                    <div className={`flex flex-col items-center ${page=="Explore"?"text-indigo-500":""}`}>
                         <Link href='/explore' onClick={()=>setPage('Explore')}>
                             <div><IconMapQuestion/></div>
                         </Link> 

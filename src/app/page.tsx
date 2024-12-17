@@ -1,6 +1,7 @@
 
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import BlurFade from "@/components/ui/blur-fade";
+import { Button } from "@/components/ui/button";
 import { SparklesCore } from "@/components/ui/sparkles";
 import { SignInButton, SignUpButton } from "@clerk/nextjs";
 
@@ -21,19 +22,16 @@ export default function Landing() {
         />
       </div> */}
       <BlurFade delay={0.25} inView>
-        <h1 className="md:text-9xl text-7xl font-bold text-center relative z-20 text-transparent bg-gradient-to-b from-neutral-200 via-neutral-400 to-neutral-800 bg-clip-text">Journee.</h1>
+        <h1 className="sm:text-9xl text-7xl font-bold text-center relative z-20 text-transparent bg-gradient-to-b from-neutral-200 via-neutral-400 to-neutral-800 bg-clip-text">Journee.</h1>
       </BlurFade>
-      <BlurFade delay={0.25*2} inView>
+      <BlurFade delay={0.25*2} inView className="text-center mt-3">
         <SignInButton>
-          <button className="p-[3px] relative mt-4 block mx-auto">
-            <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg" />
-            <div className="px-8 py-2 bg-black rounded-[6px] relative group transition duration-200 text-white hover:bg-transparent md:text-2xl text-md">
-              Sign In
-            </div>
-          </button>
+          <Button className="bg-gradient-to-r from-indigo-500 to-purple-500 font-bold text-white hover:brightness-90 px-7 py-4 text-lg sm:text-xl sm:py-5">
+            Sign In
+          </Button>
         </SignInButton>
         <SignUpButton>
-          <a href="sign-up" className="text-gray-400 text-sm z-20 hover:underline text-center block mt-3">Don't have an account?</a>        
+          <a href="sign-up" className="text-gray-400 text-sm z-20 hover:underline text-center block mt-2">Don't have an account?</a>        
         </SignUpButton>
       </BlurFade>
     {/* </div> */}

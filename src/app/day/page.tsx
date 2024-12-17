@@ -138,7 +138,7 @@ function DaysContent() {
 
 
     return(
-        <div>
+        <div className="h-screen w-screen">
             <BlurFade delay={0.25} inView>
                 <div className="sm:p-3" style={{height:"calc(100vh - 90px)"}}>
                     <button className="fixed flex flex-row pl-2" onClick={handleBackClick}>

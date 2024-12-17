@@ -156,9 +156,9 @@ export default function AddTrip() {
                 </FormItem>
               )}
             />
-            <div>
-              <Button type="submit">Add</Button>
-            </div>
+            <Button type="submit" className="bg-gradient-to-r from-indigo-500 to-purple-500 font-bold text-white hover:brightness-90 px-5">
+              Add
+            </Button>
           </form>
         </Form>
       </div>
