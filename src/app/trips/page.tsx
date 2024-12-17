@@ -67,7 +67,7 @@ export default function Trips() {
                 </div>
             </div>
         </BlurFade>
-        <BlurFade delay={0.25} inView>
+        <BlurFade delay={0.25} inView className={`${trips.length!==0?"":"hidden"} h-screen`}>
             <div className="flex flex-wrap justify-center h-screen">
               {trips.map((trip, index) => (
               <Link href={{
