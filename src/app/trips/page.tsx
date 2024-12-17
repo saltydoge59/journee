@@ -71,13 +71,13 @@ export default function Trips() {
             <div className="flex flex-wrap justify-center h-screen">
               {trips.map((trip, index) => (
               <Link href={{
-                pathname:"/dates",
-                query:{
-                  name:trip.trip_name,
-                  start:trip.start_date,
-                  end:trip.end_date,
-                }
-                }} key={index} className="mx-auto rounded-full w-11/12 sm:w-5/6 mt-3 h-1/2">
+              pathname:"/dates",
+              query:{
+                name:trip.trip_name,
+                start:trip.start_date,
+                end:trip.end_date,
+              }
+              }} key={index} className="mx-auto rounded-full w-11/12 sm:w-5/6 mt-3 h-1/2">
                 <div style={{backgroundImage:`url(${trip.image_url})`}}
                 className={cn(
                     "group w-full cursor-pointer overflow-hidden relative card h-full rounded-md shadow-xl mx-auto flex flex-col justify-end p-4 border",

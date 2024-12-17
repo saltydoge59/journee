@@ -18,7 +18,7 @@ const Tiptap = ({onChange,content}:any) => {
   
 
   const editor = useEditor({
-    autofocus:true,
+    autofocus:false,
     editable:true,
     extensions: [StarterKit, Underline, Color, TextStyle,
       HardBreak.extend({
