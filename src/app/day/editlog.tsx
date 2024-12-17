@@ -34,18 +34,18 @@ const EditLog = ({
   const { userId, getToken } = useAuth();
   const { toast } = useToast();
 
-  const onFilesUpload = async (event:any)=>{
-    console.log(event.target.files);
-    handleFileUpload(event.target.files);
+  const onFilesUpload = async (files:any)=>{
+    console.log(files);
+    handleFileUpload(files);
     toast({duration:Infinity,
       title:"Uploading images...Please Wait",
       action:<RingLoader loading={true} color={'green'}/>
     })
-    console.log("Files selected:", event.target.files); // Debugging
+    console.log("Files selected:", files); // Debugging
     try{
       const token = await getToken({ template: "supabase" });
       if(userId && token){
-        for(let f of event.target.files){
+        for(let f of files){
           let imageURL = null;
           imageURL = await uploadPhotosToSupabase(token, userId, day, trip_name, f, "photos");
           if(!imageURL) throw new Error(`Failed to upload ${f.name} to Supabase Storage.`);
@@ -102,8 +102,7 @@ const EditLog = ({
           Photos
         </Label>
         {/* <Input multiple type="file" onChange={handleFileChange} /> */}
-        {/* <FileUpload onChange={onFilesUpload}/> */}
-        <Input type="file" multiple onChange={onFilesUpload} accept="image/*" />
+        <FileUpload onChange={onFilesUpload}/>
       </div>
 
       <Button
