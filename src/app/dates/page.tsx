@@ -209,7 +209,7 @@ function DatesContent() {
         </h3>
         <div className="">
           <BlurFade inView delay={0.5}>
-            <div className="grid grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-4 mt-10 mx-2" key={1}>
+            <div className="grid grid-cols-4 md:grid-cols-5 xl:grid-cols-7 gap-4 mt-10 mx-2" key={1}>
               {daysArray.map((day, index) => (
                 <Link href={{
                     pathname:'/day',
