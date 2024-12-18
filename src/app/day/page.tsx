@@ -36,51 +36,48 @@ function DaysContent() {
     const [logPresent,setLogPresent] = useState(true);
     const { toast } = useToast();
     const [files, setFiles] = useState<File[]>([]);
-    const [submit, setSubmit] = useState(false);
     const [photos, setPhotos] = useState<{ imageURL: string }[] | null>(null);
     const [deleteOpen, setDeleteOpen] = useState(false)
 
+    const fetchLog = useCallback(async()=> {
+        try{
+            const token = await getToken({ template: "supabase" });
+            if(userId && token){
+                const res = await getLog({userId,token,day,trip_name})||{entry:"",title:""};
+                setLog({ ... res});
+                setLogPresent(true);
+                if(res.entry==null || res.title==null){
+                    setLogPresent(false);
+                }
+                console.log(res);
+            }
+            else{
+                console.error("User ID or token is missing.")
+            }
+        }
+        catch (error){
+            console.error("Error fetching log from page.")
+        }
+    },[getToken, userId, day, trip_name]);
+
+    const fetchPhotos = useCallback(async()=>{
+        try{
+            const token = await getToken({ template: "supabase" });
+            if(userId && token){
+                const photos = await getPhotos({token,userId,trip_name,day})||[];
+                setPhotos([...photos]);
+                console.log('Photos preloaded:',photos)
+            }
+        }
+        catch(error){
+            console.error("Error fetching photos:", error);
+        }
+    },[getToken, userId, trip_name, day]);
+
     useEffect(()=>{
-        const fetchLog = async () => {
-            try{
-                setSubmit(false);
-                const token = await getToken({ template: "supabase" });
-                if(userId && token){
-                    const res = await getLog({userId,token,day,trip_name});
-                    setLog(res);
-                    if(res===null || res.entry===null || res.title===null){
-                        setLogPresent(false);
-                    }
-                    console.log(res);
-                }
-                else{
-                    console.error("User ID or token is missing.")
-                }
-            }
-            catch (error){
-                console.error("Error fetching log from page.")
-            }
-        };
         fetchLog();
-    },[getToken, userId, day, trip_name, submit,drawerOpen, dialogueOpen])
-
-
-    useEffect(()=>{
-        const fetchPhotos = async () => {
-            try{
-                const token = await getToken({ template: "supabase" });
-                if(userId && token){
-                    const photos = await getPhotos({token,userId,trip_name,day});
-                    setPhotos(photos);
-                    console.log('Photos preloaded:',photos)
-                }
-            }
-            catch(error){
-                console.error("Error fetching photos:", error);
-            }
-        };
         fetchPhotos();
-    },[day,trip_name,getToken,userId,submit,deleteOpen,drawerOpen, dialogueOpen])
+    },[fetchLog,fetchPhotos])
 
     // Handle file selection
     const handleFileUpload = (files:File[]) => {
@@ -94,10 +91,11 @@ function DaysContent() {
         async (entry: string, title: string) => {
           console.log("submitted");
           try {
-            setSubmit(true);
             const token = await getToken({ template: "supabase" });
             if(token){
                 await editLog({ userId, token, trip_name, day, entry, title });
+                await fetchLog();
+                await fetchPhotos();
                 toast({ duration: 2000, title: "Log edited successfully! Redirecting..." });
                 setTimeout(() => {
                 setDrawerOpen(false);
@@ -110,7 +108,7 @@ function DaysContent() {
             toast({ variant: "destructive", title: "Failed to edit log. Try again." });
           }
         },
-        [userId, getToken, trip_name, day, toast]
+        [userId, getToken, trip_name, day, fetchLog, fetchPhotos]
       );
 
     async function deleteImage(imageURL:string) {
@@ -135,7 +133,6 @@ function DaysContent() {
         }
 
     }
-
 
     return(
         <div className="h-screen w-screen">
