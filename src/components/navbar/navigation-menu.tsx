@@ -1,14 +1,27 @@
+"use client"
+
 import Link from "next/link";
 import { NavigationMenu, NavigationMenuItem} from "../ui/navigation-menu";
 import { UserButton } from "@clerk/nextjs";
 import { ModeToggle } from "../mode-toggle/toggle";
 import { IconMapQuestion, IconPlaneDeparture } from "@tabler/icons-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
+import { usePathname } from "next/navigation";
 
 export default function Navbar(){
     const [page, setPage] = useState<string>('Trips')
+    const pathname = usePathname();
     const { resolvedTheme } = useTheme();
+
+    // Update the `page` state based on the current route
+    useEffect(() => {
+        if (pathname === '/trips') {
+            setPage('Trips');
+        } else if (pathname === '/snapspot') {
+            setPage('Snapspot');
+        }
+    }, [pathname]);
     
     return (
         <div>
@@ -21,8 +34,8 @@ export default function Navbar(){
                         </Link>
                     </NavigationMenuItem>
                     <NavigationMenuItem className="mx-4 hover:underline">
-                        <Link href="/explore">
-                            Explore
+                        <Link href="/snapspot">
+                            Snapspot
                         </Link>
                     </NavigationMenuItem>
                 </div>
@@ -37,7 +50,8 @@ export default function Navbar(){
                 </div>
             </NavigationMenu>
 
-            <NavigationMenu className="flex sm:hidden top-0 h-[60px] p-5 justify-end min-w-full list-none">
+            <NavigationMenu className="flex sm:hidden top-0 h-[60px] p-5 justify-between min-w-full list-none">
+                <img src="/journee.png" className={`w-8 h-8 ${resolvedTheme==='dark'?"outline outline-slate-500":""} rounded-lg`}/>
                 <NavigationMenuItem>
                     <ModeToggle/>
                 </NavigationMenuItem>
@@ -53,11 +67,11 @@ export default function Navbar(){
                     </div>
                 </NavigationMenuItem>
                 <NavigationMenuItem className="mx-4">
-                    <div className={`flex flex-col items-center ${page=="Explore"?"text-indigo-500":""}`}>
-                        <Link href='/explore' onClick={()=>setPage('Explore')}>
+                    <div className={`flex flex-col items-center ${page=="Snapspot"?"text-indigo-500":""}`}>
+                        <Link href='/snapspot' onClick={()=>setPage('Snapspot')}>
                             <div><IconMapQuestion/></div>
                         </Link> 
-                        <span>Explore</span>
+                        <span>Snapspot</span>
                     </div>
                 </NavigationMenuItem>
                 <NavigationMenuItem className="mx-4">
