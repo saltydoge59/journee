@@ -21,7 +21,6 @@ export default function Snapspot() {
     const { toast } = useToast();
     const geoapify_key = process.env.NEXT_PUBLIC_GEOAPIFY_API_KEY || "";
     const [selectedPlace, setSelectedPlace] = useState<string>("");
-    const [place, setPlace] = useState<string>("");
 
     const fileUploadRef = useRef<{ resetFiles: () => void }>(null);
     const handlePlaceSelect = (place: any) => {
@@ -81,7 +80,6 @@ export default function Snapspot() {
         setLocation("");
         setPreviewURL("");
         setPhotos([]);
-        setPlace("");
         handleReset();
     }
 
