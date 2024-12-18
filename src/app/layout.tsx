@@ -33,6 +33,9 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
+        <head>
+          <title>Journee</title>
+        </head>
         <body
           className={`${geistSans.variable} ${geistMono.variable} ${varelaRound.className} antialiased`}
         >
