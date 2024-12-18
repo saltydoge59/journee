@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { IconUpload } from "@tabler/icons-react";
 import { useDropzone } from "react-dropzone";
 
+
 const mainVariant = {
   initial: {
     x: 0,
@@ -42,6 +43,7 @@ export const FileUpload = ({
     fileInputRef.current?.click();
   };
 
+
   const { getRootProps, isDragActive } = useDropzone({
     multiple: true,
     noClick: true,
@@ -66,9 +68,9 @@ export const FileUpload = ({
           onChange={(e) => handleFileChange(Array.from(e.target.files || []))}
           className="hidden"
         />
-        <div className="absolute inset-0 [mask-image:radial-gradient(ellipse_at_center,white,transparent)]">
+        {/* <div className={`absolute inset-0 [mask-image:radial-gradient(ellipse_at_center,${resolvedTheme==="dark"?"black":"white"},transparent)]`}>
           <GridPattern />
-        </div>
+        </div> */}
         <div className="flex flex-col items-center justify-center">
           <p className="relative z-20 font-sans font-bold text-base">
             Upload file

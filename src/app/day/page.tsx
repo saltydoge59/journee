@@ -171,7 +171,7 @@ function DaysContent() {
                                         <DialogTrigger asChild>
                                             <button className="fixed top-2 right-2 bg-slate-300/50 rounded drop-shadow-xl"><IconDotsVertical/></button>
                                         </DialogTrigger>
-                                        <DialogContent className="w-[80vw] lg:w-[25vw]">
+                                        <DialogContent className="w-[80vw] lg:w-[25vw] rounded-lg">
                                             <DialogHeader>
                                                 <DialogTitle>Delete Picture</DialogTitle>
                                                 <DialogDescription>

@@ -180,7 +180,7 @@ export const insertUser = async ({ userId, token, username }: { userId: string, 
   export const editLog = async ({ userId, token, trip_name, day, entry, title}: { userId: string|undefined|null, token: string,trip_name:string, day:number, entry:string, title:string }) => {
     const supabase = await supabaseClient(token);
     try {
-      const { error: insertError } = await supabase
+      const { error: updateError } = await supabase
         .from('logs')
         .update({
           entry:entry,
@@ -190,9 +190,9 @@ export const insertUser = async ({ userId, token, username }: { userId: string, 
         .eq('day',day)
         .eq('trip',trip_name)
 
-      if (insertError){
-        console.log(`Error updating day ${day}`, insertError);
-        return insertError
+      if (updateError){
+        console.log(`Error updating day ${day}`, updateError);
+        return updateError
       }
       console.log(`Day ${day} updated successfully!`)
       
@@ -355,4 +355,52 @@ export const insertUser = async ({ userId, token, username }: { userId: string, 
     }
   };
 
+  export const deleteTrip = async ({ userId, token, trip_name }: { userId: string|undefined|null, token: string, trip_name:string }) => {
+    const supabase = await supabaseClient(token);
+    try {
+      const {error: fetchError } = await supabase
+        .from('trips')
+        .delete()
+        .eq('id', userId)
+        .eq('trip_name',trip_name)
+      
+      // Handle specific Supabase errors
+      if (fetchError) {
+        if (fetchError.code === "PGRST116") {
+          console.error("No matching rows found to delete.");
+          return new Error("No matching rows found.");
+        } else {
+          console.error("Error deleting trip:", fetchError.message);
+          return new Error(`Failed to delete trip: ${fetchError.message}`);
+        }
+      }
+  
+    } catch (error) {
+      console.error('Unexpected Error:', error);
+      return error;
+    }
+  };
+
+  export const updateTrip = async ({ userId, token, trip_name, imageURL}: { userId: string|undefined|null, token: string,trip_name:string, imageURL:string }) => {
+    const supabase = await supabaseClient(token);
+    try {
+      const { error: updateError } = await supabase
+        .from('trips')
+        .update({
+          image_url:imageURL,
+        })
+        .eq('id',userId)
+        .eq('trip_name',trip_name)
+
+      if (updateError){
+        console.error(`Error updating cover photo:`, updateError);
+        return updateError
+      }
+      console.log(`Cover photo for ${trip_name} updated successfully!`)
+      
+    } catch (error) {
+      console.error('Unexpected Error when updating tp supabase:', error);
+      return error;
+    }
+  };
 

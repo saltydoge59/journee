@@ -6,10 +6,21 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@clerk/nextjs"
-import { getAllLogs } from "../../../utils/supabaseRequest";
+import { deleteTrip, getAllLogs, updateTrip, uploadBackgroundToSupabase } from "../../../utils/supabaseRequest";
+import { Button } from "@/components/ui/button";
+import { IconDots, IconDotsCircleHorizontal, IconDotsVertical, IconPencil, IconTrash } from "@tabler/icons-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useTheme } from "next-themes";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
+import * as React from "react";
 
 function DatesContent() {
+  const { resolvedTheme } = useTheme();
+  const { toast } = useToast();
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   // Safely extract query parameters
   const trip_name = searchParams.get("name") || "Unnamed Trip";
@@ -55,10 +66,133 @@ function DatesContent() {
     fetchLog();
 },[getToken, userId, trip_name])
 
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false)
+
+  // Handle file selection
+  const [selectedFile, setSelectedFile] = React.useState<File[]>([]);
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      setSelectedFile(Array.from(event.target.files));
+    }
+  };
+
+  async function onSubmit(){
+    try{
+      const token = await getToken({ template: "supabase" });
+      if (userId && token) {
+        if (selectedFile.length > 0) {
+          const imageURL = await uploadBackgroundToSupabase(token, userId, selectedFile[0], "backgrounds");
+          const error = await updateTrip({
+            userId,
+            token,
+            trip_name,
+            imageURL
+          });
+          if(error){
+            console.error("Error updating URL in database.",error);
+            toast({
+              variant:"destructive",
+              title:"Failed to update cover photo. Try again."
+            })
+          }
+          else{
+            console.log("Cover photo updated.")
+            toast({
+              title:"Cover photo updated successfully!"
+            })}
+            setEditOpen(false);
+        }
+      }
+    }
+  catch(error){
+    console.error("Could not upload to supabase");
+    toast({
+      variant:"destructive",
+      title:"Database error. Please try again."})
+    }
+  }
+
+  async function removeTrip(){
+    try{
+      const token = await getToken({ template: "supabase" });
+      if(userId && token){
+        const error = await deleteTrip({
+        userId,
+        token,
+        trip_name
+        })
+        if(error){
+          console.error("Error from supabase:",error);
+          toast({
+            variant:"destructive",
+            title:"Failed to delete trip. Try again."
+          })
+        }
+        else{
+          console.log("Trip deleted successfully!")
+          toast({
+            duration:2000,
+            title:"Trip deleted successfully! Redirecting..."
+          })
+          setTimeout(()=>{
+            router.push("/trips")
+          },2000)
+        }
+      }
+
+    }
+    catch(error){
+      console.error("Unexpected error occurred here.")
+      toast({
+        variant:"destructive",
+        title:"An unexpected error occurred. Please wait..."
+      })
+    }
+  }
 
   return (
     <div className="w-screen h-screen">
       <BlurFade inView delay={0.25}>
+          <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>              
+            <DialogTrigger asChild>
+              <Button className={`fixed left-16 sm:left-20 sm:top-2 w-9 h-9 rounded-full drop-shadow-lg ${resolvedTheme==='dark'?"outline outline-slate-200 bg-black":"outline outline-slate-200 bg-white"}`}>
+                <IconTrash className="text-red-500"/>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="w-[80vw] lg:w-[25vw] rounded-lg">
+            <DialogHeader>
+              <DialogTitle>Delete Trip</DialogTitle>
+              <DialogDescription>
+                  Are you sure you want to delete this trip? This action cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex gap-3">
+                <Button onClick={()=>{setDeleteOpen(false)}} className="p-2 rounded bg-slate-300 font-bold w-full">Close</Button>
+                <Button onClick={()=>{removeTrip()}} className="p-2 rounded bg-red-400 font-bold w-full">Delete</Button>
+            </div>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={editOpen} onOpenChange={setEditOpen}>              
+            <DialogTrigger asChild>
+              <Button className={`fixed left-5 sm:top-2 w-9 h-9 rounded-full drop-shadow-lg ${resolvedTheme==='dark'?"outline outline-slate-200 bg-black":"outline outline-slate-200 bg-white"}`}>
+                <IconPencil className={`${resolvedTheme==='dark'?"text-white":"text-black"}`}/>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="w-[80vw] lg:w-[50vw] rounded-lg">
+              <DialogHeader>
+                <DialogTitle>Edit Cover Picture</DialogTitle>
+                <DialogDescription>
+                    Change your trip's cover picture.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex gap-3 flex-col">
+                  <Input type="file" className="w-full" onChange={handleFileChange} />
+                  <Button onClick={onSubmit} className={`mt-3 bg-gradient-to-r from-indigo-500 to-purple-500 font-bold text-white hover:brightness-90 ${!selectedFile?"disabled":""}`}>Save</Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         <h1 className="text-4xl text-center">{trip_name}</h1>
         <h3 className="text-xl text-center text-slate-400">
           {start_date.toLocaleDateString("en-us", {
