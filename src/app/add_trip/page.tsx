@@ -148,9 +148,9 @@ export default function AddTrip() {
               name="image"
               render={() => (
                 <FormItem>
-                  <FormLabel>Trip Cover Picture (Optional)</FormLabel>
+                  <FormLabel className="block">Trip Cover Picture (Optional)</FormLabel>
                   <FormControl>
-                    <Input type="file" onChange={handleFileChange} accept="image/*" />
+                    <input type="file" onChange={handleFileChange} accept="image/*" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

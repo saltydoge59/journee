@@ -156,7 +156,7 @@ function DatesContent() {
       <BlurFade inView delay={0.25}>
           <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>              
             <DialogTrigger asChild>
-              <Button className={`fixed left-16 sm:left-20 sm:top-2 w-9 h-9 rounded-full drop-shadow-lg ${resolvedTheme==='dark'?"outline outline-slate-200 bg-black":"outline outline-slate-200 bg-white"}`}>
+              <Button className={`fixed left-16 sm:left-20 sm:top-2 w-9 h-9 rounded-full drop-shadow-lg ${resolvedTheme==='dark'?"outline outline-slate-200 bg-black":"bg-white"}`}>
                 <IconTrash className="text-red-500"/>
               </Button>
             </DialogTrigger>
@@ -176,7 +176,7 @@ function DatesContent() {
 
           <Dialog open={editOpen} onOpenChange={setEditOpen}>              
             <DialogTrigger asChild>
-              <Button className={`fixed left-5 sm:top-2 w-9 h-9 rounded-full drop-shadow-lg ${resolvedTheme==='dark'?"outline outline-slate-200 bg-black":"outline outline-slate-200 bg-white"}`}>
+              <Button className={`fixed left-5 sm:top-2 w-9 h-9 rounded-full drop-shadow-lg ${resolvedTheme==='dark'?"outline outline-slate-200 bg-black":"bg-white"}`}>
                 <IconPencil className={`${resolvedTheme==='dark'?"text-white":"text-black"}`}/>
               </Button>
             </DialogTrigger>
@@ -188,7 +188,7 @@ function DatesContent() {
                 </DialogDescription>
               </DialogHeader>
               <div className="flex gap-3 flex-col">
-                  <Input type="file" className="w-full" onChange={handleFileChange} />
+                  <input type="file" className="w-full" onChange={handleFileChange} />
                   <Button onClick={onSubmit} className={`mt-3 bg-gradient-to-r from-indigo-500 to-purple-500 font-bold text-white hover:brightness-90 ${!selectedFile?"disabled":""}`}>Save</Button>
               </div>
             </DialogContent>
