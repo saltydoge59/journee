@@ -27,7 +27,9 @@ export default function Navbar(){
         <div>
             <NavigationMenu className="flex justify-between min-w-full list-none hidden sm:flex relative top-0 p-5 h-[60px]">
                 <div className="flex items-center">
-                    <h1 className="mr-4 font-bold text-2xl bg-gradient-to-b from-neutral-200 via-neutral-400 to-neutral-800 bg-clip-text text-transparent">Journee</h1>
+                    <Link href="/trips">
+                        <h1 className="mr-4 font-bold text-2xl bg-gradient-to-b from-neutral-200 via-neutral-400 to-neutral-800 bg-clip-text text-transparent">Journee</h1>
+                    </Link>
                     <NavigationMenuItem className="mx-4 hover:underline">
                         <Link href="/trips">
                             Trips
@@ -51,7 +53,9 @@ export default function Navbar(){
             </NavigationMenu>
 
             <NavigationMenu className="flex sm:hidden top-0 h-[60px] p-5 justify-between min-w-full list-none">
-                <img src="/journee.png" className={`w-8 h-8 ${resolvedTheme==='dark'?"outline outline-slate-500":""} rounded-lg`}/>
+                <Link href="/trips">
+                    <img src="/journee.png" className={`w-8 h-8 ${resolvedTheme==='dark'?"outline outline-slate-500":""} rounded-lg`}/>
+                </Link>
                 <NavigationMenuItem>
                     <ModeToggle/>
                 </NavigationMenuItem>

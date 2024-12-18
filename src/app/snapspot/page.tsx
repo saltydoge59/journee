@@ -129,11 +129,11 @@ export default function Snapspot() {
         </BlurFade>
       </div>
 
-      <div ref={targetRef} className={`h-screen w-screen flex flex-col ${location==""?"hidden":""}`}>
+      <div className={`h-screen w-screen flex flex-col ${location==""?"hidden":""}`}>
         <div className="my-auto">
             <BlurFade inView delay={0.25*2} className="w-full h-full flex justify-center items-center flex-col pb-20 md:pb-0">
                 <img src={previewURL} className="rounded-lg mx-auto w-1/2"/>
-                <h1 className="text-3xl lg:text-6xl text-center font-bold p-5">{location}</h1>
+                <h1 ref={targetRef} className="text-3xl lg:text-6xl text-center font-bold p-5">{location}</h1>
                 <Button onClick={resetSelection} className="bg-gradient-to-r from-indigo-500 to-purple-500 font-bold text-white hover:brightness-90">Reset</Button>  
             </BlurFade>
         </div>

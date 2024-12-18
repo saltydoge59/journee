@@ -26,7 +26,7 @@ export default function Landing() {
       </BlurFade>
       <BlurFade delay={0.25*2} inView className="text-center mt-3">
         <SignInButton>
-          <Button className="bg-gradient-to-r from-indigo-500 to-purple-500 font-bold text-white hover:brightness-90 px-7 py-4 text-lg sm:text-xl sm:py-5">
+          <Button className="bg-gradient-to-r from-indigo-500 to-purple-500 font-bold text-white hover:brightness-90 px-8 py-6 text-xl sm:text-2xl sm:py-7">
             Sign In
           </Button>
         </SignInButton>
