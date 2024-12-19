@@ -6,9 +6,12 @@ import { getTrips, insertUser } from "../../../utils/supabaseRequest";
 import Link from "next/link";
 import BlurFade from "@/components/ui/blur-fade";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
+import RingLoader from "react-spinners/ClipLoader";
 
 
 export default function Trips() {
+    const { toast } = useToast();
     const { userId, getToken } = useAuth(); // Destructure userId and getToken from useAuth
     const { user } = useUser(); // Destructure user object from useUser to access user details
     const username = user?.username;
@@ -46,7 +49,12 @@ export default function Trips() {
         initializeUserAndFetchTrips();
       }, [userId, getToken, username]); // Dependencies
       
-      
+    function handleClick(){
+      toast({
+        title:"Redirecting...Please Wait",
+        action:<RingLoader loading={true} color={'green'}/>
+      })
+    }
 
     return (
     
@@ -94,7 +102,7 @@ export default function Trips() {
               ))}
             </div>
         </BlurFade>
-        <button className={`fixed bottom-16 sm:bottom-3 right-2 sm:right-6 px-5 p-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-3xl font-bold text-white tracking-widest transform hover:scale-105 hover:bg-[#21e065] transition-colors duration-200 ${trips.length===0?"hidden":""}`}>
+        <button onClick={handleClick} className={`fixed bottom-16 sm:bottom-3 right-2 sm:right-6 px-5 p-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-3xl font-bold text-white tracking-widest transform hover:scale-105 hover:bg-[#21e065] transition-colors duration-200 ${trips.length===0?"hidden":""}`}>
           <Link href="/add_trip">
             +
           </Link>

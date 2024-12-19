@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import * as React from "react";
+import RingLoader from "react-spinners/ClipLoader";
 
 function DatesContent() {
   const { resolvedTheme } = useTheme();
@@ -99,7 +100,8 @@ function DatesContent() {
           else{
             console.log("Cover photo updated.")
             toast({
-              title:"Cover photo updated successfully!"
+              title:"Cover photo updated successfully!",
+              action:<RingLoader loading={true} color={'green'}/>
             })}
             setEditOpen(false);
         }
@@ -133,7 +135,8 @@ function DatesContent() {
           console.log("Trip deleted successfully!")
           toast({
             duration:2000,
-            title:"Trip deleted successfully! Redirecting..."
+            title:"Trip deleted successfully! Redirecting...",
+            action:<RingLoader loading={true} color={'green'}/>
           })
           setTimeout(()=>{
             router.push("/trips")

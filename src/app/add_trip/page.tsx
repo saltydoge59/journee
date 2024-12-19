@@ -21,6 +21,9 @@ import { createTrip, uploadBackgroundToSupabase } from "../../../utils/supabaseR
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
+import { useEffect } from "react";
+import RingLoader from "react-spinners/ClipLoader";
+
 
 const formSchema = z.object({
   trip_name: z.string().min(1, {
@@ -57,6 +60,15 @@ export default function AddTrip() {
     }
   };
 
+  function clearToast(){
+    toast({
+      duration:0.00001
+    })
+  }
+  useEffect(()=>{
+    clearToast();
+  },[])
+
   // Define a submit handler
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
@@ -85,7 +97,8 @@ export default function AddTrip() {
         } else {
           form.reset();
           toast({duration:2000,
-            title:"Trip created successfully! Redirecting..."
+            title:"Trip created successfully! Redirecting...",
+            action:<RingLoader loading={true} color={'green'}/>
           })
           setTimeout(() => {
             router.push("/trips");

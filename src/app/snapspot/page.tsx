@@ -14,6 +14,9 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import RingLoader from "react-spinners/ClipLoader";
 import "./round-borders.dark.css"
+import {
+    RotateCcw
+} from "lucide-react"
 
 export default function Snapspot() {
     const { resolvedTheme } = useTheme();
@@ -46,7 +49,7 @@ export default function Snapspot() {
 
 
     const findPlace = async ()=>{
-        toast({duration:2000,
+        toast({duration:Infinity,
             title:"Finding location...Please wait",
             action:<RingLoader loading={true} color={'green'}/>
           })
@@ -73,7 +76,8 @@ export default function Snapspot() {
 
         const loc = JSON.parse(cleanedJsonString);
         setLocation(loc.location);
-        
+        toast({duration:0.001,
+          })
     }
 
     function resetSelection(){
@@ -91,6 +95,16 @@ export default function Snapspot() {
             targetRef.current.scrollIntoView({behavior:"smooth"});
         }
     },[location])
+
+    const [isLandscape, setIsLandscape] = useState(true);
+
+    useEffect(()=>{
+        const img = new Image();
+        img.src = previewURL;
+        img.onload = ()=>{
+            setIsLandscape(img.width>img.height);
+        }
+    },[previewURL]);
 
     
   return (
@@ -131,10 +145,10 @@ export default function Snapspot() {
 
       <div className={`h-screen w-screen flex flex-col ${location==""?"hidden":""}`}>
         <div className="my-auto">
-            <BlurFade inView delay={0.25*2} className="w-full h-full flex justify-center items-center flex-col pb-20 md:pb-0">
-                <img src={previewURL} className="rounded-lg mx-auto w-1/2"/>
+            <BlurFade inView delay={0.25*2} className="w-full h-full flex justify-center items-center flex-col pb-12 sm:pb-0 pt-20">
+                <img src={previewURL} className={`rounded-lg mx-auto ${isLandscape?"w-3/4 h-auto":"w-1/2 h-auto md:w-1/4 h-auto"}`}/>
                 <h1 ref={targetRef} className="text-3xl lg:text-6xl text-center font-bold p-5">{location}</h1>
-                <Button onClick={resetSelection} className="bg-gradient-to-r from-indigo-500 to-purple-500 font-bold text-white hover:brightness-90">Reset</Button>  
+                <Button onClick={resetSelection} className="fixed top-24 lg:top-20 right-3 md:right-6 lg:right-10 xl:right-16 bg-gradient-to-r from-indigo-500 to-purple-500 font-bold text-white hover:brightness-90 rounded-full w-10 h-10 md:w-12 md:h-12"><RotateCcw/></Button>  
             </BlurFade>
         </div>
   

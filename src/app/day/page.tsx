@@ -17,7 +17,8 @@ import Tiptap from "@/components/Tiptap"
 import { useAuth } from "@clerk/nextjs"
 import { deletePhotos, editLog, getLog,getPhotos } from "../../../utils/supabaseRequest"
 import { useToast } from "@/hooks/use-toast";
-import EditLog from "./editlog"
+import EditLog from "./editlog";
+import RingLoader from "react-spinners/ClipLoader";
 
 function DaysContent() {
     const { userId, getToken } = useAuth();
@@ -96,7 +97,7 @@ function DaysContent() {
                 await editLog({ userId, token, trip_name, day, entry, title });
                 await fetchLog();
                 await fetchPhotos();
-                toast({ duration: 2000, title: "Log edited successfully! Redirecting..." });
+                toast({ duration: 2000, title: "Log edited successfully! Redirecting...",action:<RingLoader loading={true} color={'green'}/> });
                 setTimeout(() => {
                 setDrawerOpen(false);
                 setDialogueOpen(false);
