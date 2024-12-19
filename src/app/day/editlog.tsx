@@ -33,8 +33,10 @@ const EditLog = ({
   const [entryContent, setEntryContent] = useState(logContent);
   const { userId, getToken } = useAuth();
   const { toast } = useToast();
+  const [disabled,setDisabled] = useState(false);
 
   const onFilesUpload = async (files:any)=>{
+    setDisabled(true);
     console.log(files);
     handleFileUpload(files);
     toast({duration:Infinity,
@@ -67,6 +69,7 @@ const EditLog = ({
       else{
         console.error("User ID or token is missing.")
       }
+      setDisabled(false);
     }
     catch(error){
       console.error("Unexpected error:",error);
@@ -74,6 +77,7 @@ const EditLog = ({
         variant:"destructive",
         title:"Failed to upload images. Try again."
       })
+      setDisabled(false);
     }
   }
 
@@ -107,7 +111,7 @@ const EditLog = ({
 
       <Button
         onClick={() => onSubmit(entryContent, titleValue)}
-        className="bg-gradient-to-r from-indigo-500 to-purple-500 font-bold text-white hover:brightness-90"
+        className="bg-gradient-to-r from-indigo-500 to-purple-500 font-bold text-white hover:brightness-90" disabled={disabled}
       >
         Save Changes
       </Button>
