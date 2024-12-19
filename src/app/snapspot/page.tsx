@@ -174,7 +174,7 @@ export default function Snapspot() {
                     <Button onClick={resetSelection} className="bg-gradient-to-r from-indigo-500 to-purple-500 font-bold text-white hover:brightness-90 rounded-full w-10 h-10 md:w-12 md:h-12"><RotateCcw/></Button>  
                   </div>
                   <CollapsibleContent className="mb-30">
-                    <div className="m-3 bg-slate-200 rounded-lg p-3 px-7" ref={infoRef}>
+                    <div className="m-3 rounded-lg p-3 px-7" ref={infoRef}>
                       <h1 className="font-bold text-xl text-center">Some facts:</h1>
                       <ul className="list-disc">
                       {facts.map((item,index)=>(
