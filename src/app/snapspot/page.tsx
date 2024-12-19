@@ -17,6 +17,8 @@ import "./round-borders.dark.css"
 import {
     RotateCcw
 } from "lucide-react"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { IconCaretDownFilled } from "@tabler/icons-react";
 
 export default function Snapspot() {
     const { resolvedTheme } = useTheme();
@@ -59,7 +61,7 @@ export default function Snapspot() {
         const base64Image = Buffer.from(imageBytes).toString('base64');
         let country = selectedPlace===""?"the world":selectedPlace;
 
-        const prompt = `This is an image of somewhere in ${country}. Use any landmarks, signs, languages, mountain ranges or hints in the image to tell me where this photo is likely to be taken. You may use any metadata that the photo provides as well. Do not give me the coordinates of the location, give me the name of the area which is easily understandable. Structure the response in the following format:{"location":string}`;
+        const prompt = `This is an image of somewhere in ${country}. Use any landmarks, signs, languages, mountain ranges or hints in the image to tell me where this photo is likely to be taken. You may use any metadata that the photo provides as well. Do not give me the coordinates of the location, give me the name of the area which is easily understandable. Additionally, tell me some interesting facts about the place, and also what is there to do in the area around. Structure the response in the following format:{"location":string,"facts":array of strings,"todo":array of strings}`;
         const result = await model.generateContent([
             prompt,
             {
@@ -74,21 +76,28 @@ export default function Snapspot() {
         .replace(/```$/, '');      // Remove closing 
         console.log(cleanedJsonString);
 
-        const loc = JSON.parse(cleanedJsonString);
-        setLocation(loc.location);
+        const info = JSON.parse(cleanedJsonString);
+        setLocation(info.location);
+        setFacts(info.facts);
+        setTodo(info.todo);
         toast({duration:0.001,
           })
     }
 
     function resetSelection(){
         setLocation("");
+        setFacts([]);
+        setTodo([]);
         setPreviewURL("");
         setPhotos([]);
         handleReset();
+        setCollapseOpen(false);
     }
 
     const targetRef = useRef<HTMLDivElement | null>(null);
     const [location, setLocation] = useState<string>("");
+    const [facts, setFacts] = useState<string[]>([]);
+    const [todo, setTodo] = useState<string[]>([]);
 
     useEffect(()=>{
         if(targetRef.current){
@@ -105,6 +114,15 @@ export default function Snapspot() {
             setIsLandscape(img.width>img.height);
         }
     },[previewURL]);
+
+  const [collapseOpen, setCollapseOpen] = useState(false);
+  const infoRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(()=>{
+    if(infoRef.current){
+      infoRef.current.scrollIntoView({behavior:"smooth"});
+    }
+  },[collapseOpen])
 
     
   return (
@@ -145,10 +163,34 @@ export default function Snapspot() {
 
       <div className={`h-screen w-screen flex flex-col ${location==""?"hidden":""}`}>
         <div className="my-auto">
-            <BlurFade inView delay={0.25*2} className="w-full h-full flex justify-center items-center flex-col pb-12 sm:pb-0 pt-20">
-                <img src={previewURL} className={`rounded-lg mx-auto ${isLandscape?"w-3/4 h-auto":"w-1/2 h-auto md:w-1/4 h-auto"}`}/>
-                <h1 ref={targetRef} className="text-3xl lg:text-6xl text-center font-bold p-5">{location}</h1>
-                <Button onClick={resetSelection} className="fixed top-24 lg:top-20 right-3 md:right-6 lg:right-10 xl:right-16 bg-gradient-to-r from-indigo-500 to-purple-500 font-bold text-white hover:brightness-90 rounded-full w-10 h-10 md:w-12 md:h-12"><RotateCcw/></Button>  
+            <BlurFade inView delay={0.25*2} className="w-full h-full flex justify-center items-center flex-col pb-20 sm:pb-0 pt-20">
+                <img src={previewURL} className={`rounded-lg mx-auto md:w-1/2 h-auto ${isLandscape?"w-3/4":"md:w-1/4 h-auto"}`}/>
+                <h1 ref={targetRef} className="text-3xl lg:text-4xl xl:text-5xl text-center font-bold p-5">{location}</h1>
+                <Collapsible open={collapseOpen} onOpenChange={setCollapseOpen}>
+                  <div className="w-full text-center">
+                    <CollapsibleTrigger asChild>
+                        <Button className="bg-gradient-to-r from-indigo-500 to-purple-500 font-bold text-white hover:brightness-90 my-auto mx-3">See more<IconCaretDownFilled/></Button>
+                    </CollapsibleTrigger>
+                    <Button onClick={resetSelection} className="bg-gradient-to-r from-indigo-500 to-purple-500 font-bold text-white hover:brightness-90 rounded-full w-10 h-10 md:w-12 md:h-12"><RotateCcw/></Button>  
+                  </div>
+                  <CollapsibleContent className="mb-30">
+                    <div className="m-3 bg-slate-200 rounded-lg p-3 px-7" ref={infoRef}>
+                      <h1 className="font-bold text-xl text-center">Some facts:</h1>
+                      <ul className="list-disc">
+                      {facts.map((item,index)=>(
+                          <li>{item}</li>
+                      ))}
+                      </ul>
+                      <br />
+                      <h1 className="font-bold text-xl text-center">Things to do around the area:</h1>
+                      <ul className="list-disc">
+                        {todo.map((item,index)=>(
+                          <li>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
             </BlurFade>
         </div>
   
