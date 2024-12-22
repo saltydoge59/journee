@@ -13,11 +13,16 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { createRoot } from "react-dom/client";
-import axios from "axios";
 import { updateLatLong } from "../../utils/supabaseRequest";
 import { useAuth } from "@clerk/nextjs";
 import { useToast } from "@/hooks/use-toast";
 import { useLoadScript } from "@react-google-maps/api";
+import {
+    GeoapifyContext,
+    GeoapifyGeocoderAutocomplete,
+  } from "@geoapify/react-geocoder-autocomplete";
+import "../app/snapspot/round-borders.dark.css";
+import getCoords from "@/app/map/gemini";
 
 interface Pin {
   day: number;
@@ -32,12 +37,11 @@ interface MapProps {
   trip_name: string;
 }
 
-
-
 export function Map({ pins, trip_name }: MapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const { userId, getToken } = useAuth();
   const { toast } = useToast();
+  const geoapify_key = process.env.NEXT_PUBLIC_GEOAPIFY_API_KEY || "";
 
 const { isLoaded, loadError} = useLoadScript({
     googleMapsApiKey:process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
@@ -61,43 +65,19 @@ const { isLoaded, loadError} = useLoadScript({
 
         const InfoWindowContent = ({ pin }: { pin: Pin }) => {
           const [location, setLocation] = useState(pin.area);
-          const placesAutoCompleteRef = useRef(null);
-          const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
 
-
-          const handleChange = (event:any) =>{
-            console.log(event.target.value);
-            setLocation(event.target.value)
-          }
-
-          function handlePlaceChanged (){
-            if(!autocomplete) return;
-            
-            const place = autocomplete.getPlace();
-            console.log(place);
-
-            if(place && place.geometry){
-                console.log('here');
-            }
+          const handlePlaceSelect=(place:any)=>{
+                setLocation(place.properties.formatted);
+                console.log(place.properties.formatted)
             };
-
-          const refCallback = (node: HTMLInputElement | null) => {
-            if (node && !autocomplete) {
-              const options = { fields: ["geometry", "formatted_address"] };
-              const autocompleteInstance = new google.maps.places.Autocomplete(node, options);
-              autocompleteInstance.addListener('place_changed', handlePlaceChanged);
-              setAutocomplete(autocompleteInstance);
-              console.log(autocompleteInstance);
-            }
-          };
 
           const updateCoord = async () => {
             try {
-              let coords = await getCoords(location);
+                const coords = await getCoords(location);
               if (!coords) throw new Error("Failed to fetch coordinates.");
-
-              const lat = coords.lat;
-              const long = coords.long;
+                console.log(coords);
+              const lat = coords.coordinates[0];
+              const long = coords.coordinates[1];
               const token = await getToken({ template: "supabase" }) || "";
               if (userId) {
                 const error = await updateLatLong({
@@ -132,54 +112,29 @@ const { isLoaded, loadError} = useLoadScript({
             }
           };
 
-          async function getCoords(address: string) {
-            try {
-              const url = "https://maps.googleapis.com/maps/api/geocode/json";
-              const params = {
-                key: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
-                address: encodeURIComponent(address),
-              };
-              console.log(params);
-              const response = await axios.get(url, { params });
-              if (
-                response.data.status === "OK" &&
-                response.data.results.length > 0
-              ) {
-                const { lat, lng } =
-                  response.data.results[0].geometry.location;
-                console.log("Coordinates:", lat, lng);
-                return { lat, long: lng };
-              } else {
-                console.error("No results or error:", response.data.status);
-                return null;
-              }
-            } catch (error) {
-              console.error("Error fetching coordinates:", error);
-              return null;
-            }
-          }
-
           const [dialogOpen, setDialogOpen] = useState(false);
 
           return (
-            <div className="w-80 h-80">
+            <div className="w-96 h-96">
               <div className="flex flex-row justify-between items-center mb-2">
-                <h1 className="text-xl font-bold text-black">{pin.area}</h1>
+                <h1 className="text-xl font-bold text-black mr-3">{pin.area}</h1>
                 <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                   <DialogTrigger asChild>
                     <IconPencil className="text-black bg-slate-200 rounded-full p-1 w-7 h-7" />
                   </DialogTrigger>
                   <DialogContent className="w-full">
-                    <DialogHeader>
+                    <DialogHeader className="overflow-hidden">
                       <DialogTitle>Edit Location</DialogTitle>
                     </DialogHeader>
                     <div>
-                      <Input
-                        ref={refCallback}
-                        onChange={handleChange}
+                    <GeoapifyContext apiKey={geoapify_key} className="w-full">
+                        <GeoapifyGeocoderAutocomplete
+                        placeholder="e.g. Niseko, Japan"
+                        placeSelect={handlePlaceSelect}
                         value={location}
-                      />
-                      <Button onClick={updateCoord}>Save</Button>
+                        />
+                    </GeoapifyContext>
+                      <Button className="mt-2" onClick={updateCoord}>Save</Button>
                     </div>
                   </DialogContent>
                 </Dialog>

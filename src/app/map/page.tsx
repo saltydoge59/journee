@@ -102,24 +102,27 @@ function MyPage() {
 
   return (
     <div>
-        <div className="m-3">
-            Trips
-            <Select onValueChange={handleTripChange}>
-                <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select Trip"/>
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectGroup>
-                        <SelectLabel>Trips</SelectLabel>
-                        {trips.map((trip,index)=>(
-                            <SelectItem value={trip.trip_name}>{trip.trip_name}</SelectItem>
-                        ))}
-                    </SelectGroup>
-                </SelectContent>
-            </Select>
-    
-            Day
-            <MinimumDistanceSlider min={startDay} max={endDay} onValueChange={handleValueChange}/>
+        <div className="m-3 font-bold flex sm:flex-row flex-col gap-5">
+            <div>
+                <h1>Trips</h1>
+                <Select onValueChange={handleTripChange}>
+                    <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Select Trip"/>
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectLabel>Trips</SelectLabel>
+                            {trips.map((trip,index)=>(
+                                <SelectItem value={trip.trip_name}>{trip.trip_name}</SelectItem>
+                            ))}
+                        </SelectGroup>
+                    </SelectContent>
+                </Select> 
+            </div>
+            <div>
+                <h1>Day Selector</h1>
+                <MinimumDistanceSlider min={startDay} max={endDay} onValueChange={handleValueChange}/>
+            </div>
         </div>
         <Map trip_name={selectedTrip} pins={pins}/>
     </div>
