@@ -35,9 +35,14 @@ export default function Navbar(){
                             Trips
                         </Link>
                     </NavigationMenuItem>
-                    <NavigationMenuItem className="mx-4 hover:underline">
+                    {/* <NavigationMenuItem className="mx-4 hover:underline">
                         <Link href="/snapspot">
                             Snapspot
+                        </Link>
+                    </NavigationMenuItem> */}
+                    <NavigationMenuItem className="mx-4 hover:underline">
+                        <Link href="/map">
+                            Map
                         </Link>
                     </NavigationMenuItem>
                 </div>

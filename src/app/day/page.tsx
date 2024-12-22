@@ -33,18 +33,18 @@ function DaysContent() {
     const [dialogueOpen, setDialogueOpen] = useState(false)
     const [drawerOpen, setDrawerOpen] = useState(false)
     const isDesktop = useMediaQuery("(min-width: 640px)")
-    const [log, setLog] = useState<{entry:any,title:any}|null>();
+    const [log, setLog] = useState<{entry:any,title:any,location:any}|null>();
     const [logPresent,setLogPresent] = useState(true);
     const { toast } = useToast();
-    const [files, setFiles] = useState<File[]>([]);
-    const [photos, setPhotos] = useState<{ imageURL: string }[] | null>(null);
+    // const [files, setFiles] = useState<File[]>([]);
+    const [photos, setPhotos] = useState<string[] | null>(null);
     const [deleteOpen, setDeleteOpen] = useState(false)
 
     const fetchLog = useCallback(async()=> {
         try{
             const token = await getToken({ template: "supabase" });
             if(userId && token){
-                const res = await getLog({userId,token,day,trip_name})||{entry:"",title:""};
+                const res = await getLog({userId,token,day,trip_name})||{entry:"",title:"",location:""};
                 setLog({ ... res});
                 setLogPresent(true);
                 if(res.entry==null || res.title==null){
@@ -65,7 +65,12 @@ function DaysContent() {
         try{
             const token = await getToken({ template: "supabase" });
             if(userId && token){
-                const photos = await getPhotos({token,userId,trip_name,day})||[];
+                const photoInfo = await getPhotos({token,userId,trip_name,start_day:day,end_day:-1})||[];
+                console.log(photoInfo);
+                let photos:string[] = [];
+                for(let p of photoInfo){
+                    photos.push(p.imageURL);
+                }
                 setPhotos([...photos]);
                 console.log('Photos preloaded:',photos)
             }
@@ -73,28 +78,28 @@ function DaysContent() {
         catch(error){
             console.error("Error fetching photos:", error);
         }
-    },[getToken, userId, trip_name, day]);
+    },[getToken, userId, trip_name, day, deleteOpen]);
 
     useEffect(()=>{
         fetchLog();
         fetchPhotos();
     },[fetchLog,fetchPhotos])
 
-    // Handle file selection
-    const handleFileUpload = (files:File[]) => {
-        const uploadedFiles = files;
-        setFiles(uploadedFiles); // Update state instead of a `let` variable
-        console.log(uploadedFiles);
+    // // Handle file selection
+    // const handleFileUpload = (files:File[]) => {
+    //     const uploadedFiles = files;
+    //     setFiles(uploadedFiles); // Update state instead of a `let` variable
+    //     console.log(uploadedFiles);
         
-    };
+    // };
 
     const handleSubmit = useCallback(
-        async (entry: string, title: string) => {
+        async (entry: string, loc:string, title: string) => {
           console.log("submitted");
           try {
             const token = await getToken({ template: "supabase" });
             if(token){
-                await editLog({ userId, token, trip_name, day, entry, title });
+                await editLog({ userId, token, trip_name, day, entry, title, loc});
                 await fetchLog();
                 await fetchPhotos();
                 toast({ duration: 2000, title: "Log edited successfully! Redirecting...",action:<RingLoader loading={true} color={'green'}/> });
@@ -163,7 +168,7 @@ function DaysContent() {
                             {photos?.map((photo,idx)=>(
                                 <BlurFade key={`${idx}`} inView delay={0.25+ idx * 0.05}>
                                     <div className="relative">
-                                        <img src={photo.imageURL} className="mb-4 size-full rounded-lg object-contain" key={`Picture ${idx}`}/>
+                                        <img src={photo} className="mb-4 size-full rounded-lg object-contain" key={`Picture ${idx}`}/>
                                     </div>
                                     <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
                                         <DialogTrigger asChild>
@@ -178,7 +183,7 @@ function DaysContent() {
                                             </DialogHeader>
                                             <div className="flex gap-3">
                                                 <Button onClick={()=>{setDeleteOpen(false)}} className="p-2 rounded bg-slate-300 font-bold w-full">Close</Button>
-                                                <Button onClick={()=>{deleteImage(photo.imageURL)}}  className="p-2 rounded bg-red-400 font-bold w-full">Delete</Button>
+                                                <Button onClick={()=>{deleteImage(photo)}}  className="p-2 rounded bg-red-400 font-bold w-full">Delete</Button>
                                             </div>
                                         </DialogContent>
                                     </Dialog>
@@ -210,8 +215,9 @@ function DaysContent() {
                                 trip_name={trip_name}
                                 logContent={log?.entry||""}
                                 title={log?.title|| `Day ${day}`}
+                                loc={log?.location}
                                 onSubmit={handleSubmit}
-                                handleFileUpload={handleFileUpload}
+                                // handleFileUpload={handleFileUpload}
                                 />
                         </DialogHeader>
                     </DialogContent>
@@ -232,8 +238,9 @@ function DaysContent() {
                                 trip_name={trip_name}
                                 logContent={log?.entry||""}
                                 title={log?.title|| `Day ${day}`}
+                                loc={log?.location}
                                 onSubmit={handleSubmit}
-                                handleFileUpload={handleFileUpload}
+                                // handleFileUpload={handleFileUpload}
                                 />
                         </DrawerHeader>
                     </DrawerContent>

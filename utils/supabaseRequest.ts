@@ -177,7 +177,7 @@ export const insertUser = async ({ userId, token, username }: { userId: string, 
     }
   };
 
-  export const editLog = async ({ userId, token, trip_name, day, entry, title}: { userId: string|undefined|null, token: string,trip_name:string, day:number, entry:string, title:string }) => {
+  export const editLog = async ({ userId, token, trip_name, day, entry, title, loc}: { userId: string|undefined|null, token: string,trip_name:string, day:number, entry:string, title:string, loc:string}) => {
     const supabase = await supabaseClient(token);
     try {
       const { error: updateError } = await supabase
@@ -185,6 +185,7 @@ export const insertUser = async ({ userId, token, username }: { userId: string, 
         .update({
           entry:entry,
           title:title,
+          location:loc,
         })
         .eq('id',userId)
         .eq('day',day)
@@ -207,7 +208,7 @@ export const insertUser = async ({ userId, token, username }: { userId: string, 
     try {
       const { data: log, error: fetchError } = await supabase
         .from('logs')
-        .select('entry,title')
+        .select('entry,title,location')
         .eq('id', userId)
         .eq('day',day)
         .eq('trip',trip_name)
@@ -280,7 +281,7 @@ export const insertUser = async ({ userId, token, username }: { userId: string, 
     }
   };
 
-  export const insertPhotos = async ({ userId, token, trip_name, day, imageURL}: { userId: string|undefined|null, token: string,trip_name:string, day:number, imageURL:string }) => {
+  export const insertPhotos = async ({ userId, token, trip_name, day, imageURL, lat, long, area}: { userId: string|undefined|null, token: string,trip_name:string, day:number, imageURL:string, lat:number, long:number, area:string }) => {
     const supabase = await supabaseClient(token);
     try {
       const { error: insertError } = await supabase
@@ -289,7 +290,10 @@ export const insertUser = async ({ userId, token, username }: { userId: string, 
           id:userId,
           day:day,
           trip_name:trip_name,
-          imageURL:imageURL
+          imageURL:imageURL,
+          lat:lat,
+          long:long,
+          area:area
         })
 
       if (insertError){
@@ -304,22 +308,27 @@ export const insertUser = async ({ userId, token, username }: { userId: string, 
     }
   };
 
-  export const getPhotos = async ({ userId, token, trip_name,day }: { userId: string|undefined|null, token: string, trip_name:string, day:number }) => {
+  export const getPhotos = async ({ userId, token, trip_name,start_day, end_day }: { userId: string|undefined|null, token: string, trip_name:string, start_day:number, end_day:number }) => {
     const supabase = await supabaseClient(token);
     try {
-      const { data: photos, error: fetchError } = await supabase
-        .from('photos')
-        .select('imageURL')
-        .eq('id', userId)
-        .eq('trip_name',trip_name)
-        .eq('day',day)
+      let query = supabase.from('photos').select('day,imageURL,lat,long,area').eq('id',userId);
+      if(trip_name !== '*'){
+        query = query.eq('trip_name',trip_name);
+      }
+      if(end_day !== -1){
+        query = query.gte('day',start_day).lte('day',end_day)
+      }
+      else{
+        query = query.eq('day',start_day);
+      }
+      const { data: photoInfo, error: fetchError } = await query;
       
       if (fetchError && fetchError.code !== 'PGRST116') {
         // Handle any error other than 'PGRST116' (which is Supabase's "No Rows Found" error code)
         console.error('Error fetching photos:', fetchError);
         throw fetchError;
       }
-      return photos;
+      return photoInfo;
   
     } catch (error) {
       console.error('Unexpected Error:', error);
@@ -397,6 +406,32 @@ export const insertUser = async ({ userId, token, username }: { userId: string, 
         return updateError
       }
       console.log(`Cover photo for ${trip_name} updated successfully!`)
+      
+    } catch (error) {
+      console.error('Unexpected Error when updating tp supabase:', error);
+      return error;
+    }
+  };
+
+  export const updateLatLong = async ({ userId, token, trip_name, imageURL, lat, long, area}: { userId: string|undefined|null, token: string,trip_name:string, imageURL:string, lat:number, long:number, area:string }) => {
+    const supabase = await supabaseClient(token);
+    try {
+      const { error: updateError } = await supabase
+        .from('photos')
+        .update({
+          lat:lat,
+          long:long,
+          area:area
+        })
+        .eq('id',userId)
+        .eq('trip_name',trip_name)
+        .eq('imageURL',imageURL)
+
+      if (updateError){
+        console.error(`Error updating location coordinates:`, updateError);
+        return updateError
+      }
+      console.log(`Coordinates for ${area} updated successfully!`)
       
     } catch (error) {
       console.error('Unexpected Error when updating tp supabase:', error);

@@ -7,9 +7,9 @@ import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { insertPhotos, uploadPhotosToSupabase } from "../../../utils/supabaseRequest";
 import { useToast } from "@/hooks/use-toast";
-import { IconX } from "@tabler/icons-react";
 import RingLoader from "react-spinners/ClipLoader";
 import { FileUpload } from "@/components/ui/file-upload";
+import getLocation from "./gemini";
 
 
 interface EditLogProps {
@@ -17,8 +17,9 @@ interface EditLogProps {
   trip_name: string;
   logContent: string;
   title: string;
-  onSubmit: (entry: string, title: string) => void;
-  handleFileUpload:(files:File[])=>void;
+  loc: string;
+  onSubmit: (entry: string, loc:string, title: string) => void;
+  // handleFileUpload:(files:File[])=>void;
 }
 
 const EditLog = ({
@@ -26,32 +27,42 @@ const EditLog = ({
   trip_name,
   logContent,
   title,
+  loc,
   onSubmit,
-  handleFileUpload,
+  // handleFileUpload,
 }: EditLogProps) => {
   const [titleValue, setTitleValue] = useState(title);
+  const [locValue, setLocValue] = useState(loc);
   const [entryContent, setEntryContent] = useState(logContent);
   const { userId, getToken } = useAuth();
   const { toast } = useToast();
-  const [disabled,setDisabled] = useState(false);
+  const [saveDisabled,setSaveDisabled] = useState(false);
+  const [files, setFiles] = useState<File[]>([]);
 
-  const onFilesUpload = async (files:any)=>{
-    setDisabled(true);
-    console.log(files);
-    handleFileUpload(files);
-    toast({duration:Infinity,
-      title:"Uploading images...Please Wait",
-      action:<RingLoader loading={true} color={'green'}/>
-    })
+  const uploadFiles = async ()=>{
+    setSaveDisabled(true);
+    let count=1;
     console.log("Files selected:", files); // Debugging
     try{
-      const token = await getToken({ template: "supabase" });
-      if(userId && token){
+      if(userId){
         for(let f of files){
+          toast({duration:Infinity,
+            title:`Analyzing images ${count}/${files.length}...This may take awhile...`,
+            action:<RingLoader loading={true} color={'green'}/>
+          })
+          const result = await getLocation(f,locValue);
+          const lat = result.coordinates[0];
+          const long = result.coordinates[1];
+          const area = result.area;
           let imageURL = null;
+          toast({duration:Infinity,
+            title:`Uploading images ${count}/${files.length}...This may take awhile...`,
+            action:<RingLoader loading={true} color={'green'}/>
+          })
+          const token = await getToken({ template: "supabase" }) || "";
           imageURL = await uploadPhotosToSupabase(token, userId, day, trip_name, f, "photos");
           if(!imageURL) throw new Error(`Failed to upload ${f.name} to Supabase Storage.`);
-          const error = await insertPhotos({userId,token,trip_name,day,imageURL});
+          const error = await insertPhotos({userId,token,trip_name,day,imageURL,lat,long,area});
           if(error){
             toast({
               variant:"destructive",
@@ -60,16 +71,17 @@ const EditLog = ({
           }
           else{
             console.log(`Image ${f.name} uploaded successfully.`)
+            count++;
           }
         }
         toast({duration:2000,
-          title:"Images uploaded successfully!"
+          title:"All images uploaded successfully!"
         })
       }
       else{
         console.error("User ID or token is missing.")
       }
-      setDisabled(false);
+      setSaveDisabled(false);
     }
     catch(error){
       console.error("Unexpected error:",error);
@@ -77,9 +89,14 @@ const EditLog = ({
         variant:"destructive",
         title:"Failed to upload images. Try again."
       })
-      setDisabled(false);
+      setSaveDisabled(false);
     }
   }
+
+  // const onFilesUpload = async (files:any)=>{
+  //   console.log(files);
+  //   handleFileUpload(files);
+  // }
 
   return (
     <div className={cn("grid items-start gap-5")}>
@@ -96,6 +113,18 @@ const EditLog = ({
         />
       </div>
       <div className="grid gap-2">
+        <Label className="text-start" htmlFor="location">
+          Area/Country
+        </Label>
+        <input
+          className="border p-2 rounded"
+          type="text"
+          id="location"
+          value={locValue}
+          onChange={(e) => setLocValue(e.target.value)}
+        />
+      </div>
+      <div className="grid gap-2">
         <Label className="text-start" htmlFor="entry">
           Entry
         </Label>
@@ -106,15 +135,20 @@ const EditLog = ({
           Photos
         </Label>
         {/* <Input multiple type="file" onChange={handleFileChange} /> */}
-        <FileUpload onChange={onFilesUpload}/>
+        <FileUpload onChange={(files:any)=>{setFiles(files)}}/>
+        
       </div>
 
-      <Button
-        onClick={() => onSubmit(entryContent, titleValue)}
-        className="bg-gradient-to-r from-indigo-500 to-purple-500 font-bold text-white hover:brightness-90" disabled={disabled}
-      >
+      <div className="w-full">
+        <Button className="w-1/2 font-bold" onClick={uploadFiles} disabled={files.length==0}>Upload</Button>
+        <Button
+        onClick={() => onSubmit(entryContent, locValue, titleValue)}
+        className="w-1/2 bg-gradient-to-r from-indigo-500 to-purple-500 font-bold text-white hover:brightness-90" disabled={saveDisabled}
+        >
         Save Changes
-      </Button>
+        </Button>
+      </div>
+
     </div>
   );
 };

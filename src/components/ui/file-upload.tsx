@@ -76,7 +76,7 @@ export const FileUpload = ({
             Upload file
           </p>
           <p className="relative z-20 font-sans font-normal text-base mt-2">
-            Drag or drop your files here or click to upload
+            😅 Max 5 Photos at a time! 😅
           </p>
           <div className="relative w-full mt-10 max-w-xl mx-auto">
             {files.length > 0 &&
