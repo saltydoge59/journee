@@ -18,8 +18,8 @@ export default function Navbar(){
     useEffect(() => {
         if (pathname === '/trips') {
             setPage('Trips');
-        } else if (pathname === '/snapspot') {
-            setPage('Snapspot');
+        } else if (pathname === '/map') {
+            setPage('Map');
         }
     }, [pathname]);
     
@@ -76,11 +76,11 @@ export default function Navbar(){
                     </div>
                 </NavigationMenuItem>
                 <NavigationMenuItem className="mx-4">
-                    <div className={`flex flex-col items-center ${page=="Snapspot"?"text-indigo-500":""}`}>
-                        <Link href='/snapspot' onClick={()=>setPage('Snapspot')}>
+                    <div className={`flex flex-col items-center ${page=="Map"?"text-indigo-500":""}`}>
+                        <Link href='/map' onClick={()=>setPage('Map')}>
                             <div><IconMapQuestion/></div>
                         </Link> 
-                        <span>Snapspot</span>
+                        <span>Map</span>
                     </div>
                 </NavigationMenuItem>
                 <NavigationMenuItem className="mx-4">
