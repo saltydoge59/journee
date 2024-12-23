@@ -1,6 +1,6 @@
 ![Journee Logo](./public/J.png)
 
-**Journee** is a thoughtfully redesigned travel journaling application that offers avid travellers a seamless yet powerful journaling experience. This application features a clean, minimalistic design, an interactive map to mark photo locations, and AI-powered technology to automatically generate location data.
+**Journee** is a thoughtfully redesigned **travel journaling application** that offers avid travellers a seamless yet powerful journaling experience. This application features a clean, minimalistic design, an interactive map to mark photo locations, and AI-powered technology to automatically generate location data.
 
 ## 📂 Project Links
 
