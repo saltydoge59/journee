@@ -100,8 +100,8 @@ function DatesContent() {
           else{
             console.log("Cover photo updated.")
             toast({
+              duration:2000,
               title:"Cover photo updated successfully!",
-              action:<RingLoader loading={true} color={'green'}/>
             })}
             setEditOpen(false);
         }
