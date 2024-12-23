@@ -85,7 +85,7 @@ export default function Navbar(){
                 </NavigationMenuItem>
                 <NavigationMenuItem className="mx-4">
                     <div className="flex flex-col items-center">
-                        <UserButton/>
+                        <UserButton afterSignOutUrl="/"/>
                         Profile
                     </div>                   
                 </NavigationMenuItem>
