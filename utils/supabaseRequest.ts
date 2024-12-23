@@ -311,10 +311,7 @@ export const insertUser = async ({ userId, token, username }: { userId: string, 
   export const getPhotos = async ({ userId, token, trip_name,start_day, end_day }: { userId: string|undefined|null, token: string, trip_name:string, start_day:number, end_day:number }) => {
     const supabase = await supabaseClient(token);
     try {
-      let query = supabase.from('photos').select('day,imageURL,lat,long,area').eq('id',userId);
-      if(trip_name !== '*'){
-        query = query.eq('trip_name',trip_name);
-      }
+      let query = supabase.from('photos').select('day,imageURL,lat,long,area').eq('id',userId).eq('trip_name',trip_name);
       if(end_day !== -1){
         query = query.gte('day',start_day).lte('day',end_day)
       }

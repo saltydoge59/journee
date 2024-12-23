@@ -85,13 +85,6 @@ function DaysContent() {
         fetchPhotos();
     },[fetchLog,fetchPhotos])
 
-    // // Handle file selection
-    // const handleFileUpload = (files:File[]) => {
-    //     const uploadedFiles = files;
-    //     setFiles(uploadedFiles); // Update state instead of a `let` variable
-    //     console.log(uploadedFiles);
-        
-    // };
 
     const handleSubmit = useCallback(
         async (entry: string, loc:string, title: string) => {
@@ -118,25 +111,26 @@ function DaysContent() {
       );
 
     async function deleteImage(imageURL:string) {
-        try{
-            const token = await getToken({ template: "supabase" });
-            if(token && userId){
-                const error = await deletePhotos({userId,token,trip_name,day,imageURL});
-                if(error){
-                    console.error("Error in deleting photo.",error);
-                    toast({ variant: "destructive", title: "Failed to delete photo. Try again." });
-                }
-                else{
-                    console.log("Photo deleted")
-                    toast({ duration: 2000, title: "Photo deleted successfully!" });
-                    setDeleteOpen(false);
-                }
-            }
-        }
-        catch(error){
-            console.error("Unexpected Error:", error);
-            toast({ variant: "destructive", title: "An unexpected error occurred." });
-        }
+        console.log(imageURL);
+        // try{
+        //     const token = await getToken({ template: "supabase" });
+        //     if(token && userId){
+        //         const error = await deletePhotos({userId,token,trip_name,day,imageURL});
+        //         if(error){
+        //             console.error("Error in deleting photo.",error);
+        //             toast({ variant: "destructive", title: "Failed to delete photo. Try again." });
+        //         }
+        //         else{
+        //             console.log("Photo deleted")
+        //             toast({ duration: 2000, title: "Photo deleted successfully!" });
+        //             setDeleteOpen(false);
+        //         }
+        //     }
+        // }
+        // catch(error){
+        //     console.error("Unexpected Error:", error);
+        //     toast({ variant: "destructive", title: "An unexpected error occurred." });
+        // }
 
     }
 

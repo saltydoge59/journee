@@ -97,9 +97,13 @@ const { isLoaded, loadError} = useLoadScript({
                   });
                 } else {
                     setDialogOpen(false)
-                  console.log("Coordinates updated successfully!");
-                  toast({ title: "Location updated successfully!" });
-                }
+                    console.log("Coordinates updated successfully!");
+                    toast({duration:1000,
+                      title: "Location updated successfully!" });
+                  }
+                  setTimeout(() => {
+                    window.location.reload();
+                  }, 1000);
               } else {
                 console.error("User ID missing.");
               }
@@ -115,9 +119,9 @@ const { isLoaded, loadError} = useLoadScript({
           const [dialogOpen, setDialogOpen] = useState(false);
 
           return (
-            <div className="w-96 h-96">
+            <div className="w-auto sm:w-96 h-auto">
               <div className="flex flex-row justify-between items-center mb-2">
-                <h1 className="text-xl font-bold text-black mr-3">{pin.area}</h1>
+                <h1 className="text-xl font-bold text-black w-3/4">{pin.area}</h1>
                 <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                   <DialogTrigger asChild>
                     <IconPencil className="text-black bg-slate-200 rounded-full p-1 w-7 h-7" />

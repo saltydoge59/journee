@@ -20,6 +20,7 @@ function MyPage() {
 
 
     const retrieveTrips = async ()=>{
+        if(!userId) return;
         try{
             const token = await getToken({ template: "supabase" }) || "";
             if(userId){
@@ -42,6 +43,7 @@ function MyPage() {
     }
 
     const retrievePhotos = async () =>{
+        if(!userId || !selectedTrip) return;
         try{
             const token = await getToken({ template: "supabase" }) || "";
             if(userId){
@@ -59,6 +61,7 @@ function MyPage() {
     }
 
     const retrieveDays = async()=>{
+        if(!userId || !selectedTrip) return;
         try{
             const token = await getToken({ template: "supabase" }) || "";
             if(userId){
@@ -77,8 +80,10 @@ function MyPage() {
     }
 
     useEffect(()=>{
-        retrieveTrips();
-    },[])
+        if(userId){
+            retrieveTrips();
+        }
+    },[userId])
 
     useEffect(()=>{
         retrieveDays();
@@ -97,7 +102,6 @@ function MyPage() {
     const handleTripChange = (value:string)=>{
         console.log(value);
         setSelectedTrip(value);
-
     }
 
   return (
