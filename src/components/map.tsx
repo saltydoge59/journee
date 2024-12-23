@@ -49,6 +49,11 @@ const { isLoaded, loadError} = useLoadScript({
 })
   useEffect(() => {
     const initMap = async () => {
+      if(!isLoaded || loadError){
+        return(
+          <div>Loading Map...</div>
+        )
+      };
       try {
         const position = {
           lat: pins.length > 0 ? pins[0].lat : 0,
@@ -177,7 +182,7 @@ const { isLoaded, loadError} = useLoadScript({
     };
 
     initMap();
-  }, [pins]);
+  }, [pins, isLoaded, loadError]);
 
   return <div style={{ height: "100vh" }} ref={mapRef} />;
 }
