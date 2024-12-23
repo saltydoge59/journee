@@ -18,8 +18,8 @@ export default function Navbar(){
     useEffect(() => {
         if (pathname === '/trips') {
             setPage('Trips');
-        } else if (pathname === '/map') {
-            setPage('Map');
+        } else if (pathname === '/snapspot') {
+            setPage('Snapspot');
         }
     }, [pathname]);
     
@@ -35,16 +35,16 @@ export default function Navbar(){
                             Trips
                         </Link>
                     </NavigationMenuItem>
-                    {/* <NavigationMenuItem className="mx-4 hover:underline">
+                    <NavigationMenuItem className="mx-4 hover:underline">
                         <Link href="/snapspot">
                             Snapspot
                         </Link>
-                    </NavigationMenuItem> */}
-                    <NavigationMenuItem className="mx-4 hover:underline">
+                    </NavigationMenuItem>
+                    {/* <NavigationMenuItem className="mx-4 hover:underline">
                         <Link href="/map">
                             Map
                         </Link>
-                    </NavigationMenuItem>
+                    </NavigationMenuItem> */}
                 </div>
                 <div className="flex items-center justify-center">
                     <div className="mx-4">
@@ -76,11 +76,11 @@ export default function Navbar(){
                     </div>
                 </NavigationMenuItem>
                 <NavigationMenuItem className="mx-4">
-                    <div className={`flex flex-col items-center ${page=="Map"?"text-indigo-500":""}`}>
-                        <Link href='/map' onClick={()=>setPage('Map')}>
+                    <div className={`flex flex-col items-center ${page=="Snapspot"?"text-indigo-500":""}`}>
+                        <Link href='/snapspot' onClick={()=>setPage('Snapspot')}>
                             <div><IconMapQuestion/></div>
                         </Link> 
-                        <span>Map</span>
+                        <span>Snapspot</span>
                     </div>
                 </NavigationMenuItem>
                 <NavigationMenuItem className="mx-4">

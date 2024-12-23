@@ -18,11 +18,11 @@ import { useAuth } from "@clerk/nextjs";
 import { useToast } from "@/hooks/use-toast";
 import { useLoadScript } from "@react-google-maps/api";
 import {
-    GeoapifyContext,
-    GeoapifyGeocoderAutocomplete,
-  } from "@geoapify/react-geocoder-autocomplete";
-import "../app/snapspot/round-borders.dark.css";
-import getCoords from "@/app/map/gemini";
+  GeoapifyContext,
+  GeoapifyGeocoderAutocomplete,
+} from "@geoapify/react-geocoder-autocomplete";
+import "../app/snapspot(outdated)/round-borders.dark.css";
+import getCoords from "@/app/snapspot/gemini";
 
 interface Pin {
   day: number;
@@ -43,17 +43,15 @@ export function Map({ pins, trip_name }: MapProps) {
   const { toast } = useToast();
   const geoapify_key = process.env.NEXT_PUBLIC_GEOAPIFY_API_KEY || "";
 
-const { isLoaded, loadError} = useLoadScript({
-    googleMapsApiKey:process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
-    libraries:['places',"maps","marker"],
-})
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+    libraries: ["places", "maps", "marker"],
+  });
   useEffect(() => {
     const initMap = async () => {
-      if(!isLoaded || loadError){
-        return(
-          <div>Loading Map...</div>
-        )
-      };
+      if (!isLoaded || loadError) {
+        return <div>Loading Map...</div>;
+      }
       try {
         const position = {
           lat: pins.length > 0 ? pins[0].lat : 0,
@@ -66,24 +64,27 @@ const { isLoaded, loadError} = useLoadScript({
           mapId: "MY_NEXTJS_MAPID",
         };
 
-        const map = new google.maps.Map(mapRef.current as HTMLDivElement, mapOptions);
+        const map = new google.maps.Map(
+          mapRef.current as HTMLDivElement,
+          mapOptions
+        );
 
         const InfoWindowContent = ({ pin }: { pin: Pin }) => {
           const [location, setLocation] = useState(pin.area);
 
-          const handlePlaceSelect=(place:any)=>{
-                setLocation(place.properties.formatted);
-                console.log(place.properties.formatted)
-            };
+          const handlePlaceSelect = (place: any) => {
+            setLocation(place.properties.formatted);
+            console.log(place.properties.formatted);
+          };
 
           const updateCoord = async () => {
             try {
-                const coords = await getCoords(location);
+              const coords = await getCoords(location);
               if (!coords) throw new Error("Failed to fetch coordinates.");
-                console.log(coords);
+              console.log(coords);
               const lat = coords.coordinates[0];
               const long = coords.coordinates[1];
-              const token = await getToken({ template: "supabase" }) || "";
+              const token = (await getToken({ template: "supabase" })) || "";
               if (userId) {
                 const error = await updateLatLong({
                   userId,
@@ -101,14 +102,16 @@ const { isLoaded, loadError} = useLoadScript({
                     title: "Failed to update. Please try again.",
                   });
                 } else {
-                    setDialogOpen(false)
-                    console.log("Coordinates updated successfully!");
-                    toast({duration:1000,
-                      title: "Location updated successfully!" });
-                  }
-                  setTimeout(() => {
-                    window.location.reload();
-                  }, 1000);
+                  setDialogOpen(false);
+                  console.log("Coordinates updated successfully!");
+                  toast({
+                    duration: 1000,
+                    title: "Location updated successfully!",
+                  });
+                }
+                setTimeout(() => {
+                  window.location.reload();
+                }, 1000);
               } else {
                 console.error("User ID missing.");
               }
@@ -126,7 +129,9 @@ const { isLoaded, loadError} = useLoadScript({
           return (
             <div className="w-auto sm:w-96 h-auto">
               <div className="flex flex-row justify-between items-center mb-2">
-                <h1 className="text-xl font-bold text-black w-3/4">{pin.area}</h1>
+                <h1 className="text-xl font-bold text-black w-3/4">
+                  {pin.area}
+                </h1>
                 <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                   <DialogTrigger asChild>
                     <IconPencil className="text-black bg-slate-200 rounded-full p-1 w-7 h-7" />
@@ -136,14 +141,16 @@ const { isLoaded, loadError} = useLoadScript({
                       <DialogTitle>Edit Location</DialogTitle>
                     </DialogHeader>
                     <div>
-                    <GeoapifyContext apiKey={geoapify_key} className="w-full">
+                      <GeoapifyContext apiKey={geoapify_key} className="w-full">
                         <GeoapifyGeocoderAutocomplete
-                        placeholder="e.g. Niseko, Japan"
-                        placeSelect={handlePlaceSelect}
-                        value={location}
+                          placeholder="e.g. Niseko, Japan"
+                          placeSelect={handlePlaceSelect}
+                          value={location}
                         />
-                    </GeoapifyContext>
-                      <Button className="mt-2" onClick={updateCoord}>Save</Button>
+                      </GeoapifyContext>
+                      <Button className="mt-2" onClick={updateCoord}>
+                        Save
+                      </Button>
                     </div>
                   </DialogContent>
                 </Dialog>
