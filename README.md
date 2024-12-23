@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+![Journee Logo](./public/J.png)
 
-## Getting Started
+**Journee** is a thoughtfully redesigned travel journaling application that offers avid travellers a seamless yet powerful journaling experience. This application features a clean, minimalistic design, an interactive map to mark photo locations, and AI-powered technology to automatically generate location data.
 
-First, run the development server:
+## 📂 Project Links
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+-   **GitHub Repository:** [Journee on GitHub](https://github.com/saltydoge59/journee)
+-   **Hosted Application:** The live application is hosted on Vercel. Access it here: [Journee on Vercel](https://journee-beta.vercel.app)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 🔐 Login Instructions
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+For user authentication, Journee utilizes Apple/Google Authentication.
 
-## Learn More
+-   **Sign in:** Simply sign in using your Apple/Google account.
+-   **Create a new account:** Alternatively, you can create a new account with a username and password.
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🌟 Key Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+#### 1) **📔 Trip Journaling 📔**
+-   Easily organise your trips and journal entries by date with a built-in, intuitive text editor. Color, highlight and add links to your text as you wish!
+-   Relive your adventures by including photos in your journal.
 
-## Deploy on Vercel
+#### 2) **🗺️ Snapspot 🗺️**
+- Explore your travels through a dynamic map that connects your photos to their locations.
+- Easily find specific moments with trip and day filters. 
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📚 Technology Stack
+
+Journee leverages modern web development frameworks and APIs to provide a seamless and dynamic user experience.
+
+-   **Frontend:** Built with Next.js and styled with Tailwind CSS for responsive design, hosted on Vercel.
+-   **Database:** Supabase provides a scalable and secure backend database.
+-   **Core Libraries:**
+    -   **Aceternity** and **Shadcn** for smooth animations and additional UI elements.
+    -   **Material UI** components for a polished and accessible user interface.
+-   **Authentication:** Clerk is integrated to handle secure and streamlined user authentication.
+
+### 🔗 Integrated APIs
+
+Planty integrates several external APIs to provide enhanced functionality:
+
+-   **Google Maps API:** [Google Maps API Documentation](https://developers.google.com/maps/documentation/places/web-service) for a dynamic map display.
+-   **Gemini Developer API:** [Gemini API Documentation](https://ai.google.dev/) for advanced AI features used to generate location coordinates of uploaded photos.
+
+
