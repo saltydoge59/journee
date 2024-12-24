@@ -19,7 +19,7 @@ For user authentication, Journee utilizes Apple/Google Authentication.
 ## 🌟 Key Features
 
 #### 1) **📔 Trip Journaling 📔**
--   Easily organise your trips and journal entries by date with a built-in, intuitive text editor. Color, highlight and add links to your text as you wish!
+-   Easily organise your trips and journal entries by date with a built-in, intuitive text editor. Color, decorate and add links to your text as you wish!
 -   Relive your adventures by including photos in your journal.
 
 #### 2) **🗺️ Snapspot 🗺️**
