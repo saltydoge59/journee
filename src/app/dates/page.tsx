@@ -156,46 +156,7 @@ function DatesContent() {
 
   return (
     <div className="w-screen h-screen">
-      <BlurFade inView delay={0.25}>
-          <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>              
-            <DialogTrigger asChild>
-              <Button className={`fixed left-16 sm:left-20 sm:top-2 w-9 h-9 rounded-full drop-shadow-lg ${resolvedTheme==='dark'?"outline outline-slate-200 bg-black":"bg-white"}`}>
-                <IconTrash className="text-red-500"/>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="w-[80vw] lg:w-[25vw] rounded-lg">
-            <DialogHeader>
-              <DialogTitle>Delete Trip</DialogTitle>
-              <DialogDescription>
-                  Are you sure you want to delete this trip? This action cannot be undone.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="flex gap-3">
-                <Button onClick={()=>{setDeleteOpen(false)}} className="p-2 rounded bg-slate-300 font-bold w-full">Close</Button>
-                <Button onClick={()=>{removeTrip()}} className="p-2 rounded bg-red-400 font-bold w-full">Delete</Button>
-            </div>
-            </DialogContent>
-          </Dialog>
-
-          <Dialog open={editOpen} onOpenChange={setEditOpen}>              
-            <DialogTrigger asChild>
-              <Button className={`fixed left-5 sm:top-2 w-9 h-9 rounded-full drop-shadow-lg ${resolvedTheme==='dark'?"outline outline-slate-200 bg-black":"bg-white"}`}>
-                <IconPencil className={`${resolvedTheme==='dark'?"text-white":"text-black"}`}/>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="w-[80vw] lg:w-[50vw] rounded-lg">
-              <DialogHeader>
-                <DialogTitle>Edit Cover Picture</DialogTitle>
-                <DialogDescription>
-                    Change your trip's cover picture.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="flex gap-3 flex-col">
-                  <input type="file" className="w-full" onChange={handleFileChange} />
-                  <Button onClick={onSubmit} className={`mt-3 bg-gradient-to-r from-indigo-500 to-purple-500 font-bold text-white hover:brightness-90 ${!selectedFile?"disabled":""}`}>Save</Button>
-              </div>
-            </DialogContent>
-          </Dialog>
+      <BlurFade inView delay={0.25} className="w-screen h-screen">
         <h1 className="text-4xl text-center">{trip_name}</h1>
         <h3 className="text-xl text-center text-slate-400">
           {start_date.toLocaleDateString("en-us", {
@@ -239,7 +200,47 @@ function DatesContent() {
           </BlurFade>
         </div>
       </BlurFade>
-    </div>
+
+          <Dialog open={editOpen} onOpenChange={setEditOpen}>              
+            <DialogTrigger asChild>
+              <Button className={`fixed right-16 bottom-20 sm:bottom-4 w-9 h-9 rounded-full drop-shadow-lg ${resolvedTheme==='dark'?"outline outline-slate-200 bg-black":"bg-white"}`}>
+                <IconPencil className={`${resolvedTheme==='dark'?"text-white":"text-black"}`}/>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="w-[80vw] lg:w-[50vw] rounded-lg">
+              <DialogHeader>
+                <DialogTitle>Edit Cover Picture</DialogTitle>
+                <DialogDescription>
+                    Change your trip's cover picture.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex gap-3 flex-col">
+                  <input type="file" className="w-full" onChange={handleFileChange} />
+                  <Button onClick={onSubmit} className={`mt-3 bg-gradient-to-r from-indigo-500 to-purple-500 font-bold text-white hover:brightness-90 ${!selectedFile?"disabled":""}`}>Save</Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>              
+            <DialogTrigger asChild>
+              <Button className={`fixed right-4 bottom-20 sm:bottom-4 w-9 h-9 rounded-full drop-shadow-lg ${resolvedTheme==='dark'?"outline outline-slate-200 bg-black":"bg-white"}`}>
+                <IconTrash className="text-red-500"/>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="w-[80vw] lg:w-[25vw] rounded-lg">
+            <DialogHeader>
+              <DialogTitle>Delete Trip</DialogTitle>
+              <DialogDescription>
+                  Are you sure you want to delete this trip? This action cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex gap-3">
+                <Button onClick={()=>{setDeleteOpen(false)}} className="p-2 rounded bg-slate-300 font-bold w-full">Close</Button>
+                <Button onClick={()=>{removeTrip()}} className="p-2 rounded bg-red-400 font-bold w-full">Delete</Button>
+            </div>
+            </DialogContent>
+          </Dialog>
+        </div>
   );
 }
 

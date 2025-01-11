@@ -111,26 +111,26 @@ function DaysContent() {
       );
 
     async function deleteImage(imageURL:string) {
-        console.log(imageURL);
-        // try{
-        //     const token = await getToken({ template: "supabase" });
-        //     if(token && userId){
-        //         const error = await deletePhotos({userId,token,trip_name,day,imageURL});
-        //         if(error){
-        //             console.error("Error in deleting photo.",error);
-        //             toast({ variant: "destructive", title: "Failed to delete photo. Try again." });
-        //         }
-        //         else{
-        //             console.log("Photo deleted")
-        //             toast({ duration: 2000, title: "Photo deleted successfully!" });
-        //             setDeleteOpen(false);
-        //         }
-        //     }
-        // }
-        // catch(error){
-        //     console.error("Unexpected Error:", error);
-        //     toast({ variant: "destructive", title: "An unexpected error occurred." });
-        // }
+        // console.log(imageURL);
+        try{
+            const token = await getToken({ template: "supabase" });
+            if(token && userId){
+                const error = await deletePhotos({userId,token,trip_name,day,imageURL});
+                if(error){
+                    console.error("Error in deleting photo.",error);
+                    toast({ variant: "destructive", title: "Failed to delete photo. Try again." });
+                }
+                else{
+                    console.log("Photo deleted")
+                    toast({ duration: 2000, title: "Photo deleted successfully!" });
+                    setDeleteOpen(false);
+                }
+            }
+        }
+        catch(error){
+            console.error("Unexpected Error:", error);
+            toast({ variant: "destructive", title: "An unexpected error occurred." });
+        }
 
     }
 
@@ -159,7 +159,9 @@ function DaysContent() {
                         <h4 className="text-md text-center">{new Date(datestring).toDateString()}</h4>
                         <div className="p-2" dangerouslySetInnerHTML={{__html:`${log?.entry}`}}/>
                         <div className="columns-2 gap-4 p-2">
-                            {photos?.map((photo,idx)=>(
+                            {photos?.map((photo,idx)=>{
+                                console.log(photo,idx);
+                                return (
                                 <BlurFade key={`${idx}`} inView delay={0.25+ idx * 0.05}>
                                     <div className="relative">
                                         <img src={photo} className="mb-4 size-full rounded-lg object-contain" key={`Picture ${idx}`}/>
@@ -170,20 +172,19 @@ function DaysContent() {
                                         </DialogTrigger>
                                         <DialogContent className="w-[80vw] lg:w-[25vw] rounded-lg">
                                             <DialogHeader>
-                                                <DialogTitle>Delete Picture</DialogTitle>
+                                                <DialogTitle>Delete Picture{`${idx}`}</DialogTitle>
                                                 <DialogDescription>
                                                     Are you sure you want to delete this picture? This action cannot be undone.
                                                 </DialogDescription>
                                             </DialogHeader>
                                             <div className="flex gap-3">
-                                                <Button onClick={()=>{setDeleteOpen(false)}} className="p-2 rounded bg-slate-300 font-bold w-full">Close</Button>
-                                                <Button onClick={()=>{deleteImage(photo)}}  className="p-2 rounded bg-red-400 font-bold w-full">Delete</Button>
+                                                <Button onClick={()=>{deleteImage(photo);console.log(photo)}}  className="p-2 rounded bg-red-400 font-bold w-full">Delete</Button>
                                             </div>
                                         </DialogContent>
                                     </Dialog>
-                                    
                                 </BlurFade>
-                            ))}
+                                );
+                            })}
                         </div>
                         {/* <button className="ml-2 text-sm p-2 rounded bg-gradient-to-r from-indigo-500 to-purple-500 font-bold text-white tracking-widest transform hover:scale-105 transition-colors duration-200">Edit Photos</button> */}
                         <div className="pb-20"></div>
