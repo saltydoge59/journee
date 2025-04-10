@@ -7,14 +7,10 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { Suspense, useState, useEffect, useCallback, useRef } from "react";
 import { useMediaQuery } from "@custom-react-hooks/use-media-query"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { cn } from "@/lib/utils"
-import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger, } from "@/components/ui/drawer"
-import { Input } from "@/components/ui/input"
 import * as React from "react";
-import Tiptap from "@/components/Tiptap"
-import { useAuth } from "@clerk/nextjs"
+import { useAuth } from "@clerk/nextjs";
 import { deletePhotos, editLog, getLog,getPhotos } from "../../../utils/supabaseRequest"
 import { useToast } from "@/hooks/use-toast";
 import EditLog from "./editlog";
@@ -41,20 +37,16 @@ function DaysContent() {
     const [deleteOpen, setDeleteOpen] = useState(false)
 
     const fetchLog = useCallback(async()=> {
+        const token = await getToken({ template: "supabase" });
+        if(!userId || !token) return;
         try{
-            const token = await getToken({ template: "supabase" });
-            if(userId && token){
-                const res = await getLog({userId,token,day,trip_name})||{entry:"",title:"",location:""};
-                setLog({ ... res});
-                setLogPresent(true);
-                if(res.entry==null || res.title==null){
-                    setLogPresent(false);
-                }
-                console.log(res);
+            const res = await getLog({userId,token,day,trip_name})||{entry:"",title:"",location:""};
+            setLog({ ... res});
+            setLogPresent(true);
+            if(res.entry==null || res.title==null){
+                setLogPresent(false);
             }
-            else{
-                console.error("User ID or token is missing.")
-            }
+            console.log(res);
         }
         catch (error){
             console.error("Error fetching log from page.")

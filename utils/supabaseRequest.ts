@@ -167,7 +167,7 @@ export const insertUser = async ({ userId, token, username }: { userId: string, 
 
         if (insertError){
           console.log(`Error creating day ${index+1}`, insertError);
-          return insertError
+          return insertError 
         }
         console.log(`Day ${index+1} created successfully!`)
       }

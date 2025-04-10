@@ -16,7 +16,6 @@ const Tiptap = ({onChange,content}:any) => {
     onChange(newContent);
   };
   
-
   const editor = useEditor({
     autofocus:false,
     editable:true,

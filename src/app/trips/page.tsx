@@ -21,7 +21,7 @@ export default function Trips() {
         const initializeUserAndFetchTrips = async () => {
           try {
             const token = await getToken({ template: "supabase" }); // Fetch the token
-            if (userId && token) {
+            if(!userId || !token) return;
               if (username) {
                 const error = await insertUser({ userId, token, username }); // Insert user
                 if (error) {
@@ -30,7 +30,6 @@ export default function Trips() {
                 }
                 console.log("User inserted successfully");
               }
-      
               const trips = await getTrips({ userId, token }); // Fetch trips
               if (trips) {
                 setTrips(trips);
@@ -38,9 +37,6 @@ export default function Trips() {
               } else {
                 console.error("No trips found.");
               }
-            } else {
-              console.error("User ID or token is missing.");
-            }
           } catch (error) {
             console.error("Error during initialization:", error);
           }

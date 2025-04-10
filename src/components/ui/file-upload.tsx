@@ -75,9 +75,9 @@ export const FileUpload = ({
           <p className="relative z-20 font-sans font-bold text-base">
             Upload file
           </p>
-          <p className="relative z-20 font-sans font-normal text-base mt-2">
+          {/* <p className="relative z-20 font-sans font-normal text-base mt-2">
             😅 Max 5 Photos at a time! 😅
-          </p>
+          </p> */}
           <div className="relative w-full mt-10 max-w-xl mx-auto">
             {files.length > 0 &&
               files.map((file, idx) => (
