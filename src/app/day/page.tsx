@@ -32,9 +32,16 @@ function DaysContent() {
     const [log, setLog] = useState<{entry:any,title:any,location:any}|null>();
     const [logPresent,setLogPresent] = useState(true);
     const { toast } = useToast();
-    // const [files, setFiles] = useState<File[]>([]);
     const [photos, setPhotos] = useState<string[] | null>(null);
-    const [deleteOpen, setDeleteOpen] = useState(false)
+    const [deleteOpen, setDeleteOpen] = useState<boolean[]>([]);
+
+    const handleDialogOpen = (idx: number, isOpen: boolean) => {
+        setDeleteOpen((prev) => {
+            const newState = [...prev];
+            newState[idx] = isOpen; // Set the open state for the specific dialog
+            return newState;
+        });
+    };
 
     const fetchLog = useCallback(async()=> {
         const token = await getToken({ template: "supabase" });
@@ -102,7 +109,7 @@ function DaysContent() {
         [userId, getToken, trip_name, day, fetchLog, fetchPhotos]
       );
 
-    async function deleteImage(imageURL:string) {
+    async function deleteImage(imageURL:string,idx:number) {
         // console.log(imageURL);
         try{
             const token = await getToken({ template: "supabase" });
@@ -115,7 +122,8 @@ function DaysContent() {
                 else{
                     console.log("Photo deleted")
                     toast({ duration: 2000, title: "Photo deleted successfully!" });
-                    setDeleteOpen(false);
+                    handleDialogOpen(idx, false);
+                    fetchPhotos();
                 }
             }
         }
@@ -154,23 +162,23 @@ function DaysContent() {
                             {photos?.map((photo,idx)=>{
                                 console.log(photo,idx);
                                 return (
-                                <BlurFade key={`${idx}`} inView delay={0.25+ idx * 0.05}>
+                                <BlurFade key={idx} inView delay={0.25+ idx * 0.05}>
                                     <div className="relative">
                                         <img src={photo} className="mb-4 size-full rounded-lg object-contain" key={`Picture ${idx}`}/>
                                     </div>
-                                    <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+                                    <Dialog key={`Dialog ${idx}`} open={deleteOpen[idx]||false} onOpenChange={(isOpen) => handleDialogOpen(idx, isOpen)}>
                                         <DialogTrigger asChild>
                                             <button className="fixed top-2 right-2 bg-slate-300/50 rounded drop-shadow-xl"><IconDotsVertical/></button>
                                         </DialogTrigger>
                                         <DialogContent className="w-[80vw] lg:w-[25vw] rounded-lg">
                                             <DialogHeader>
-                                                <DialogTitle>Delete Picture{`${idx}`}</DialogTitle>
+                                                <DialogTitle>Delete Picture {idx+1}</DialogTitle>
                                                 <DialogDescription>
                                                     Are you sure you want to delete this picture? This action cannot be undone.
                                                 </DialogDescription>
                                             </DialogHeader>
                                             <div className="flex gap-3">
-                                                <Button onClick={()=>{deleteImage(photo);console.log(photo)}}  className="p-2 rounded bg-red-400 font-bold w-full">Delete</Button>
+                                                <Button onClick={()=>{deleteImage(photo,idx);console.log(photo)}}  className="p-2 rounded bg-red-400 font-bold w-full">Delete</Button>
                                             </div>
                                         </DialogContent>
                                     </Dialog>
