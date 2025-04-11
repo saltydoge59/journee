@@ -212,7 +212,7 @@ function DaysContent() {
                                 title={log?.title|| `Day ${day}`}
                                 loc={log?.location}
                                 onSubmit={handleSubmit}
-                                // handleFileUpload={handleFileUpload}
+                                onUpload={fetchPhotos}
                                 />
                         </DialogHeader>
                     </DialogContent>
@@ -235,7 +235,7 @@ function DaysContent() {
                                 title={log?.title|| `Day ${day}`}
                                 loc={log?.location}
                                 onSubmit={handleSubmit}
-                                // handleFileUpload={handleFileUpload}
+                                onUpload={fetchPhotos}
                                 />
                         </DrawerHeader>
                     </DrawerContent>

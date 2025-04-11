@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import RingLoader from "react-spinners/ClipLoader";
 import { FileUpload } from "@/components/ui/file-upload";
 import getLocation from "./gemini";
-import { Autosave, useAutosave } from 'react-autosave';
+import { useAutosave } from 'react-autosave';
 import { editLog } from "../../../utils/supabaseRequest";
 
 
@@ -20,7 +20,7 @@ interface EditLogProps {
   title: string;
   loc: string;
   onSubmit: (entry: string, loc:string, title: string) => void;
-  // handleFileUpload:(files:File[])=>void;
+  onUpload:() => void;
 }
 
 const EditLog = ({
@@ -30,7 +30,7 @@ const EditLog = ({
   title,
   loc,
   onSubmit,
-  // handleFileUpload,
+  onUpload
 }: EditLogProps) => {
   const [titleValue, setTitleValue] = useState(title);
   const [locValue, setLocValue] = useState(loc);
@@ -83,14 +83,10 @@ const EditLog = ({
     }
     toast({duration:3000,
       title:`${count-1}/${files.length} images uploaded!`,
-    })
+    });
+    onUpload();
     setSaveDisabled(false);
     }
-
-  // const onFilesUpload = async (files:any)=>{
-  //   console.log(files);
-  //   handleFileUpload(files);
-  // }
 
   return (
     <div className={cn("grid items-start gap-5")}>
