@@ -202,7 +202,7 @@ function DaysContent() {
                             <IconPencil/>
                         </Link>
                     </DialogTrigger>
-                    <DialogContent className="h-3/4 max-w-[80vw]" aria-describedby="content">
+                    <DialogContent className="h-7/12 max-w-[80vw]" aria-describedby="content">
                         <DialogHeader>
                             <DialogTitle className="mb-3">Edit Log</DialogTitle>
                             <EditLog

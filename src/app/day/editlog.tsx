@@ -11,6 +11,7 @@ import { FileUpload } from "@/components/ui/file-upload";
 import getLocation from "./gemini";
 import { useAutosave } from 'react-autosave';
 import { editLog } from "../../../utils/supabaseRequest";
+import debounce from "lodash.debounce";
 
 
 interface EditLogProps {
@@ -39,17 +40,24 @@ const EditLog = ({
   const { toast } = useToast();
   const [saveDisabled,setSaveDisabled] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
+  const [saveStatus, setSavingStatus] = useState<String>("Saved!");
 
   const autosaveLog = async () => {
+    setSavingStatus("Saving...");
     const token = await getToken({ template: "supabase" });
     if(!userId || !token) return;
     try {
       await editLog({ userId, token, trip_name, day, entry:entryContent, title, loc});
     }catch (error) {
       console.error("Error in updating log:", error);
+      setSavingStatus("Error");
     }
+    setTimeout(() => {
+      setSavingStatus("Saved!");
+    }, 2000);
   }
-  useAutosave({data:entryContent, onSave:autosaveLog});
+  const debouncedAutosaveLog = debounce(autosaveLog, 1000);
+  useAutosave({data:entryContent, onSave:debouncedAutosaveLog});
 
   const uploadFiles = async ()=>{
     setSaveDisabled(true);
@@ -115,9 +123,16 @@ const EditLog = ({
         />
       </div>
       <div className="grid gap-2">
-        <Label className="text-start" htmlFor="entry">
-          Entry
-        </Label>
+        <div className="flex justify-between items-baseline">
+          <Label className="text-start" htmlFor="entry">
+            Entry
+          </Label>
+          <div className="flex items-baseline">
+            <RingLoader loading={saveStatus=="Saving..."} color={'green'} size={15}/>
+            <p className="mx-1">{saveStatus}</p>
+          </div>
+        </div>
+
         <Tiptap content={entryContent} onChange={(newContent:any) => setEntryContent(newContent)} />
       </div>
       <div className="grid gap-2">
