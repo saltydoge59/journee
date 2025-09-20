@@ -15,6 +15,7 @@ import { deletePhotos, editLog, getLog,getPhotos } from "../../../utils/supabase
 import { useToast } from "@/hooks/use-toast";
 import EditLog from "./editlog";
 import RingLoader from "react-spinners/ClipLoader";
+import EmptyState from "@/components/EmptyState";
 
 function DaysContent() {
     const { userId, getToken } = useAuth();
@@ -142,17 +143,16 @@ function DaysContent() {
                         <IconArrowLeft className="inline"/>
                         <span>Back</span>
                     </button>
-                    {!logPresent ?(
+                    {!logPresent ? (
                     <div>
                         <h1 className="text-xl text-center font-bold">{new Date(datestring).toDateString()}</h1>
-                        <div className="h-full w-full flex justify-center items-center" style={{height:"calc(100vh - 90px)"}}>
-                            <div className="flex flex-col items-center">
-                                <span className="text-4xl">😴</span>
-                                <h4 className="mt-1">Nothing to see yet...</h4>
-                            </div>
-                        </div>
+                        <EmptyState
+                          emoji="😴"
+                          title="Nothing to see yet..."
+                          className=""
+                        />
                     </div>
-                    ):
+                    ) :
                     (
                     <div>
                         <h1 className="text-3xl font-bold text-center">{log?.title}</h1>

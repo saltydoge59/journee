@@ -1,10 +1,8 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import BlurFade from "@/components/ui/blur-fade";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
-import Link from "next/link";
 import { useAuth } from "@clerk/nextjs"
 import { deleteTrip, getAllLogs, updateTrip, uploadBackgroundToSupabase } from "../../../utils/supabaseRequest";
 import { Button } from "@/components/ui/button";
@@ -16,6 +14,8 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import * as React from "react";
 import RingLoader from "react-spinners/ClipLoader";
+import PageHeader from "@/components/PageHeader";
+import DayGrid from "@/components/DayGrid";
 
 function DatesContent() {
   const { resolvedTheme } = useTheme();
@@ -157,47 +157,20 @@ function DatesContent() {
   return (
     <div className="w-screen h-screen">
       <BlurFade inView delay={0.25} className="w-screen h-screen">
-        <h1 className="text-4xl text-center">{trip_name}</h1>
-        <h3 className="text-xl text-center text-slate-400">
-          {start_date.toLocaleDateString("en-us", {
+        <PageHeader
+          title={trip_name}
+          subtitle={`${start_date.toLocaleDateString("en-us", {
             month: "long",
             year: "numeric",
             day: "numeric",
-          })}{" "}
-          -{" "}
-          {end_date.toLocaleDateString("en-us", {
+          })} - ${end_date.toLocaleDateString("en-us", {
             month: "long",
             year: "numeric",
             day: "numeric",
-          })}
-        </h3>
+          })}`}
+        />
         <div>
-          <BlurFade inView delay={0.5}>
-            <div className="grid grid-cols-4 md:grid-cols-5 xl:grid-cols-7 gap-4 mt-10 mx-2">
-              {daysArray.map((day, index) => (
-                <Link href={{
-                    pathname:'/day',
-                    query:{
-                        day:day.toLocaleDateString("en-us"),
-                        trip:trip_name,
-                        num:Number(index)+1,
-                    }
-                }} className={cn(
-                    "group cursor-pointer overflow-hidden relative card h-full rounded-md shadow-xl mx-auto flex flex-row justify-center items-center border bg-cover w-20 h-20 sm:w-28 sm:h-28 md:w-36 md:h-36 lg:w-44 lg:h-44",
-                    `${logs[index]?.entry==null ? "bg-slate-100 text-zinc-300":""}`
-                )}>
-                    <div
-                    key={index}
-                    style={{ backgroundImage: "" }}
-                    >
-                      <h1 className="font-black text-lg sm:text-xl md:text-2xl drop-shadow-2xl">
-                          {index+1}
-                      </h1>
-                    </div>
-                </Link>
-              ))}
-            </div>
-          </BlurFade>
+          <DayGrid daysArray={daysArray} tripName={trip_name} logs={logs} />
         </div>
       </BlurFade>
 

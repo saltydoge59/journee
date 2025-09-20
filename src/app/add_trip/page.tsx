@@ -7,7 +7,6 @@ import { useForm } from "react-hook-form";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -23,6 +22,7 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect } from "react";
 import RingLoader from "react-spinners/ClipLoader";
+import PageHeader from "@/components/PageHeader";
 
 
 const formSchema = z.object({
@@ -118,9 +118,7 @@ export default function AddTrip() {
 
   return (
     <div className="relative">
-      <h1 className="justify-center font-bold text-3xl h-[60px] items-center flex">
-        New Trip
-      </h1>
+      <PageHeader title="New Trip" className="h-[60px] flex items-center justify-center" />
       <div className="p-3">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">

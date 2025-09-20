@@ -8,6 +8,9 @@ import BlurFade from "@/components/ui/blur-fade";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import RingLoader from "react-spinners/ClipLoader";
+import EmptyState from "@/components/EmptyState";
+import TripCard from "@/components/TripCard";
+import FloatingActionButton from "@/components/FloatingActionButton";
 
 
 export default function Trips() {
@@ -55,54 +58,38 @@ export default function Trips() {
     return (
     
     <div className="h-screen w-screen">
-        <BlurFade delay={0.25} inView className={`${trips.length!==0?`hidden`:""} h-screen`}>
-            <div className="h-screen w-full flex justify-center items-center">
-                <div className="flex flex-col items-center">
-                    <span className="text-4xl">😴</span>
-                    <h4 className="mt-1">No Trips yet...</h4>
-                    <button className="p-[3px] relative mt-4 block mx-auto">
-                        <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg" />
-                        <div className="px-8 py-2 bg-black rounded-[6px] relative group transition duration-200 text-white hover:bg-transparent md:text-lg text-md">
-                            <Link href="/add_trip">
-                                Add Trip
-                            </Link>
-                        </div>
-                    </button>
-                </div>
-            </div>
-        </BlurFade>
+        <EmptyState
+          emoji="😴"
+          title="No Trips yet..."
+          actionText="Add Trip"
+          actionHref="/add_trip"
+          className={trips.length !== 0 ? "hidden" : ""}
+        />
         <BlurFade delay={0.25} inView className={`${trips.length!==0?"":"hidden"} h-screen`}>
             <div className="flex flex-wrap justify-center h-screen pb-24 sm:pb-0">
               {trips.map((trip, index) => (
-              <Link href={{
-              pathname:"/dates",
-              query:{
-                name:trip.trip_name,
-                start:trip.start_date,
-                end:trip.end_date,
-              }
-              }} key={index} className="mx-auto rounded-full w-11/12 sm:w-5/6 mt-3 h-1/2">
-                <div style={{backgroundImage:`url(${trip.image_url})`}}
-                className={cn(
-                    "group w-full cursor-pointer overflow-hidden relative card h-full rounded-md shadow-xl mx-auto flex flex-col justify-end p-4 border",
-                    `bg-cover`
-                )}
-                >
-                  <div className="text relative z-50 h-full flex items-center">
-                    <h1 className="font-black text-4xl text-white drop-shadow-2xl relative">
-                        {trip.trip_name}
-                    </h1>
-                  </div>
-                </div>
-              </Link>
+                <TripCard
+                  key={index}
+                  trip={trip}
+                  href={{
+                    pathname: "/dates",
+                    query: {
+                      name: trip.trip_name,
+                      start: trip.start_date,
+                      end: trip.end_date,
+                    }
+                  }}
+                />
               ))}
             </div>
         </BlurFade>
-        <button onClick={handleClick} className={`fixed bottom-16 sm:bottom-3 right-2 sm:right-6 px-5 p-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-3xl font-bold text-white tracking-widest transform hover:scale-105 hover:bg-[#21e065] transition-colors duration-200 ${trips.length===0?"hidden":""}`}>
-          <Link href="/add_trip">
-            +
-          </Link>
-        </button>
+        <FloatingActionButton
+          href="/add_trip"
+          onClick={handleClick}
+          visible={trips.length !== 0}
+        >
+          +
+        </FloatingActionButton>
     </div>
     )
 }
