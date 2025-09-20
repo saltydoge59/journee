@@ -108,6 +108,7 @@ export const insertUser = async ({ userId, token, username }: { userId: string, 
       const { data: trips, error: fetchError } = await supabase
         .from('trips')
         .select('trip_name,image_url,start_date,end_date')
+        .order('start_date', {ascending: false})
         .eq('id', userId)
       
       if (fetchError && fetchError.code !== 'PGRST116') {

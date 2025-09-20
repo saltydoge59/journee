@@ -17,18 +17,18 @@ import {
 export function DatePickerWithRange({
   className,
   value,
-  onChange,
+  onChangeAction,
 }: {
   className?: string;
   value?: DateRange;
-  onChange?: (date: DateRange | undefined) => void;
+  onChangeAction?: (date: DateRange | undefined) => void;
 }) {
   const [date, setDate] = React.useState<DateRange | undefined>(value);
 
   const handleSelect = (selected: DateRange | undefined) => {
     setDate(selected);
-    if (onChange) {
-      onChange(selected); // Notify parent component of the date change
+    if (onChangeAction) {
+      onChangeAction(selected); // Notify parent component of the date change
     }
   };
 

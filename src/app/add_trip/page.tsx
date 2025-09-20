@@ -146,7 +146,7 @@ export default function AddTrip() {
                   <FormControl>
                     <DatePickerWithRange
                       value={field.value}
-                      onChange={(value: DateRange | undefined) => field.onChange(value)}
+                      onChangeAction={(value: DateRange | undefined) => field.onChange(value)}
                     />
                   </FormControl>
                   <FormMessage />

@@ -3,9 +3,7 @@
 import { useAuth, useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { getTrips, insertUser } from "../../../utils/supabaseRequest";
-import Link from "next/link";
 import BlurFade from "@/components/ui/blur-fade";
-import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import RingLoader from "react-spinners/ClipLoader";
 import EmptyState from "@/components/EmptyState";
