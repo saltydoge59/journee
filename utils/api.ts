@@ -1,6 +1,5 @@
-// Thin fetch wrappers replacing utils/supabaseRequest.ts. Same exported names and call
-// shapes minus token/userId (the server derives userId from the Clerk session, never
-// from the client) so call sites change by import swap only.
+// Thin fetch wrappers calling the server API routes. userId is derived server-side
+// from the Clerk session, never sent from the client.
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function json(res: Response): Promise<any> {
@@ -160,7 +159,7 @@ export const updateLatLong = async ({
   return json(res);
 };
 
-export const uploadBackgroundToSupabase = async (file: File, bucketName: string) => {
+export const uploadBackground = async (file: File, bucketName: string) => {
   const form = new FormData();
   form.append("file", file);
   form.append("bucketName", bucketName);
@@ -169,7 +168,7 @@ export const uploadBackgroundToSupabase = async (file: File, bucketName: string)
   return imageURL as string;
 };
 
-export const uploadPhotosToSupabase = async (
+export const uploadPhotos = async (
   day: number,
   trip_name: string,
   file: File,

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import Tiptap from "@/components/Tiptap";
 import { useState } from "react";
 import { useAuth } from "@clerk/nextjs";
-import { insertPhotos, uploadPhotosToSupabase, getPhotoLocation, editLog } from "../../../utils/api";
+import { insertPhotos, uploadPhotos, getPhotoLocation, editLog } from "../../../utils/api";
 import { useToast } from "@/hooks/use-toast";
 import RingLoader from "react-spinners/ClipLoader";
 import { FileUpload } from "@/components/ui/file-upload";
@@ -74,7 +74,7 @@ const EditLog = ({
         console.log("Gemini result:",result);
 
         console.log("Uploading to R2...");
-        let imageURL = await uploadPhotosToSupabase(day, trip_name, f, "photos");
+        let imageURL = await uploadPhotos(day, trip_name, f, "photos");
         console.log("R2 upload result:",imageURL);
 
         console.log("Inserting photo data into database...");

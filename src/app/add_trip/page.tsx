@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DateRange } from "react-day-picker";
 import { DatePickerWithRange } from "@/components/daterange/date-picker-with-range";
-import { createTrip, uploadBackgroundToSupabase } from "../../../utils/api";
+import { createTrip, uploadBackground } from "../../../utils/api";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
@@ -76,7 +76,7 @@ export default function AddTrip() {
 
       if (userId) {
         if (selectedFiles.length > 0) {
-          imageURL = await uploadBackgroundToSupabase(selectedFiles[0], "backgrounds");
+          imageURL = await uploadBackground(selectedFiles[0], "backgrounds");
         }
 
         const result = await createTrip({

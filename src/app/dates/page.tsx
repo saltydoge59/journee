@@ -4,7 +4,7 @@ import BlurFade from "@/components/ui/blur-fade";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs"
-import { deleteTrip, getAllLogs, updateTrip, uploadBackgroundToSupabase } from "../../../utils/api";
+import { deleteTrip, getAllLogs, updateTrip, uploadBackground } from "../../../utils/api";
 import { Button } from "@/components/ui/button";
 import { IconDots, IconDotsCircleHorizontal, IconDotsVertical, IconPencil, IconTrash } from "@tabler/icons-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -81,7 +81,7 @@ function DatesContent() {
     try{
       if (userId) {
         if (selectedFile.length > 0) {
-          const imageURL = await uploadBackgroundToSupabase(selectedFile[0], "backgrounds");
+          const imageURL = await uploadBackground(selectedFile[0], "backgrounds");
           await updateTrip({ trip_name, imageURL });
           console.log("Cover photo updated.")
           toast({
