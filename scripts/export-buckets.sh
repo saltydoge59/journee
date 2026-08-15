@@ -39,9 +39,16 @@ walk() {
       encoded=$(jq -rn --arg p "$path" '$p | split("/") | map(@uri) | join("/")')
 
       mkdir -p "$OUT/$bucket/$(dirname "$path")"
-      curl -sS --fail-with-body "${auth[@]}" \
-        "$URL/storage/v1/object/$bucket$encoded" -o "$OUT/$bucket/$path"
-      echo "  $bucket/$path"
+      # A few DB rows reference objects that no longer exist in storage (pre-existing
+      # inconsistency). Record and continue rather than aborting the whole export.
+      if curl -sS --fail "${auth[@]}" \
+           "$URL/storage/v1/object/$bucket/$encoded" -o "$OUT/$bucket/$path"; then
+        echo "  $bucket/$path"
+      else
+        rm -f "$OUT/$bucket/$path"
+        echo "$bucket/$path" >> "$OUT/missing.txt"
+        echo "  MISSING $bucket/$path"
+      fi
     fi
   done
 }
