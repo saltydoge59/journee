@@ -21,7 +21,7 @@ import {
   GeoapifyContext,
   GeoapifyGeocoderAutocomplete,
 } from "@geoapify/react-geocoder-autocomplete";
-import "../app/snapspot(outdated)/round-borders.dark.css";
+import "./round-borders.dark.css";
 import getCoords from "@/app/snapspot/gemini";
 
 interface Pin {
