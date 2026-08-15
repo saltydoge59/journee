@@ -5,7 +5,7 @@
 ## 📂 Project Links
 
 -   **GitHub Repository:** [Journee on GitHub](https://github.com/saltydoge59/journee)
--   **Hosted Application:** The live application is hosted on Vercel. Access it here: [Journee on Vercel](https://journee-beta.vercel.app)
+-   **Hosted Application:** The live application is hosted on Cloudflare Workers.
 
 
 ### 🔐 Login Instructions
@@ -31,8 +31,8 @@ For user authentication, Journee utilizes Apple/Google Authentication.
 
 Journee leverages modern web development frameworks and APIs to provide a seamless and dynamic user experience.
 
--   **Frontend:** Built with Next.js and styled with Tailwind CSS for responsive design, hosted on Vercel.
--   **Database:** Supabase provides a scalable and secure backend database.
+-   **Frontend:** Built with Next.js and styled with Tailwind CSS for responsive design, hosted on Cloudflare Workers.
+-   **Database & Storage:** Cloudflare D1 (database) and Cloudflare R2 (image storage).
 -   **Core Libraries:**
     -   **Aceternity** and **Shadcn** for smooth animations and additional UI elements.
     -   **Material UI** components for a polished and accessible user interface.
@@ -44,5 +44,11 @@ Planty integrates several external APIs to provide enhanced functionality:
 
 -   **Google Maps API:** [Google Maps API Documentation](https://developers.google.com/maps/documentation/places/web-service) for a dynamic map display.
 -   **Gemini Developer API:** [Gemini API Documentation](https://ai.google.dev/) for advanced AI features used to generate location coordinates of uploaded photos.
+
+## 🏷️ Versioning
+
+This project follows [Semantic Versioning](https://semver.org/). See
+[CHANGELOG.md](./CHANGELOG.md) for release history and
+[CLAUDE.md](./CLAUDE.md) for the full versioning/changelog policy.
 
 
