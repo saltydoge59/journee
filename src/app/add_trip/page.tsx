@@ -23,6 +23,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useEffect } from "react";
 import RingLoader from "react-spinners/ClipLoader";
 import PageHeader from "@/components/PageHeader";
+import { CoverPhotoPicker } from "@/components/ui/cover-photo-picker";
 
 
 const formSchema = z.object({
@@ -54,10 +55,8 @@ export default function AddTrip() {
   const router = useRouter();
 
   // Handle file selection
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      setSelectedFiles(Array.from(event.target.files));
-    }
+  const handleFileChange = (files: File[]) => {
+    setSelectedFiles(files);
   };
 
   function clearToast(){
@@ -115,19 +114,19 @@ export default function AddTrip() {
 
   return (
     <div className="relative">
-      <PageHeader title="New Trip" className="h-[60px] flex items-center justify-center" />
-      <div className="p-3">
+      <PageHeader title="New Trip" className="h-auto flex flex-col items-center justify-center pt-8" />
+      <div className="mx-auto max-w-md p-6">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             {/* Trip Name Field */}
             <FormField
               control={form.control}
               name="trip_name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Trip Name</FormLabel>
+                  <FormLabel className="font-mono-label text-xs uppercase text-muted-foreground">Trip Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g. Japan Family Trip" {...field} />
+                    <Input placeholder="e.g. Japan Family Trip" className="font-entry rounded-sm" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -139,7 +138,7 @@ export default function AddTrip() {
               name="date_range"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Trip Duration</FormLabel>
+                  <FormLabel className="font-mono-label text-xs uppercase text-muted-foreground">Trip Duration</FormLabel>
                   <FormControl>
                     <DatePickerWithRange
                       value={field.value}
@@ -156,16 +155,16 @@ export default function AddTrip() {
               name="image"
               render={() => (
                 <FormItem>
-                  <FormLabel className="block">Trip Cover Picture (Optional)</FormLabel>
+                  <FormLabel className="font-mono-label block text-xs uppercase text-muted-foreground">Trip Cover Picture (Optional)</FormLabel>
                   <FormControl>
-                    <input type="file" onChange={handleFileChange} accept="image/*" />
+                    <CoverPhotoPicker onChange={handleFileChange} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" className="bg-gradient-to-r from-indigo-500 to-purple-500 font-bold text-white hover:brightness-90 px-5">
-              Add
+            <Button type="submit" className="font-mono-label w-full rounded-sm bg-primary text-xs uppercase text-primary-foreground hover:brightness-95">
+              Add Trip
             </Button>
           </form>
         </Form>

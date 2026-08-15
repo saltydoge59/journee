@@ -17,16 +17,14 @@ interface TripCardProps {
 
 export default function TripCard({ trip, href, className = "" }: TripCardProps) {
   return (
-    <Link href={href} className={cn("mx-auto rounded-full w-11/12 sm:w-5/6 mt-3 h-1/2", className)}>
+    <Link href={href} className={cn("mx-auto w-11/12 sm:w-5/6 mt-3 h-1/2 block", className)}>
       <div
         style={{backgroundImage:`url(${trip.image_url})`}}
-        className={cn(
-          "group w-full cursor-pointer overflow-hidden relative card h-full rounded-md shadow-xl mx-auto flex flex-col justify-end p-4 border",
-          "bg-cover"
-        )}
+        className="group relative flex h-full w-full cursor-pointer flex-col justify-end overflow-hidden rounded-sm border border-border bg-cover shadow-md"
       >
-        <div className="text relative z-50 h-full flex items-center">
-          <h1 className="font-black text-4xl text-white drop-shadow-2xl relative">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+        <div className="relative z-10 flex h-full items-end p-5">
+          <h1 className="font-serif-display text-3xl italic text-white drop-shadow-md">
             {trip.trip_name}
           </h1>
         </div>

@@ -23,7 +23,7 @@ export default function FloatingActionButton({
     "bottom-left": "fixed bottom-16 sm:bottom-3 left-2 sm:left-6"
   };
 
-  const baseClasses = `${positionClasses[position]} px-5 p-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-3xl font-bold text-white tracking-widest transform hover:scale-105 hover:bg-[#21e065] transition-colors duration-200 flex items-center justify-center ${!visible ? "hidden" : ""} ${className}`;
+  const baseClasses = `${positionClasses[position]} h-14 w-14 rounded-full bg-[hsl(var(--seal))] text-[hsl(var(--seal-foreground))] text-2xl font-semibold shadow-lg transition-transform hover:scale-105 flex items-center justify-center ${!visible ? "hidden" : ""} ${className}`;
 
   if (onClick) {
     return (

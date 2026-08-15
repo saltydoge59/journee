@@ -95,7 +95,7 @@ const Tiptap = ({onChange,content}:any) => {
     })],
     editorProps:{
       attributes:{
-        class:"flex flex-col px-4 py-3 justify-start items-start w-full gap-3 text-[16px] pt-4 border p-2 rounded h-auto"
+        class:"ruled font-entry flex flex-col w-full gap-3 text-[16px] px-4 py-3 border border-t-0 border-border rounded-b-sm min-h-[12rem] leading-[1.85rem] focus:outline-none"
       }
     },
     onUpdate:({editor})=>{

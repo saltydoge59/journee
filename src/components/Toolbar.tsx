@@ -49,11 +49,11 @@ const Toolbar = ({editor,content}:Props)=>{
       }
     
     return(
-        <div className='px-4 py-3 rounded-tl-md ronuded-tr-md flex justify-between items-start gap-5 w-full flex-wrap border border-slate-300'>
+        <div className='px-4 py-3 rounded-t-sm flex justify-between items-start gap-5 w-full flex-wrap border border-border bg-secondary/40'>
             <div className='flex justify-start items-center gap-5 w-full lg:w-10/12 flex-wrap'>
             {/* Color */}
                 <input
-                className='border-gray-400 border'
+                className='border-border border h-6 w-6 rounded-sm bg-transparent'
                 type="color"
                 onInput={(e) => editor.chain().focus().setColor((e.target as HTMLInputElement).value).run()}
                 value={editor.getAttributes('textStyle').color}
@@ -65,7 +65,7 @@ const Toolbar = ({editor,content}:Props)=>{
                     editor.chain().focus().toggleBold().run();
                 }}
                 className={
-                    editor.isActive("bold")?"bg-indigo-500 text-white rounded-lg":"text-purple-500"
+                    editor.isActive("bold")?"bg-primary text-primary-foreground rounded-sm":"text-muted-foreground hover:text-foreground"
                 }>
                     <Bold className='w-5 h-5'/>
                 </button>
@@ -75,7 +75,7 @@ const Toolbar = ({editor,content}:Props)=>{
                     editor.chain().focus().toggleItalic().run();
                 }}
                 className={
-                    editor.isActive("italic")?"bg-indigo-500 text-white rounded-lg":"text-purple-500"
+                    editor.isActive("italic")?"bg-primary text-primary-foreground rounded-sm":"text-muted-foreground hover:text-foreground"
                 }>
                     <Italic className='w-5 h-5'/>
                 </button>
@@ -85,7 +85,7 @@ const Toolbar = ({editor,content}:Props)=>{
                     editor.chain().focus().toggleUnderline().run();
                 }}
                 className={
-                    editor.isActive("underline")?"bg-indigo-500 text-white rounded-lg":"text-purple-500"
+                    editor.isActive("underline")?"bg-primary text-primary-foreground rounded-sm":"text-muted-foreground hover:text-foreground"
                 }>
                     <Underline className='w-5 h-5'/>
                 </button>
@@ -95,7 +95,7 @@ const Toolbar = ({editor,content}:Props)=>{
                     editor.chain().focus().toggleStrike().run();
                 }}
                 className={
-                    editor.isActive("strike")?"bg-indigo-500 text-white rounded-lg":"text-purple-500"
+                    editor.isActive("strike")?"bg-primary text-primary-foreground rounded-sm":"text-muted-foreground hover:text-foreground"
                 }>
                     <Strikethrough className='w-5 h-5'/>
                 </button>
@@ -105,7 +105,7 @@ const Toolbar = ({editor,content}:Props)=>{
                     editor.chain().focus().undo().run();
                 }}
                 className={
-                    editor.isActive("undo")?"bg-indigo-500 text-white rounded-lg":"text-purple-500"
+                    editor.isActive("undo")?"bg-primary text-primary-foreground rounded-sm":"text-muted-foreground hover:text-foreground"
                 }>
                     <Undo className='w-5 h-5'/>
                 </button>
@@ -115,16 +115,16 @@ const Toolbar = ({editor,content}:Props)=>{
                     editor.chain().focus().redo().run();
                 }}
                 className={
-                    editor.isActive("redo")?"bg-indigo-500 text-white rounded-lg":"text-purple-500"
+                    editor.isActive("redo")?"bg-primary text-primary-foreground rounded-sm":"text-muted-foreground hover:text-foreground"
                 }>
                     <Redo className='w-5 h-5'/>
                 </button>
 
-                <button onClick={setLink} className={editor.isActive('link') ? 'bg-indigo-500 text-white rounded-lg' : 'text-purple-500'}>
+                <button onClick={setLink} className={editor.isActive('link') ? 'bg-primary text-primary-foreground rounded-sm' : 'text-muted-foreground hover:text-foreground'}>
                     <Link className='w-5 h-5'/>
                 </button>
                 <button
-                    className='text-purple-500'
+                    className='text-muted-foreground hover:text-foreground disabled:opacity-30'
                     onClick={() => editor.chain().focus().unsetLink().run()}
                     disabled={!editor.isActive('link')}
                 >

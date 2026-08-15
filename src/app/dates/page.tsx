@@ -8,7 +8,6 @@ import { deleteTrip, getAllLogs, updateTrip, uploadBackground } from "../../../u
 import { Button } from "@/components/ui/button";
 import { IconDots, IconDotsCircleHorizontal, IconDotsVertical, IconPencil, IconTrash } from "@tabler/icons-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { useTheme } from "next-themes";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
@@ -16,9 +15,9 @@ import * as React from "react";
 import RingLoader from "react-spinners/ClipLoader";
 import PageHeader from "@/components/PageHeader";
 import DayGrid from "@/components/DayGrid";
+import { CoverPhotoPicker } from "@/components/ui/cover-photo-picker";
 
 function DatesContent() {
-  const { resolvedTheme } = useTheme();
   const { toast } = useToast();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -71,10 +70,8 @@ function DatesContent() {
 
   // Handle file selection
   const [selectedFile, setSelectedFile] = React.useState<File[]>([]);
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      setSelectedFile(Array.from(event.target.files));
-    }
+  const handleFileChange = (files: File[]) => {
+    setSelectedFile(files);
   };
 
   async function onSubmit(){
@@ -145,42 +142,42 @@ function DatesContent() {
         </div>
       </BlurFade>
 
-          <Dialog open={editOpen} onOpenChange={setEditOpen}>              
+          <Dialog open={editOpen} onOpenChange={setEditOpen}>
             <DialogTrigger asChild>
-              <Button className={`fixed right-16 bottom-20 sm:bottom-4 w-9 h-9 rounded-full drop-shadow-lg ${resolvedTheme==='dark'?"outline outline-slate-200 bg-black":"bg-white"}`}>
-                <IconPencil className={`${resolvedTheme==='dark'?"text-white":"text-black"}`}/>
+              <Button className="fixed right-16 bottom-20 sm:bottom-4 w-9 h-9 rounded-full border border-border bg-card shadow-md hover:bg-secondary">
+                <IconPencil className="text-foreground"/>
               </Button>
             </DialogTrigger>
-            <DialogContent className="w-[80vw] lg:w-[50vw] rounded-lg">
+            <DialogContent className="w-[80vw] lg:w-[50vw] rounded-sm">
               <DialogHeader>
-                <DialogTitle>Edit Cover Picture</DialogTitle>
+                <DialogTitle className="font-serif-display italic">Edit Cover Picture</DialogTitle>
                 <DialogDescription>
                     Change your trip's cover picture.
                 </DialogDescription>
               </DialogHeader>
               <div className="flex gap-3 flex-col">
-                  <input type="file" className="w-full" onChange={handleFileChange} />
-                  <Button onClick={onSubmit} className={`mt-3 bg-gradient-to-r from-indigo-500 to-purple-500 font-bold text-white hover:brightness-90 ${!selectedFile?"disabled":""}`}>Save</Button>
+                  <CoverPhotoPicker onChange={handleFileChange} />
+                  <Button onClick={onSubmit} className={`font-mono-label mt-3 rounded-sm bg-primary text-xs uppercase text-primary-foreground hover:brightness-95 ${!selectedFile?"disabled":""}`}>Save</Button>
               </div>
             </DialogContent>
           </Dialog>
 
-          <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>              
+          <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
             <DialogTrigger asChild>
-              <Button className={`fixed right-4 bottom-20 sm:bottom-4 w-9 h-9 rounded-full drop-shadow-lg ${resolvedTheme==='dark'?"outline outline-slate-200 bg-black":"bg-white"}`}>
-                <IconTrash className="text-red-500"/>
+              <Button className="fixed right-4 bottom-20 sm:bottom-4 w-9 h-9 rounded-full border border-border bg-card shadow-md hover:bg-secondary">
+                <IconTrash className="text-[hsl(var(--seal))]"/>
               </Button>
             </DialogTrigger>
-            <DialogContent className="w-[80vw] lg:w-[25vw] rounded-lg">
+            <DialogContent className="w-[80vw] lg:w-[25vw] rounded-sm">
             <DialogHeader>
-              <DialogTitle>Delete Trip</DialogTitle>
+              <DialogTitle className="font-serif-display italic">Delete Trip</DialogTitle>
               <DialogDescription>
                   Are you sure you want to delete this trip? This action cannot be undone.
               </DialogDescription>
             </DialogHeader>
             <div className="flex gap-3">
-                <Button onClick={()=>{setDeleteOpen(false)}} className="p-2 rounded bg-slate-300 font-bold w-full">Close</Button>
-                <Button onClick={()=>{removeTrip()}} className="p-2 rounded bg-red-400 font-bold w-full">Delete</Button>
+                <Button onClick={()=>{setDeleteOpen(false)}} className="font-mono-label w-full rounded-sm border border-border bg-secondary text-xs uppercase text-foreground">Close</Button>
+                <Button onClick={()=>{removeTrip()}} className="font-mono-label w-full rounded-sm bg-[hsl(var(--seal))] text-xs uppercase text-[hsl(var(--seal-foreground))]">Delete</Button>
             </div>
             </DialogContent>
           </Dialog>

@@ -6,13 +6,11 @@ import { UserButton } from "@clerk/nextjs";
 import { ModeToggle } from "../mode-toggle/toggle";
 import { IconMapQuestion, IconPlaneDeparture } from "@tabler/icons-react";
 import { useState, useEffect } from "react";
-import { useTheme } from "next-themes";
 import { usePathname } from "next/navigation";
 
 export default function Navbar(){
     const [page, setPage] = useState<string>('Trips')
     const pathname = usePathname();
-    const { resolvedTheme } = useTheme();
 
     // Update the `page` state based on the current route
     useEffect(() => {
@@ -25,69 +23,64 @@ export default function Navbar(){
     
     return (
         <div>
-            <NavigationMenu className="flex justify-between min-w-full list-none hidden sm:flex relative top-0 p-5 h-[60px]">
+            <NavigationMenu className="flex justify-between min-w-full list-none hidden sm:flex relative top-0 p-5 h-[60px] border-b border-border">
                 <div className="flex items-center">
                     <Link href="/trips">
-                        <h1 className="mr-4 font-bold text-2xl bg-gradient-to-b from-neutral-200 via-neutral-400 to-neutral-800 bg-clip-text text-transparent">Journee</h1>
+                        <h1 className="mr-6 font-serif-display text-2xl italic text-foreground">Journee</h1>
                     </Link>
-                    <NavigationMenuItem className="mx-4 hover:underline">
+                    <NavigationMenuItem className={`font-mono-label mx-4 text-xs uppercase ${page==="Trips"?"text-primary":"text-muted-foreground hover:text-foreground"}`}>
                         <Link href="/trips">
                             Trips
                         </Link>
                     </NavigationMenuItem>
-                    <NavigationMenuItem className="mx-4 hover:underline">
+                    <NavigationMenuItem className={`font-mono-label mx-4 text-xs uppercase ${page==="Snapspot"?"text-primary":"text-muted-foreground hover:text-foreground"}`}>
                         <Link href="/snapspot">
                             Snapspot
                         </Link>
                     </NavigationMenuItem>
-                    {/* <NavigationMenuItem className="mx-4 hover:underline">
-                        <Link href="/map">
-                            Map
-                        </Link>
-                    </NavigationMenuItem> */}
                 </div>
                 <div className="flex items-center justify-center">
                     <div className="mx-4">
                         <ModeToggle/>
                     </div>
                     <div className="ml-2">
-                        <UserButton/>                        
+                        <UserButton/>
                     </div>
 
                 </div>
             </NavigationMenu>
 
-            <NavigationMenu className="flex sm:hidden top-0 h-[60px] p-5 justify-between min-w-full list-none">
+            <NavigationMenu className="flex sm:hidden top-0 h-[60px] p-5 justify-between min-w-full list-none border-b border-border">
                 <Link href="/trips">
-                    <img src="/journee.png" className={`w-8 h-8 ${resolvedTheme==='dark'?"outline outline-slate-500":""} rounded-lg`}/>
+                    <span className="font-serif-display text-xl italic text-foreground">Journee</span>
                 </Link>
                 <NavigationMenuItem>
                     <ModeToggle/>
                 </NavigationMenuItem>
             </NavigationMenu>
-            
-            <NavigationMenu className={`flex sm:hidden fixed ${resolvedTheme==='dark'?"bg-black":"bg-white"} bottom-0 h-[60px] p-5 justify-between min-w-full list-none`}>
+
+            <NavigationMenu className="flex sm:hidden fixed bg-card border-t border-border bottom-0 h-[60px] p-5 justify-between min-w-full list-none">
                 <NavigationMenuItem className="mx-4">
-                    <div className={`flex flex-col items-center ${page=="Trips"?"text-indigo-500":""}`}>
+                    <div className={`flex flex-col items-center font-mono-label text-[11px] uppercase ${page=="Trips"?"text-primary":"text-muted-foreground"}`}>
                         <Link href='/trips' onClick={()=>setPage('Trips')}>
                             <IconPlaneDeparture/>
-                        </Link>  
+                        </Link>
                         <span>Trips</span>
                     </div>
                 </NavigationMenuItem>
                 <NavigationMenuItem className="mx-4">
-                    <div className={`flex flex-col items-center ${page=="Snapspot"?"text-indigo-500":""}`}>
+                    <div className={`flex flex-col items-center font-mono-label text-[11px] uppercase ${page=="Snapspot"?"text-primary":"text-muted-foreground"}`}>
                         <Link href='/snapspot' onClick={()=>setPage('Snapspot')}>
                             <div><IconMapQuestion/></div>
-                        </Link> 
+                        </Link>
                         <span>Snapspot</span>
                     </div>
                 </NavigationMenuItem>
                 <NavigationMenuItem className="mx-4">
-                    <div className="flex flex-col items-center">
+                    <div className="flex flex-col items-center font-mono-label text-[11px] uppercase text-muted-foreground">
                         <UserButton afterSignOutUrl="/"/>
                         Profile
-                    </div>                   
+                    </div>
                 </NavigationMenuItem>
             </NavigationMenu>
         </div>

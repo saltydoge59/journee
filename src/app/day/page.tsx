@@ -11,11 +11,11 @@ import { Button } from "@/components/ui/button"
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger, } from "@/components/ui/drawer"
 import * as React from "react";
 import { useAuth } from "@clerk/nextjs";
-import { deletePhotos, editLog, getLog,getPhotos } from "../../../utils/api"
+import { deletePhotos, getLog,getPhotos } from "../../../utils/api"
 import { useToast } from "@/hooks/use-toast";
 import EditLog from "./editlog";
-import RingLoader from "react-spinners/ClipLoader";
 import EmptyState from "@/components/EmptyState";
+import PhotoViewer from "@/components/PhotoViewer";
 
 function DaysContent() {
     const { userId } = useAuth();
@@ -35,6 +35,7 @@ function DaysContent() {
     const { toast } = useToast();
     const [photos, setPhotos] = useState<string[] | null>(null);
     const [deleteOpen, setDeleteOpen] = useState<boolean[]>([]);
+    const [viewerIndex, setViewerIndex] = useState<number | null>(null);
 
     const handleDialogOpen = (idx: number, isOpen: boolean) => {
         setDeleteOpen((prev) => {
@@ -84,27 +85,17 @@ function DaysContent() {
     },[fetchLog,fetchPhotos])
 
 
+    // The editor autosaves title/location/entry text and photos as the user
+    // works, so "Done" only needs to refresh this page's view and close —
+    // no redundant save call, no artificial delay before closing.
     const handleSubmit = useCallback(
-        async (entry: string, loc:string, title: string) => {
-          console.log("submitted");
-          try {
-            if(userId){
-                await editLog({ trip_name, day, entry, title, loc});
-                await fetchLog();
-                await fetchPhotos();
-                toast({ duration: 2000, title: "Log edited successfully! Redirecting...",action:<RingLoader loading={true} color={'green'}/> });
-                setTimeout(() => {
-                setDrawerOpen(false);
-                setDialogueOpen(false);
-                }, 2000);
-            }
-
-          } catch (error) {
-            console.error("Error in updating log:", error);
-            toast({ variant: "destructive", title: "Failed to edit log. Try again." });
-          }
+        async () => {
+          await fetchLog();
+          await fetchPhotos();
+          setDrawerOpen(false);
+          setDialogueOpen(false);
         },
-        [userId, trip_name, day, fetchLog, fetchPhotos]
+        [fetchLog, fetchPhotos]
       );
 
     async function deleteImage(imageURL:string,idx:number) {
@@ -126,75 +117,89 @@ function DaysContent() {
     }
 
     return(
-        <div className="h-screen w-screen">
+        <div className="min-h-screen w-screen pb-24">
             <BlurFade delay={0.25} inView>
-                <div className="sm:p-3" style={{height:"calc(100vh - 90px)"}}>
-                    <button className="fixed flex flex-row pl-2" onClick={handleBackClick}>
-                        <IconArrowLeft className="inline"/>
+                <div className="mx-auto max-w-2xl px-4 pt-6 sm:px-6" style={{minHeight:"calc(100vh - 90px)"}}>
+                    <button className="font-mono-label flex flex-row items-center gap-1 text-xs uppercase text-muted-foreground hover:text-foreground" onClick={handleBackClick}>
+                        <IconArrowLeft className="inline h-4 w-4"/>
                         <span>Back</span>
                     </button>
                     {!logPresent ? (
-                    <div>
-                        <h1 className="text-xl text-center font-bold">{new Date(datestring).toDateString()}</h1>
+                    <div className="mt-10 text-center">
+                        <p className="font-mono-label text-xs uppercase text-muted-foreground">{new Date(datestring).toDateString()}</p>
                         <EmptyState
-                          emoji="😴"
-                          title="Nothing to see yet..."
+                          title="Nothing recorded for this day."
                           className=""
                         />
                     </div>
                     ) :
                     (
-                    <div>
-                        <h1 className="text-3xl font-bold text-center">{log?.title}</h1>
-                        <h4 className="text-md text-center">{new Date(datestring).toDateString()}</h4>
-                        <div className="p-2" dangerouslySetInnerHTML={{__html:`${log?.entry}`}}/>
-                        <div className="columns-2 gap-4 p-2">
+                    <div className="mt-8">
+                        <div className="text-center">
+                            <p className="font-mono-label text-xs uppercase text-muted-foreground">{new Date(datestring).toDateString()}</p>
+                            <h1 className="mt-2 font-serif-display text-3xl italic">{log?.title}</h1>
+                        </div>
+                        <div className="ruled font-entry mt-8 leading-[1.85rem]" dangerouslySetInnerHTML={{__html:`${log?.entry}`}}/>
+
+                        {photos && photos.length > 0 && (
+                        <div className="mt-10 flex flex-wrap justify-center gap-6 border-t border-border pt-8">
                             {photos?.map((photo,idx)=>{
-                                console.log(photo,idx);
                                 return (
                                 <BlurFade key={idx} inView delay={0.25+ idx * 0.05}>
-                                    <div className="relative">
-                                        <img src={photo} className="mb-4 size-full rounded-lg object-contain" key={`Picture ${idx}`}/>
+                                    <div className="relative w-40 border border-border bg-card p-2 shadow-sm">
+                                        <span className="absolute -left-1 -top-1 h-3 w-3 border-l border-t border-accent" />
+                                        <span className="absolute -bottom-1 -right-1 h-3 w-3 border-b border-r border-accent" />
+                                        <img
+                                            src={photo}
+                                            className="aspect-square w-full cursor-zoom-in object-cover"
+                                            key={`Picture ${idx}`}
+                                            onClick={() => setViewerIndex(idx)}
+                                        />
+                                        <Dialog key={`Dialog ${idx}`} open={deleteOpen[idx]||false} onOpenChange={(isOpen) => handleDialogOpen(idx, isOpen)}>
+                                            <DialogTrigger asChild>
+                                                <button className="absolute right-1 top-1 rounded-sm bg-card/80 p-0.5 text-muted-foreground"><IconDotsVertical className="h-4 w-4"/></button>
+                                            </DialogTrigger>
+                                            <DialogContent className="w-[80vw] lg:w-[25vw] rounded-sm">
+                                                <DialogHeader>
+                                                    <DialogTitle className="font-serif-display italic">Delete Picture {idx+1}</DialogTitle>
+                                                    <DialogDescription>
+                                                        Are you sure you want to delete this picture? This action cannot be undone.
+                                                    </DialogDescription>
+                                                </DialogHeader>
+                                                <div className="flex gap-3">
+                                                    <Button onClick={()=>{deleteImage(photo,idx)}} className="font-mono-label w-full rounded-sm bg-[hsl(var(--seal))] text-xs uppercase text-[hsl(var(--seal-foreground))]">Delete</Button>
+                                                </div>
+                                            </DialogContent>
+                                        </Dialog>
                                     </div>
-                                    <Dialog key={`Dialog ${idx}`} open={deleteOpen[idx]||false} onOpenChange={(isOpen) => handleDialogOpen(idx, isOpen)}>
-                                        <DialogTrigger asChild>
-                                            <button className="fixed top-2 right-2 bg-slate-300/50 rounded drop-shadow-xl"><IconDotsVertical/></button>
-                                        </DialogTrigger>
-                                        <DialogContent className="w-[80vw] lg:w-[25vw] rounded-lg">
-                                            <DialogHeader>
-                                                <DialogTitle>Delete Picture {idx+1}</DialogTitle>
-                                                <DialogDescription>
-                                                    Are you sure you want to delete this picture? This action cannot be undone.
-                                                </DialogDescription>
-                                            </DialogHeader>
-                                            <div className="flex gap-3">
-                                                <Button onClick={()=>{deleteImage(photo,idx);console.log(photo)}}  className="p-2 rounded bg-red-400 font-bold w-full">Delete</Button>
-                                            </div>
-                                        </DialogContent>
-                                    </Dialog>
                                 </BlurFade>
                                 );
                             })}
                         </div>
-                        {/* <button className="ml-2 text-sm p-2 rounded bg-gradient-to-r from-indigo-500 to-purple-500 font-bold text-white tracking-widest transform hover:scale-105 transition-colors duration-200">Edit Photos</button> */}
-                        <div className="pb-20"></div>
-                    </div> 
+                        )}
+                    </div>
                     )}
 
 
 
                 </div>
             </BlurFade>
+            <PhotoViewer
+                photos={photos || []}
+                index={viewerIndex}
+                onClose={() => setViewerIndex(null)}
+                onNavigate={setViewerIndex}
+            />
             <div className={isDesktop?"":"hidden"}>
                 <Dialog open={dialogueOpen} onOpenChange={setDialogueOpen}>
-                    <DialogTrigger asChild className={`fixed bottom-20 sm:bottom-7 right-4 sm:right-6 px-3 p-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-3xl font-bold text-white tracking-widest transform hover:scale-105 transition-colors duration-200`}>
+                    <DialogTrigger asChild className="fixed bottom-20 sm:bottom-7 right-4 sm:right-6 flex h-14 w-14 items-center justify-center rounded-full bg-[hsl(var(--seal))] text-[hsl(var(--seal-foreground))] shadow-lg transition-transform hover:scale-105">
                         <Link href="#">
                             <IconPencil/>
                         </Link>
                     </DialogTrigger>
                     <DialogContent className="h-7/12 max-w-[80vw]" aria-describedby="content">
                         <DialogHeader>
-                            <DialogTitle className="mb-3">Edit Log</DialogTitle>
+                            <DialogTitle className="mb-3 font-serif-display italic">Edit Log</DialogTitle>
                             <EditLog
                                 day={day}
                                 trip_name={trip_name}
@@ -210,14 +215,14 @@ function DaysContent() {
             </div>
             <div className={isDesktop?"hidden":""}>
                 <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
-                    <DrawerTrigger asChild className={`fixed bottom-20 sm:bottom-7 right-4 sm:right-6 px-3 p-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-3xl font-bold text-white tracking-widest transform hover:scale-105 transition-colors duration-200`}>
+                    <DrawerTrigger asChild className="fixed bottom-20 sm:bottom-7 right-4 sm:right-6 flex h-14 w-14 items-center justify-center rounded-full bg-[hsl(var(--seal))] text-[hsl(var(--seal-foreground))] shadow-lg transition-transform hover:scale-105">
                         <Link href="#">
                             <IconPencil/>
                         </Link>
                     </DrawerTrigger>
                     <DrawerContent className="h-full w-full">
                         <DrawerHeader>
-                            <DrawerTitle >Edit Log</DrawerTitle>
+                            <DrawerTitle className="font-serif-display italic">Edit Log</DrawerTitle>
                             <EditLog
                                 day={day}
                                 trip_name={trip_name}

@@ -50,14 +50,13 @@ export default function Trips() {
     
     <div className="h-screen w-screen">
         <EmptyState
-          emoji="😴"
-          title="No Trips yet..."
+          title="No trips recorded yet."
           actionText="Add Trip"
           actionHref="/add_trip"
           className={trips.length !== 0 ? "hidden" : ""}
         />
         <BlurFade delay={0.25} inView className={`${trips.length!==0?"":"hidden"} h-screen`}>
-            <div className="flex flex-wrap justify-center h-screen pb-24 sm:pb-0">
+            <div className="flex flex-wrap justify-center h-screen overflow-y-auto pb-24 sm:pb-0">
               {trips.map((trip, index) => (
                 <TripCard
                   key={index}
