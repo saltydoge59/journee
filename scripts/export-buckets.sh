@@ -33,9 +33,14 @@ walk() {
     if [ "$id" = "null" ]; then
       walk "$bucket" "$path"
     else
+      # Keys contain spaces and "&" (trip names are path segments), so percent-encode —
+      # but per segment, leaving "/" separators intact.
+      local encoded
+      encoded=$(jq -rn --arg p "$path" '$p | split("/") | map(@uri) | join("/")')
+
       mkdir -p "$OUT/$bucket/$(dirname "$path")"
       curl -sS --fail-with-body "${auth[@]}" \
-        "$URL/storage/v1/object/$bucket/$path" -o "$OUT/$bucket/$path"
+        "$URL/storage/v1/object/$bucket$encoded" -o "$OUT/$bucket/$path"
       echo "  $bucket/$path"
     fi
   done
