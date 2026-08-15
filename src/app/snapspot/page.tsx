@@ -3,13 +3,13 @@
 import { Map } from "@/components/map";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@clerk/nextjs"
-import { getAllLogs, getPhotos, getTrips } from "../../../utils/supabaseRequest";
+import { getAllLogs, getPhotos, getTrips } from "../../../utils/api";
 import { useState, useEffect } from "react";
 import MinimumDistanceSlider from "@/components/ui/slider";
 
 
 function MyPage() {
-    const { userId, getToken } = useAuth();
+    const { userId } = useAuth();
     const [trips, setTrips] = useState<{ trip_name:string;image_url:string,start_date:string,end_date:string}[]>([]);
     const [selectedTrip, setSelectedTrip] = useState("");
     const[startDay, setStartDay] = useState(1);
@@ -22,19 +22,13 @@ function MyPage() {
     const retrieveTrips = async ()=>{
         if(!userId) return;
         try{
-            const token = await getToken({ template: "supabase" }) || "";
-            if(userId){
-                const trips = await getTrips({userId,token});
-                if (trips) {
-                    setTrips(trips);
-                    console.log(trips);
-                    
-                } else {
-                console.error("No trips found.");
-                }
-            }
-            else{
-                console.error("User ID or token missing.")
+            const trips = await getTrips();
+            if (trips) {
+                setTrips(trips);
+                console.log(trips);
+
+            } else {
+            console.error("No trips found.");
             }
         }
         catch(error){
@@ -45,15 +39,9 @@ function MyPage() {
     const retrievePhotos = async () =>{
         if(!userId || !selectedTrip) return;
         try{
-            const token = await getToken({ template: "supabase" }) || "";
-            if(userId){
-                const photoInfo = await getPhotos({userId,token,trip_name:selectedTrip,start_day:selectedStart,end_day:selectedEnd})||[];
-                setPins(photoInfo);
-                console.log(photoInfo);
-            }
-            else{
-                console.error("User ID or token missing.")
-            }
+            const photoInfo = await getPhotos({trip_name:selectedTrip,start_day:selectedStart,end_day:selectedEnd})||[];
+            setPins(photoInfo);
+            console.log(photoInfo);
         }
         catch(error){
             console.error('Failed to retrieve photos.', error )
@@ -63,16 +51,10 @@ function MyPage() {
     const retrieveDays = async()=>{
         if(!userId || !selectedTrip) return;
         try{
-            const token = await getToken({ template: "supabase" }) || "";
-            if(userId){
-                const logs = await getAllLogs({userId,token,trip_name:selectedTrip})||[];
-                console.log(logs)
-                setStartDay(logs[0].day);
-                setEndDay(logs[logs.length -1].day);
-            }
-            else{
-                console.error("User ID missing.")
-            }
+            const logs = await getAllLogs({trip_name:selectedTrip})||[];
+            console.log(logs)
+            setStartDay(logs[0].day);
+            setEndDay(logs[logs.length -1].day);
         }
         catch(error){
             console.error('Failed to retrieve selected trip logs.', error )

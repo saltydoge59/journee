@@ -36,7 +36,6 @@
     "@radix-ui/react-toast": "^1.2.3",
     "@radix-ui/react-visually-hidden": "^1.1.1",
     "@react-google-maps/api": "^2.20.3",
-    "@supabase/supabase-js": "^2.47.2",
     "@tabler/core": "^1.1.1",
     "@tabler/icons-react": "^3.26.0",
     "@tiptap/extension-color": "^2.10.3",

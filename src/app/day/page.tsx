@@ -11,14 +11,14 @@ import { Button } from "@/components/ui/button"
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger, } from "@/components/ui/drawer"
 import * as React from "react";
 import { useAuth } from "@clerk/nextjs";
-import { deletePhotos, editLog, getLog,getPhotos } from "../../../utils/supabaseRequest"
+import { deletePhotos, editLog, getLog,getPhotos } from "../../../utils/api"
 import { useToast } from "@/hooks/use-toast";
 import EditLog from "./editlog";
 import RingLoader from "react-spinners/ClipLoader";
 import EmptyState from "@/components/EmptyState";
 
 function DaysContent() {
-    const { userId, getToken } = useAuth();
+    const { userId } = useAuth();
     const searchParams = useSearchParams();
     const trip_name = searchParams.get('trip')||"";
     const datestring = searchParams.get('day') || ""; //rmb to convert to timestamptz
@@ -45,10 +45,9 @@ function DaysContent() {
     };
 
     const fetchLog = useCallback(async()=> {
-        const token = await getToken({ template: "supabase" });
-        if(!userId || !token) return;
+        if(!userId) return;
         try{
-            const res = await getLog({userId,token,day,trip_name})||{entry:"",title:"",location:""};
+            const res = await getLog({day,trip_name})||{entry:"",title:"",location:""};
             setLog({ ... res});
             setLogPresent(true);
             if(res.entry==null || res.title==null){
@@ -59,13 +58,12 @@ function DaysContent() {
         catch (error){
             console.error("Error fetching log from page.")
         }
-    },[getToken, userId, day, trip_name]);
+    },[userId, day, trip_name]);
 
     const fetchPhotos = useCallback(async()=>{
         try{
-            const token = await getToken({ template: "supabase" });
-            if(userId && token){
-                const photoInfo = await getPhotos({token,userId,trip_name,start_day:day,end_day:-1})||[];
+            if(userId){
+                const photoInfo = await getPhotos({trip_name,start_day:day,end_day:-1})||[];
                 console.log(photoInfo);
                 let photos:string[] = [];
                 for(let p of photoInfo){
@@ -78,7 +76,7 @@ function DaysContent() {
         catch(error){
             console.error("Error fetching photos:", error);
         }
-    },[getToken, userId, trip_name, day, deleteOpen]);
+    },[userId, trip_name, day, deleteOpen]);
 
     useEffect(()=>{
         fetchLog();
@@ -90,16 +88,15 @@ function DaysContent() {
         async (entry: string, loc:string, title: string) => {
           console.log("submitted");
           try {
-            const token = await getToken({ template: "supabase" });
-            if(token){
-                await editLog({ userId, token, trip_name, day, entry, title, loc});
+            if(userId){
+                await editLog({ trip_name, day, entry, title, loc});
                 await fetchLog();
                 await fetchPhotos();
                 toast({ duration: 2000, title: "Log edited successfully! Redirecting...",action:<RingLoader loading={true} color={'green'}/> });
                 setTimeout(() => {
                 setDrawerOpen(false);
                 setDialogueOpen(false);
-                }, 2000); 
+                }, 2000);
             }
 
           } catch (error) {
@@ -107,25 +104,18 @@ function DaysContent() {
             toast({ variant: "destructive", title: "Failed to edit log. Try again." });
           }
         },
-        [userId, getToken, trip_name, day, fetchLog, fetchPhotos]
+        [userId, trip_name, day, fetchLog, fetchPhotos]
       );
 
     async function deleteImage(imageURL:string,idx:number) {
         // console.log(imageURL);
         try{
-            const token = await getToken({ template: "supabase" });
-            if(token && userId){
-                const error = await deletePhotos({userId,token,trip_name,day,imageURL});
-                if(error){
-                    console.error("Error in deleting photo.",error);
-                    toast({ variant: "destructive", title: "Failed to delete photo. Try again." });
-                }
-                else{
-                    console.log("Photo deleted")
-                    toast({ duration: 2000, title: "Photo deleted successfully!" });
-                    handleDialogOpen(idx, false);
-                    fetchPhotos();
-                }
+            if(userId){
+                await deletePhotos({trip_name,day,imageURL});
+                console.log("Photo deleted")
+                toast({ duration: 2000, title: "Photo deleted successfully!" });
+                handleDialogOpen(idx, false);
+                fetchPhotos();
             }
         }
         catch(error){

@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { createRoot } from "react-dom/client";
-import { updateLatLong } from "../../utils/supabaseRequest";
+import { updateLatLong, getCoords } from "../../utils/api";
 import { useAuth } from "@clerk/nextjs";
 import { useToast } from "@/hooks/use-toast";
 import { useLoadScript } from "@react-google-maps/api";
@@ -22,7 +22,6 @@ import {
   GeoapifyGeocoderAutocomplete,
 } from "@geoapify/react-geocoder-autocomplete";
 import "./round-borders.dark.css";
-import getCoords from "@/app/snapspot/gemini";
 
 interface Pin {
   day: number;
@@ -39,7 +38,7 @@ interface MapProps {
 
 export function Map({ pins, trip_name }: MapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
-  const { userId, getToken } = useAuth();
+  const { userId } = useAuth();
   const { toast } = useToast();
   const geoapify_key = process.env.NEXT_PUBLIC_GEOAPIFY_API_KEY || "";
 
@@ -84,31 +83,20 @@ export function Map({ pins, trip_name }: MapProps) {
               console.log(coords);
               const lat = coords.coordinates[0];
               const long = coords.coordinates[1];
-              const token = (await getToken({ template: "supabase" })) || "";
               if (userId) {
-                const error = await updateLatLong({
-                  userId,
-                  token,
+                await updateLatLong({
                   trip_name,
                   imageURL: pin.imageURL,
                   lat,
                   long,
                   area: location,
                 });
-                if (error) {
-                  console.error("Failed to update coordinates.");
-                  toast({
-                    variant: "destructive",
-                    title: "Failed to update. Please try again.",
-                  });
-                } else {
-                  setDialogOpen(false);
-                  console.log("Coordinates updated successfully!");
-                  toast({
-                    duration: 1000,
-                    title: "Location updated successfully!",
-                  });
-                }
+                setDialogOpen(false);
+                console.log("Coordinates updated successfully!");
+                toast({
+                  duration: 1000,
+                  title: "Location updated successfully!",
+                });
                 setTimeout(() => {
                   window.location.reload();
                 }, 1000);

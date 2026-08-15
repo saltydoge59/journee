@@ -4,13 +4,11 @@ import { Button } from "@/components/ui/button";
 import Tiptap from "@/components/Tiptap";
 import { useState } from "react";
 import { useAuth } from "@clerk/nextjs";
-import { insertPhotos, uploadPhotosToSupabase } from "../../../utils/supabaseRequest";
+import { insertPhotos, uploadPhotosToSupabase, getPhotoLocation, editLog } from "../../../utils/api";
 import { useToast } from "@/hooks/use-toast";
 import RingLoader from "react-spinners/ClipLoader";
 import { FileUpload } from "@/components/ui/file-upload";
-import getLocation from "./gemini";
 import { useAutosave } from 'react-autosave';
-import { editLog } from "../../../utils/supabaseRequest";
 import debounce from "lodash.debounce";
 
 
@@ -36,7 +34,7 @@ const EditLog = ({
   const [titleValue, setTitleValue] = useState(title);
   const [locValue, setLocValue] = useState(loc);
   const [entryContent, setEntryContent] = useState(logContent);
-  const { userId, getToken } = useAuth();
+  const { userId } = useAuth();
   const { toast } = useToast();
   const [saveDisabled,setSaveDisabled] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
@@ -44,10 +42,9 @@ const EditLog = ({
 
   const autosaveLog = async () => {
     setSavingStatus("Saving...");
-    const token = await getToken({ template: "supabase" });
-    if(!userId || !token) return;
+    if(!userId) return;
     try {
-      await editLog({ userId, token, trip_name, day, entry:entryContent, title, loc});
+      await editLog({ trip_name, day, entry:entryContent, title, loc});
     }catch (error) {
       console.error("Error in updating log:", error);
       setSavingStatus("Error");
@@ -61,8 +58,7 @@ const EditLog = ({
 
   const uploadFiles = async ()=>{
     setSaveDisabled(true);
-    const token = await getToken({ template: "supabase" }) || "";
-    if(!userId || !token) return;
+    if(!userId) return;
     let count=1;
     for(let f of files){
       toast({duration:Infinity,
@@ -71,18 +67,18 @@ const EditLog = ({
       })
       try{
         console.log("Invoking Gemini API...");
-        const result = await getLocation(f,locValue);          
+        const result = await getPhotoLocation(f,locValue);
         const lat = result.coordinates[0];
         const long = result.coordinates[1];
         const area = result.area;
         console.log("Gemini result:",result);
 
-        console.log("Uploading to Supabase blob...");
-        let imageURL = await uploadPhotosToSupabase(token, userId, day, trip_name, f, "photos");
-        console.log("Supabase blob result:",imageURL);
+        console.log("Uploading to R2...");
+        let imageURL = await uploadPhotosToSupabase(day, trip_name, f, "photos");
+        console.log("R2 upload result:",imageURL);
 
         console.log("Inserting photo data into database...");
-        const error = await insertPhotos({userId,token,trip_name,day,imageURL,lat,long,area});
+        await insertPhotos({trip_name,day,imageURL,lat,long,area});
         count++;
       }
       catch(error){
