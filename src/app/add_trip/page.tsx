@@ -73,7 +73,7 @@ export default function AddTrip() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       const token = await getToken({ template: "supabase" });
-      let imageURL = 'https://uurvbdxwneflwgawanud.supabase.co/storage/v1/object/public/backgrounds/default.webp';
+      let imageURL = 'https://pub-d8966727b726431389106312061035a7.r2.dev/backgrounds/default.webp';
 
       if (userId && token) {
         if (selectedFiles.length > 0) {
