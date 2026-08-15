@@ -1,8 +1,8 @@
 "use client"
 
-import { useAuth, useUser } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
-import { getTrips, insertUser } from "../../../utils/supabaseRequest";
+import { getTrips, insertUser } from "../../../utils/api";
 import BlurFade from "@/components/ui/blur-fade";
 import { useToast } from "@/hooks/use-toast";
 import RingLoader from "react-spinners/ClipLoader";
@@ -13,7 +13,6 @@ import FloatingActionButton from "@/components/FloatingActionButton";
 
 export default function Trips() {
     const { toast } = useToast();
-    const { userId, getToken } = useAuth(); // Destructure userId and getToken from useAuth
     const { user } = useUser(); // Destructure user object from useUser to access user details
     const username = user?.username;
     const [trips, setTrips] = useState<{ trip_name:string;image_url:string,start_date:string,end_date:string}[]>([]);
@@ -21,17 +20,11 @@ export default function Trips() {
     useEffect(() => {
         const initializeUserAndFetchTrips = async () => {
           try {
-            const token = await getToken({ template: "supabase" }); // Fetch the token
-            if(!userId || !token) return;
               if (username) {
-                const error = await insertUser({ userId, token, username }); // Insert user
-                if (error) {
-                  console.error("Error inserting user:", error);
-                  return; // Exit if user insertion fails
-                }
+                await insertUser({ username }); // Insert user
                 console.log("User inserted successfully");
               }
-              const trips = await getTrips({ userId, token }); // Fetch trips
+              const trips = await getTrips(); // Fetch trips
               if (trips) {
                 setTrips(trips);
                 console.log(trips);
@@ -42,9 +35,9 @@ export default function Trips() {
             console.error("Error during initialization:", error);
           }
         };
-      
+
         initializeUserAndFetchTrips();
-      }, [userId, getToken, username]); // Dependencies
+      }, [username]); // Dependencies
       
     function handleClick(){
       toast({

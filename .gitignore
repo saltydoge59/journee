@@ -41,3 +41,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# migration backups (data — never commit)
+/backup/
+migrations/0002_import.sql
+
+# cloudflare
+.dev.vars
+.open-next/
+.wrangler/

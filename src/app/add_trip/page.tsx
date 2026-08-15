@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DateRange } from "react-day-picker";
 import { DatePickerWithRange } from "@/components/daterange/date-picker-with-range";
-import { createTrip, uploadBackgroundToSupabase } from "../../../utils/supabaseRequest";
+import { createTrip, uploadBackground } from "../../../utils/api";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
@@ -42,7 +42,7 @@ const formSchema = z.object({
 
 export default function AddTrip() {
   const { toast } = useToast();
-  const { userId, getToken } = useAuth();
+  const { userId } = useAuth();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -72,23 +72,20 @@ export default function AddTrip() {
   // Define a submit handler
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const token = await getToken({ template: "supabase" });
-      let imageURL = 'https://uurvbdxwneflwgawanud.supabase.co/storage/v1/object/public/backgrounds/default.webp';
+      let imageURL = 'https://pub-d8966727b726431389106312061035a7.r2.dev/backgrounds/default.webp';
 
-      if (userId && token) {
+      if (userId) {
         if (selectedFiles.length > 0) {
-          imageURL = await uploadBackgroundToSupabase(token, userId, selectedFiles[0], "backgrounds");
+          imageURL = await uploadBackground(selectedFiles[0], "backgrounds");
         }
 
-        const error = await createTrip({
-          userId,
-          token,
+        const result = await createTrip({
           trip_name: values.trip_name,
           daterange: values.date_range,
           image_url: imageURL,
         });
 
-        if (error) {
+        if (result?.message) {
           form.setError("trip_name", { message: "Failed to create trip. Try again." });
           toast({
             variant:"destructive",
@@ -105,7 +102,7 @@ export default function AddTrip() {
           }, 2000);
         }
       } else {
-        console.error("User ID or token is missing.");
+        console.error("User ID is missing.");
       }
     } catch (error) {
       console.error("Unexpected error:", error);

@@ -4,7 +4,7 @@ import BlurFade from "@/components/ui/blur-fade";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs"
-import { deleteTrip, getAllLogs, updateTrip, uploadBackgroundToSupabase } from "../../../utils/supabaseRequest";
+import { deleteTrip, getAllLogs, updateTrip, uploadBackground } from "../../../utils/api";
 import { Button } from "@/components/ui/button";
 import { IconDots, IconDotsCircleHorizontal, IconDotsVertical, IconPencil, IconTrash } from "@tabler/icons-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -45,19 +45,18 @@ function DatesContent() {
     temp_date.setDate(temp_date.getDate() + 1);
   }
 
-  const { userId, getToken } = useAuth();
+  const { userId } = useAuth();
   const [logs, setLogs] = useState<{entry:any,title:any, day:any}[]>([])
   useEffect(()=>{
     const fetchLog = async () => {
         try{
-            const token = await getToken({ template: "supabase" });
-            if(userId && token){
-                const res = await getAllLogs({userId,token,trip_name})||[];
+            if(userId){
+                const res = await getAllLogs({trip_name})||[];
                 setLogs(res);
                 console.log(res);
             }
             else{
-                console.error("User ID or token is missing.")
+                console.error("User ID is missing.")
             }
         }
         catch (error){
@@ -65,7 +64,7 @@ function DatesContent() {
         }
     };
     fetchLog();
-},[getToken, userId, trip_name])
+},[userId, trip_name])
 
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false)
@@ -80,68 +79,40 @@ function DatesContent() {
 
   async function onSubmit(){
     try{
-      const token = await getToken({ template: "supabase" });
-      if (userId && token) {
+      if (userId) {
         if (selectedFile.length > 0) {
-          const imageURL = await uploadBackgroundToSupabase(token, userId, selectedFile[0], "backgrounds");
-          const error = await updateTrip({
-            userId,
-            token,
-            trip_name,
-            imageURL
-          });
-          if(error){
-            console.error("Error updating URL in database.",error);
-            toast({
-              variant:"destructive",
-              title:"Failed to update cover photo. Try again."
-            })
-          }
-          else{
-            console.log("Cover photo updated.")
-            toast({
-              duration:2000,
-              title:"Cover photo updated successfully!",
-            })}
-            setEditOpen(false);
+          const imageURL = await uploadBackground(selectedFile[0], "backgrounds");
+          await updateTrip({ trip_name, imageURL });
+          console.log("Cover photo updated.")
+          toast({
+            duration:2000,
+            title:"Cover photo updated successfully!",
+          })
+          setEditOpen(false);
         }
       }
     }
   catch(error){
-    console.error("Could not upload to supabase");
+    console.error("Error updating cover photo.", error);
     toast({
       variant:"destructive",
-      title:"Database error. Please try again."})
+      title:"Failed to update cover photo. Try again."})
     }
   }
 
   async function removeTrip(){
     try{
-      const token = await getToken({ template: "supabase" });
-      if(userId && token){
-        const error = await deleteTrip({
-        userId,
-        token,
-        trip_name
+      if(userId){
+        await deleteTrip({ trip_name })
+        console.log("Trip deleted successfully!")
+        toast({
+          duration:2000,
+          title:"Trip deleted successfully! Redirecting...",
+          action:<RingLoader loading={true} color={'green'}/>
         })
-        if(error){
-          console.error("Error from supabase:",error);
-          toast({
-            variant:"destructive",
-            title:"Failed to delete trip. Try again."
-          })
-        }
-        else{
-          console.log("Trip deleted successfully!")
-          toast({
-            duration:2000,
-            title:"Trip deleted successfully! Redirecting...",
-            action:<RingLoader loading={true} color={'green'}/>
-          })
-          setTimeout(()=>{
-            router.push("/trips")
-          },2000)
-        }
+        setTimeout(()=>{
+          router.push("/trips")
+        },2000)
       }
 
     }
