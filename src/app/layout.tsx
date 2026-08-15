@@ -39,6 +39,7 @@ export default function RootLayout({
       <html lang="en">
         <head>
           <title>Journee</title>
+          <link rel="manifest" href="/manifest.webmanifest" />
         </head>
         <body
           className={`${serif.variable} ${entryVoice.variable} ${monoLabel.variable} font-serif-display antialiased`}
@@ -66,10 +67,14 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
         >
-          <SignedIn>
-            <Navbar/>
-          </SignedIn>
-            {children}
+          <div className="flex h-screen w-screen flex-col overflow-hidden">
+            <SignedIn>
+              <Navbar/>
+            </SignedIn>
+            <div className="min-h-0 flex-1 overflow-y-auto pb-[60px] sm:pb-0">
+              {children}
+            </div>
+          </div>
             <Toaster/>
         </ThemeProvider>
         </body>

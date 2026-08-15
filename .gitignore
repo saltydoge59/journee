@@ -50,3 +50,14 @@ migrations/0002_import.sql
 .dev.vars
 .open-next/
 .wrangler/
+
+# android (TWA wrapper) — keystore is a secret, build output is regenerable
+/android/*.keystore
+/android/local.properties
+/android/.gradle/
+/android/build/
+/android/app/build/
+/android/.cxx/
+
+# serena MCP tool state (local, not project config)
+/.serena/

@@ -48,15 +48,15 @@ export default function Trips() {
 
     return (
     
-    <div className="h-screen w-screen">
+    <div className="h-full w-full">
         <EmptyState
           title="No trips recorded yet."
           actionText="Add Trip"
           actionHref="/add_trip"
           className={trips.length !== 0 ? "hidden" : ""}
         />
-        <BlurFade delay={0.25} inView className={`${trips.length!==0?"":"hidden"} h-screen`}>
-            <div className="flex flex-wrap justify-center h-screen overflow-y-auto pb-24 sm:pb-0">
+        <BlurFade delay={0.25} inView className={`${trips.length!==0?"":"hidden"} h-full`}>
+            <div className="flex h-full flex-wrap content-start justify-center">
               {trips.map((trip, index) => (
                 <TripCard
                   key={index}
@@ -71,6 +71,7 @@ export default function Trips() {
                   }}
                 />
               ))}
+              <div className="h-[70px] w-full shrink-0 sm:hidden" />
             </div>
         </BlurFade>
         <FloatingActionButton

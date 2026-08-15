@@ -5,17 +5,20 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/), and this
 project adheres to [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.3.0] - 2026-08-15
+### Added
+- Photo lightbox viewer on the day detail page: click any photo to view it full-screen with keyboard/click prev-next navigation.
+- Per-photo upload status (uploading/done/error) shown inline during photo mounting.
+- `npm run dev` script restored for fast UI-only iteration (see CLAUDE.md for when to use it vs. `npm run preview`).
+- Web app manifest (`public/manifest.webmanifest`) and app icons, enabling the site to be installed as a standalone app.
+- Android app distribution via Trusted Web Activity wrapper (sideloaded APK, not on Play Store) — see `android/README.md` to rebuild.
+
 ### Changed
 - Redesigned the app's visual identity to a "Field Almanac" theme: aged-paper palette, ink-glyph day states, ruled ledger day grid, specimen-mounted photo styling, and a serif/typewriter/mono type system replacing the previous shadcn defaults and indigo-purple gradient accents. Applied consistently across trips, dates, day detail, editor, navbar, landing, and Clerk sign-in/sign-up.
 - Reworked the day-editing flow so title, location, entry text, and photo uploads all autosave — removed the separate manual "Upload" and "Save Changes" buttons in favor of a single "Done" action.
 - Replaced the bare file `<input>` cover-photo pickers (add trip, edit trip cover) with a themed drag-and-drop picker that shows a live thumbnail preview.
 - Fixed the mobile trips list being clipped behind the bottom navigation bar.
-
-### Added
-- Photo lightbox viewer on the day detail page: click any photo to view it full-screen with keyboard/click prev-next navigation.
-- Per-photo upload status (uploading/done/error) shown inline during photo mounting.
-- `npm run dev` script restored for fast UI-only iteration (see CLAUDE.md for when to use it vs. `npm run preview`).
+- Fixed horizontal overflow/scrollbar on trips, dates, and day pages caused by `w-screen`/`h-screen` ignoring scrollbar width — switched to `w-full`/`h-full` within a flex layout instead.
 
 ## [0.2.0] - 2026-08-15
 ### Changed

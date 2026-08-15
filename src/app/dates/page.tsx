@@ -123,8 +123,8 @@ function DatesContent() {
   }
 
   return (
-    <div className="w-screen h-screen">
-      <BlurFade inView delay={0.25} className="w-screen h-screen">
+    <div className="w-full">
+      <BlurFade inView delay={0.25} className="w-full">
         <PageHeader
           title={trip_name}
           subtitle={`${start_date.toLocaleDateString("en-us", {

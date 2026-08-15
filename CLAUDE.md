@@ -49,6 +49,7 @@ No test framework is configured yet. Don't invent test infra unless asked.
 - `utils/api.ts` — client-side fetch wrappers calling `src/app/api/`
 - `migrations/` — D1 schema (SQL)
 - `scripts/` — one-off Supabase→Cloudflare migration tooling (historical, not part of the app runtime)
+- `android/` — Trusted Web Activity wrapper that packages the deployed site as a sideloaded Android APK; see `android/README.md` to rebuild
 
 ## Versioning & Changelog
 
@@ -57,12 +58,15 @@ This project follows [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PAT
 - **MINOR** — backward-compatible feature
 - **PATCH** — backward-compatible fix
 
-Every user-facing change (feature, fix, or breaking change) gets an entry in
-`CHANGELOG.md` under `[Unreleased]`, in [Keep a Changelog](https://keepachangelog.com/)
-format (`Added`/`Changed`/`Fixed`/`Removed`). Add the changelog entry in the
-same commit as the change — don't batch it later from memory.
+There is no `[Unreleased]` section — a push to production **is** the release.
+Every user-facing change (feature, fix, or breaking change) gets bumped and
+changelogged in the same commit as the change, in [Keep a Changelog](https://keepachangelog.com/)
+format (`Added`/`Changed`/`Fixed`/`Removed`):
 
-When cutting a release:
-1. Move the `[Unreleased]` entries under a new `## [x.y.z] - YYYY-MM-DD` heading in `CHANGELOG.md`
-2. Run `npm version patch|minor|major` — bumps `package.json`/`package-lock.json` and creates a git tag in one step
+1. Run `npm version patch|minor|major --no-git-tag-version` — bumps `package.json`/`package-lock.json` without tagging yet
+2. Add a new `## [x.y.z] - YYYY-MM-DD` heading at the top of `CHANGELOG.md` (today's date) describing the change
+3. Commit `package.json`, `package-lock.json`, `CHANGELOG.md`, and the change together, then tag (`git tag vX.Y.Z`)
+
+Don't batch multiple unrelated changes into one version bump, and don't write
+the changelog entry later from memory — do it as part of the same commit.
 3. Commit `package.json`, `package-lock.json`, and `CHANGELOG.md` together

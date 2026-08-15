@@ -117,7 +117,7 @@ function DaysContent() {
     }
 
     return(
-        <div className="min-h-screen w-screen pb-24">
+        <div className="w-full">
             <BlurFade delay={0.25} inView>
                 <div className="mx-auto max-w-2xl px-4 pt-6 sm:px-6" style={{minHeight:"calc(100vh - 90px)"}}>
                     <button className="font-mono-label flex flex-row items-center gap-1 text-xs uppercase text-muted-foreground hover:text-foreground" onClick={handleBackClick}>
