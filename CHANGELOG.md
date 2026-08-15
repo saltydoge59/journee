@@ -5,7 +5,7 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/), and this
 project adheres to [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.2.0] - 2026-08-15
 ### Changed
 - Geolocation API (`/api/geo`) now runs on Cloudflare Workers AI instead of the Google Gemini API
 
