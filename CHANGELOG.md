@@ -6,6 +6,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/), and this
 project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
+### Changed
+- Geolocation API (`/api/geo`) now runs on Cloudflare Workers AI instead of the Google Gemini API
+
+### Removed
+- Google Gemini API dependency (`@google/generative-ai`, `NEXT_PUBLIC_Gemini_API`)
 
 ## [0.1.0] - 2026-08-15
 ### Added

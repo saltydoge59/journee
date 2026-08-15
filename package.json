@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "build": "next build",
     "lint": "next lint",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview -- --port 8788",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview --remote -- --port 8788",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"
   },
   "dependencies": {
@@ -16,7 +17,6 @@
     "@emotion/styled": "^11.14.0",
     "@geoapify/geocoder-autocomplete": "^2.1.0",
     "@geoapify/react-geocoder-autocomplete": "^2.0.1",
-    "@google/generative-ai": "^0.21.0",
     "@googlemaps/js-api-loader": "^1.16.8",
     "@googlemaps/react-wrapper": "^1.1.42",
     "@hookform/resolvers": "^3.9.1",

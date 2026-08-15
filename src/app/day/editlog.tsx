@@ -66,12 +66,12 @@ const EditLog = ({
         action:<RingLoader loading={true} color={'green'}/>
       })
       try{
-        console.log("Invoking Gemini API...");
+        console.log("Invoking geolocation API...");
         const result = await getPhotoLocation(f,locValue);
         const lat = result.coordinates[0];
         const long = result.coordinates[1];
         const area = result.area;
-        console.log("Gemini result:",result);
+        console.log("Geolocation result:",result);
 
         console.log("Uploading to R2...");
         let imageURL = await uploadPhotos(day, trip_name, f, "photos");

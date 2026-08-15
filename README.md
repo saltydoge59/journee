@@ -43,7 +43,7 @@ Journee leverages modern web development frameworks and APIs to provide a seamle
 Planty integrates several external APIs to provide enhanced functionality:
 
 -   **Google Maps API:** [Google Maps API Documentation](https://developers.google.com/maps/documentation/places/web-service) for a dynamic map display.
--   **Gemini Developer API:** [Gemini API Documentation](https://ai.google.dev/) for advanced AI features used to generate location coordinates of uploaded photos.
+-   **Cloudflare Workers AI:** [Workers AI Documentation](https://developers.cloudflare.com/workers-ai/) for the text and vision models used to generate location coordinates of uploaded photos.
 
 ## 🏷️ Versioning
 

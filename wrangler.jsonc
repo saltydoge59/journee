@@ -7,19 +7,37 @@
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS",
-    "run_worker_first": true
+    "run_worker_first": true,
   },
   "d1_databases": [
     {
       "binding": "DB",
       "database_name": "journee",
-      "database_id": "180ca2c1-d932-4768-b5b4-a9bd07af60df"
-    }
+      "database_id": "180ca2c1-d932-4768-b5b4-a9bd07af60df",
+    },
   ],
   "r2_buckets": [
     {
       "binding": "MEDIA",
-      "bucket_name": "journee-media"
-    }
-  ]
+      "bucket_name": "journee-media",
+    },
+  ],
+  "ai": {
+    "binding": "AI",
+  },
+  "observability": {
+    "enabled": false,
+    "head_sampling_rate": 1,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "persist": true,
+      "invocation_logs": true,
+    },
+    "traces": {
+      "enabled": false,
+      "persist": true,
+      "head_sampling_rate": 1,
+    },
+  },
 }

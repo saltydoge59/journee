@@ -1,13 +1,24 @@
 import { auth } from "@clerk/nextjs/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 
+// Llama models often wrap JSON in prose ("Sure, here's the location: {...}") despite
+// instructions not to, unlike Gemini. Pull out the first {...} object rather than
+// assuming the whole response is JSON.
 function cleanJson(text: string) {
-  return text
-    .replace(/```json\s*/i, "")
-    .replace(/```$/, "")
-    .trim()
-    .replace(/\r?\n|\r/g, "");
+  const match = text.match(/\{[\s\S]*\}/);
+  return (match ? match[0] : text).trim();
+}
+
+// Workers AI text/vision models can return a plain string, or an object whose `response`
+// is either a string (parse as JSON below) or already a parsed JSON object/array (use as-is).
+function extractResponseJson(result: unknown): unknown {
+  const response = typeof result === "string" ? result
+    : result && typeof result === "object" && "response" in result ? result.response
+    : undefined;
+
+  if (typeof response === "string") return JSON.parse(cleanJson(response));
+  if (response && typeof response === "object") return response;
+  throw new Error("Unexpected Workers AI response shape");
 }
 
 // mode "photo": locate a place from an uploaded image + location hint (day/editlog.tsx)
@@ -17,18 +28,19 @@ export async function POST(req: Request) {
   if (!userId) return new Response("Unauthorized", { status: 401 });
 
   const { env } = await getCloudflareContext({ async: true });
-  const genAI = new GoogleGenerativeAI(env.NEXT_PUBLIC_Gemini_API);
 
   const form = await req.formData();
   const mode = form.get("mode") as string | null;
 
   if (mode === "text") {
     const location = form.get("location") as string;
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    const prompt = `Give me the lattitude and longitude of ${location}. Provide the most accurate coordinates possible. Structure the response in the following format:{"coordinates":[lattitude,longitude]}.Do not include backticks in the result nor the json opening.`;
+    const prompt = `Give me the lattitude and longitude of ${location}. Provide the most accurate coordinates possible. Respond with ONLY a JSON object in the format {"coordinates":[lattitude,longitude]}. No other text.`;
     try {
-      const result = await model.generateContent([prompt]);
-      return Response.json(JSON.parse(cleanJson(result.response.text())));
+      const result = await env.AI.run("@cf/meta/llama-3.3-70b-instruct-fp8-fast", {
+        messages: [{ role: "user", content: prompt }],
+        response_format: { type: "json_object" },
+      });
+      return Response.json(extractResponseJson(result));
     } catch (error) {
       console.error("Error generating content:", error);
       return new Response("Failed to process the location data.", { status: 500 });
@@ -38,22 +50,21 @@ export async function POST(req: Request) {
   if (mode === "photo") {
     const location = form.get("location") as string;
     const photo = form.get("photo") as File;
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
     const imageBytes = await photo.arrayBuffer();
-    const base64Image = Buffer.from(imageBytes).toString("base64");
+    const image = [...new Uint8Array(imageBytes)];
     const prompt = `This is an image of somewhere in ${location}.
     Use any landmarks, signs, languages, mountain ranges or hints in each image to tell me where this photo is likely to be taken.
     You may use any metadata that the photo provides as well.
     Give me the name of the area which is easily understandable, and also the lattitude and longitude of the area.
     Provide the most accurate coordinates possible.
-    Structure the response in the following format:{"area":string,"coordinates":[lattitude,longitude]}.
-    DO NOT have any other responses in the reply.`;
+    Respond with ONLY a JSON object in the format {"area":string,"coordinates":[lattitude,longitude]}.
+    Do not include any other text, explanation, or commentary in the reply.`;
     try {
-      const result = await model.generateContent([
+      const result = await env.AI.run("@cf/meta/llama-3.2-11b-vision-instruct", {
         prompt,
-        { inlineData: { data: base64Image, mimeType: photo.type } },
-      ]);
-      return Response.json(JSON.parse(cleanJson(result.response.text())));
+        image,
+      });
+      return Response.json(extractResponseJson(result));
     } catch (error) {
       console.error("Error generating content:", error);
       return new Response("Failed to process the location data.", { status: 500 });
