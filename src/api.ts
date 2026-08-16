@@ -53,22 +53,15 @@ export const deleteTrip = async ({ trip_name }: { trip_name: string }) => {
   return json(res);
 };
 
-// trip_name is base64url-encoded in the query string: OpenNext/Next's fetch-cache
-// key derivation re-parses GET route handler URLs, splitting raw "&"/" " in the
-// value as if they were query delimiters. Base64url has no such characters.
-const toTripNameParam = (trip_name: string) =>
-  btoa(String.fromCharCode(...new TextEncoder().encode(trip_name)))
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
-
 export const getLog = async ({ day, trip_name }: { day: number; trip_name: string }) => {
-  const res = await fetch(`/api/logs?trip_name=${toTripNameParam(trip_name)}&day=${day}`);
+  const params = new URLSearchParams({ trip_name, day: String(day) });
+  const res = await fetch(`/api/logs?${params}`);
   return json(res);
 };
 
 export const getAllLogs = async ({ trip_name }: { trip_name: string }) => {
-  const res = await fetch(`/api/logs?trip_name=${toTripNameParam(trip_name)}`);
+  const params = new URLSearchParams({ trip_name });
+  const res = await fetch(`/api/logs?${params}`);
   return json(res);
 };
 
@@ -102,7 +95,7 @@ export const getPhotos = async ({
   end_day: number;
 }) => {
   const params = new URLSearchParams({
-    trip_name: toTripNameParam(trip_name),
+    trip_name,
     start_day: String(start_day),
     end_day: String(end_day),
   });

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import BlurFade from "@/components/ui/blur-fade";
 
 interface EmptyStateProps {
@@ -22,7 +22,7 @@ export default function EmptyState({
           <h4 className="font-entry mt-4 text-muted-foreground">{title}</h4>
           {actionText && actionHref && (
             <Link
-              href={actionHref}
+              to={actionHref}
               className="font-mono-label mt-5 border border-primary px-6 py-2 text-xs uppercase text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
             >
               {actionText}
