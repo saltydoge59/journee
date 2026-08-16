@@ -5,6 +5,16 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/), and this
 project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.3.1] - 2026-08-16
+### Changed
+- `npm run dev` now runs with Turbopack (`next dev --turbo`) for faster dev server startup and route compilation.
+- Replaced the MUI-based range slider (day selector on `/snapspot`) with a Radix UI slider, matching the rest of the app's shadcn/Radix component pattern.
+
+### Removed
+- Unused dependencies with zero remaining imports: `@coreui/coreui`, `@coreui/react`, `@tabler/core`, `primereact`.
+- Duplicate animation library `motion` (superseded by `framer-motion`, already used throughout the app).
+- `@mui/material`, `@mui/icons-material`, `@emotion/react`, `@emotion/styled` — no longer needed after the slider swap.
+
 ## [0.3.0] - 2026-08-15
 ### Added
 - Photo lightbox viewer on the day detail page: click any photo to view it full-screen with keyboard/click prev-next navigation.
