@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger, } from "@/components/ui/drawer"
 import * as React from "react";
 import { useAuth } from "@clerk/nextjs";
-import { deletePhotos, getLog,getPhotos } from "../../../utils/api"
+import { deletePhotos, getLog,getPhotos } from "@/api"
 import { useToast } from "@/hooks/use-toast";
 import EditLog from "./editlog";
 import EmptyState from "@/components/EmptyState";

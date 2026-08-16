@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import Tiptap from "@/components/Tiptap";
 import { useState } from "react";
 import { useAuth } from "@clerk/nextjs";
-import { insertPhotos, uploadPhotos, getPhotoLocation, editLog } from "../../../utils/api";
+import { insertPhotos, uploadPhotos, getPhotoLocation, editLog } from "@/api";
 import { useToast } from "@/hooks/use-toast";
 import RingLoader from "react-spinners/ClipLoader";
 import { FileUpload, type SpecimenStatus } from "@/components/ui/file-upload";

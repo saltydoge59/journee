@@ -3,7 +3,7 @@
 import { Map } from "@/components/map";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@clerk/nextjs"
-import { getAllLogs, getPhotos, getTrips } from "../../../utils/api";
+import { getAllLogs, getPhotos, getTrips } from "@/api";
 import { useState, useEffect } from "react";
 import MinimumDistanceSlider from "@/components/ui/slider";
 

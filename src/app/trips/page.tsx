@@ -2,7 +2,7 @@
 
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
-import { getTrips, insertUser } from "../../../utils/api";
+import { getTrips, insertUser } from "@/api";
 import BlurFade from "@/components/ui/blur-fade";
 import { useToast } from "@/hooks/use-toast";
 import RingLoader from "react-spinners/ClipLoader";

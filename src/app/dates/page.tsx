@@ -4,7 +4,7 @@ import BlurFade from "@/components/ui/blur-fade";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs"
-import { deleteTrip, getAllLogs, updateTrip, uploadBackground } from "../../../utils/api";
+import { deleteTrip, getAllLogs, updateTrip, uploadBackground } from "@/api";
 import { Button } from "@/components/ui/button";
 import { IconDots, IconDotsCircleHorizontal, IconDotsVertical, IconPencil, IconTrash } from "@tabler/icons-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";

@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { createRoot } from "react-dom/client";
-import { updateLatLong, getCoords } from "../../utils/api";
+import { updateLatLong, getCoords } from "@/api";
 import { useAuth } from "@clerk/nextjs";
 import { useToast } from "@/hooks/use-toast";
 import { useLoadScript } from "@react-google-maps/api";

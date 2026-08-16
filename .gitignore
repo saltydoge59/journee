@@ -61,3 +61,4 @@ migrations/0002_import.sql
 
 # serena MCP tool state (local, not project config)
 /.serena/
+dist/
