@@ -1,6 +1,6 @@
 import BlurFade from "@/components/ui/blur-fade"
 import { IconArrowLeft, IconDotsVertical, IconPencil } from "@tabler/icons-react"
-import { Link, useSearchParams, useNavigate } from "react-router-dom"
+import { useSearchParams, useNavigate } from "react-router-dom"
 import { useState, useEffect, useCallback } from "react";
 import { useMediaQuery } from "@custom-react-hooks/use-media-query"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
@@ -190,9 +190,9 @@ export default function Day() {
             <div className={isDesktop?"":"hidden"}>
                 <Dialog open={dialogueOpen} onOpenChange={setDialogueOpen}>
                     <DialogTrigger asChild className="fixed bottom-20 sm:bottom-7 right-4 sm:right-6 flex h-14 w-14 items-center justify-center rounded-full bg-[hsl(var(--seal))] text-[hsl(var(--seal-foreground))] shadow-lg transition-transform hover:scale-105">
-                        <Link to="#">
+                        <button type="button">
                             <IconPencil/>
-                        </Link>
+                        </button>
                     </DialogTrigger>
                     <DialogContent className="h-7/12 max-w-[80vw]" aria-describedby="content">
                         <DialogHeader>
@@ -213,9 +213,9 @@ export default function Day() {
             <div className={isDesktop?"hidden":""}>
                 <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
                     <DrawerTrigger asChild className="fixed bottom-20 sm:bottom-7 right-4 sm:right-6 flex h-14 w-14 items-center justify-center rounded-full bg-[hsl(var(--seal))] text-[hsl(var(--seal-foreground))] shadow-lg transition-transform hover:scale-105">
-                        <Link to="#">
+                        <button type="button">
                             <IconPencil/>
-                        </Link>
+                        </button>
                     </DrawerTrigger>
                     <DrawerContent className="h-full w-full">
                         <DrawerHeader>
