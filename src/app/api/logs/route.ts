@@ -1,13 +1,14 @@
 import { auth } from "@clerk/nextjs/server";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { NextRequest } from "next/server";
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) return new Response("Unauthorized", { status: 401 });
 
-  const { searchParams } = new URL(req.url);
-  const trip_name = searchParams.get("trip_name");
-  const day = searchParams.get("day");
+  const trip_name_b64 = req.nextUrl.searchParams.get("trip_name");
+  const trip_name = trip_name_b64 ? Buffer.from(trip_name_b64, "base64url").toString("utf8") : null;
+  const day = req.nextUrl.searchParams.get("day");
   if (!trip_name) return new Response("trip_name is required", { status: 400 });
 
   const { env } = await getCloudflareContext({ async: true });

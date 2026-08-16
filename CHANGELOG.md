@@ -5,6 +5,10 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/), and this
 project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.3.2] - 2026-08-16
+### Fixed
+- Trips/day logs and photos wouldn't load for any trip whose name contained `&` (e.g. "Guangzhou & Guilin"). The `trip_name` query param was getting corrupted before reaching the `/api/logs` and `/api/photos` route handlers — Next/OpenNext's server-side URL re-parsing was splitting on the literal `&` inside the value. Fixed by base64url-encoding `trip_name` before it's placed in the query string, since base64url output can't contain characters that are ever treated as URL/query delimiters.
+
 ## [0.3.1] - 2026-08-16
 ### Changed
 - `npm run dev` now runs with Turbopack (`next dev --turbo`) for faster dev server startup and route compilation.
