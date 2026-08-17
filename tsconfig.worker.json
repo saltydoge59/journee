@@ -12,5 +12,5 @@
     "isolatedModules": true,
     "jsx": "react-jsx"
   },
-  "include": ["worker", "cloudflare-env.d.ts"]
+  "include": ["worker", "worker-configuration.d.ts"]
 }

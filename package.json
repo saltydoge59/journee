@@ -3,12 +3,12 @@
   "version": "0.3.2",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbo",
-    "build": "next build",
+    "dev": "vite",
+    "build": "vite build",
     "lint": "next lint",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview -- --port 8788",
-    "preview:remote": "opennextjs-cloudflare build && opennextjs-cloudflare preview -- --port 8788 --remote",
-    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"
+    "preview": "vite build && wrangler dev",
+    "preview:remote": "vite build && wrangler dev --remote",
+    "deploy": "vite build && wrangler deploy"
   },
   "dependencies": {
     "@clerk/backend": "^3.16.6",
