@@ -10,6 +10,9 @@ body {
 
 @layer base {
   :root {
+    --font-serif: "Source Serif 4 Variable";
+    --font-entry: "Special Elite";
+    --font-mono-label: "JetBrains Mono";
     --background: 42 38% 93%;
     --foreground: 30 22% 14%;
     --card: 40 42% 96%;
