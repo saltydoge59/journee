@@ -2,8 +2,6 @@ import { Hono } from "hono";
 import { getAuth } from "@clerk/hono";
 import type { CloudflareBindings } from "../env";
 
-const PUBLIC_BASE = "https://pub-d8966727b726431389106312061035a7.r2.dev";
-
 const upload = new Hono<{ Bindings: CloudflareBindings }>();
 
 // Mirrors the old Supabase Storage path shapes so existing R2 keys keep working:
@@ -31,7 +29,7 @@ upload.post("/", async (c) => {
     httpMetadata: { contentType: file.type },
   });
 
-  return c.json({ imageURL: `${PUBLIC_BASE}/${key}` });
+  return c.json({ imageURL: `${c.env.MEDIA_PUBLIC_BASE}/${key}` });
 });
 
 export default upload;

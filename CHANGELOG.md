@@ -5,6 +5,17 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/), and this
 project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.0] - 2026-08-17
+### Added
+- Local media rendering: `worker/routes/media.ts` serves uploaded images straight from the Miniflare-emulated R2 binding at `/media/*` in local dev, so `npm run dev` now renders uploaded photos/backgrounds end-to-end with zero real infrastructure. `PUBLIC_BASE` was replaced with a `MEDIA_PUBLIC_BASE` Worker var (`/media` locally, `https://journee-media.curteisyang.uk` in prod) instead of a hardcoded URL.
+
+### Changed
+- `npm run dev` now runs the full Workers runtime (`vite build && wrangler dev`) with local D1/R2/Workers AI bindings, replacing the old plain-Vite dev server. `npm run preview` removed — `dev` absorbed its role.
+- R2 media now served from the custom domain `journee-media.curteisyang.uk` instead of the R2 public dev URL, in both prod and local-dev URL generation.
+
+### Fixed
+- Upload route no longer hardcodes the R2 public dev domain, which had drifted out of sync after the bucket was moved behind a custom domain.
+
 ## [1.0.0] - 2026-08-17
 ### Changed
 - Migrated the entire app from Next.js 15 (App Router) + OpenNext to Vite + React Router + a Hono API worker, deployed directly via `wrangler`. The app was already a client-only SPA with zero server-side data fetching, so this removes a full SSR framework it wasn't using — `npm run dev` now runs with real local D1/R2/Workers AI bindings and hot reload in one command (`@cloudflare/vite-plugin`), replacing the previous three-mode dev/preview/preview:remote split.

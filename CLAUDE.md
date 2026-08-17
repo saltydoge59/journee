@@ -5,48 +5,55 @@
 | Layer | Technology |
 |-------|-----------|
 | Language | TypeScript 5 (strict mode) |
-| Framework | Next.js 15 (App Router), React 18 |
+| Framework | Vite + React Router (SPA), React 18 |
+| Backend | Hono (Cloudflare Worker) |
 | Styling | Tailwind CSS + shadcn/Radix, MUI, Aceternity |
-| Auth | Clerk |
+| Auth | Clerk (`@clerk/react`, `@clerk/hono`) |
 | Database | Cloudflare D1 |
-| Storage | Cloudflare R2 (images) |
-| Deploy | Cloudflare Workers via OpenNext |
+| Storage | Cloudflare R2 (images), served via custom domain `journee-media.curteisyang.uk` |
+| Deploy | Cloudflare Workers via Wrangler |
 
 ## Code Style
 - Path alias `@/*` → `src/*`
-- ESLint: `next/core-web-vitals` + `next/typescript`
 
 ## Build & Run
 Pick the mode by what the change touches:
-- `npm run dev` — plain Next.js dev server with hot reload. Use for **UI-only work**: styling, layout, components, copy — anything that never calls a D1/R2/Workers AI binding. Fast feedback, but `env.DB`/`env.MEDIA`/`env.AI` don't exist in this mode (no Workers runtime), so any code path touching a binding will throw or no-op.
-- `npm run preview` — builds via OpenNext, serves through `wrangler` on `localhost:8788` with **local Miniflare-emulated bindings**. Use whenever the change touches `/api/*` routes, D1 reads/writes, R2 uploads, or Workers AI — anything `dev` can't run. No hot reload; rebuild after each change. Safe default: nothing here touches production data.
-- `npm run preview:remote` — same build against **real, remote D1/R2/Workers AI** (`--remote` bindings). Only use this to verify something that specifically requires the real infrastructure (see note below on uploads/images) — writes made here hit production data.
+- `npm run dev` — builds via Vite, serves through `wrangler dev` on the Workers runtime with **local Miniflare-emulated bindings** (`env.DB`, `env.MEDIA`, `env.AI`). This is the default for everything, including UI-only work — no hot reload, rebuild after each change. Safe default: nothing here touches production data.
+- `npm run preview:remote` — same build against **real, remote D1/R2/Workers AI** (`--remote` bindings). Only use this to verify something that specifically requires the real infrastructure (see note below on uploads/images) — writes made here hit production data. There is no separate dev R2/D1 instance; `--remote` is the actual production data store.
 - Lint: `npm run lint`
 - Build: `npm run build`
 - Deploy to Cloudflare: `npm run deploy`
 
 ### Testing photo/background uploads
-Uploaded image URLs always point at the real public R2 domain
-(`PUBLIC_BASE` in `src/app/api/upload/route.ts`), regardless of which R2 an
-upload actually wrote to. Under local `npm run preview`, `env.MEDIA.put()`
-writes to the local Miniflare R2 emulator, not the real bucket — the API
-call and D1 row will succeed, but the image will 404 in the browser because
-it was never sent to the real bucket the URL points at.
-- Local `npm run preview`: fine for checking upload *logic* (response
-  status, D1 row written, no thrown errors) — don't expect the image to
-  render.
-- To verify an upload end-to-end, including that the photo actually
-  renders: use `npm run preview:remote` (writes to the real bucket) or
-  check after `npm run deploy`.
+Upload responses return `imageURL` built from `MEDIA_PUBLIC_BASE` (a Worker
+var, not a secret — see `wrangler.jsonc` / `.dev.vars`), consumed in
+`worker/routes/upload.ts`.
+- **Prod**: `MEDIA_PUBLIC_BASE=https://journee-media.curteisyang.uk` — R2's
+  custom domain serves objects directly.
+- **Local (`npm run dev`)**: `MEDIA_PUBLIC_BASE=/media` — same-origin,
+  handled by `worker/routes/media.ts`, which reads straight from the
+  Miniflare-emulated `env.MEDIA` binding. This means local uploads render
+  end-to-end with zero real infrastructure: upload via `npm run dev`, image
+  comes back through `/media/*`, no `--remote` needed.
+- Local D1 (`.wrangler/state/`) was rewritten once (2026-08-17) to swap old
+  `pub-...r2.dev` URLs for `/media` — pre-existing local rows point at
+  objects that were never actually uploaded to the local R2 emulator (they
+  only ever existed in the real bucket), so those specific images will
+  still 404 until re-uploaded locally. Freshly-uploaded local images render
+  correctly.
+- `npm run preview:remote` remains for end-to-end checks against the real
+  bucket/domain specifically (e.g. confirming DNS/custom-domain routing
+  works), not required for routine upload testing anymore.
 
 ## Testing
 No test framework is configured yet. Don't invent test infra unless asked.
 
 ## Project Structure
-- `src/app/` — Next.js pages (App Router)
-- `src/app/api/` — server-side API routes (D1/R2 access happens here, never from the client)
+- `src/routes/` — React Router pages
 - `src/components/` — UI components
-- `utils/api.ts` — client-side fetch wrappers calling `src/app/api/`
+- `src/api.ts` — client-side fetch wrappers calling `worker/routes/`
+- `worker/index.ts` — Hono Worker entry point
+- `worker/routes/` — server-side API routes (D1/R2 access happens here, never from the client)
 - `migrations/` — D1 schema (SQL)
 - `scripts/` — one-off Supabase→Cloudflare migration tooling (historical, not part of the app runtime)
 - `android/` — Trusted Web Activity wrapper that packages the deployed site as a sideloaded Android APK; see `android/README.md` to rebuild

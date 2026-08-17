@@ -7,6 +7,7 @@ import logs from "./routes/logs";
 import photos from "./routes/photos";
 import upload from "./routes/upload";
 import geo from "./routes/geo";
+import media from "./routes/media";
 
 const app = new Hono<{ Bindings: CloudflareBindings }>();
 
@@ -23,6 +24,7 @@ app.route("/api/logs", logs);
 app.route("/api/photos", photos);
 app.route("/api/upload", upload);
 app.route("/api/geo", geo);
+app.route("/media", media);
 
 app.all("/api/*", (c) => c.text("Not found", 404));
 

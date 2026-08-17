@@ -32,6 +32,9 @@
   "ai": {
     "binding": "AI",
   },
+  "vars": {
+    "MEDIA_PUBLIC_BASE": "https://journee-media.curteisyang.uk",
+  },
   "observability": {
     "enabled": false,
     "head_sampling_rate": 1,

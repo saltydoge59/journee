@@ -1,11 +1,10 @@
 {
   "name": "journee",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "scripts": {
-    "dev": "vite",
+    "dev": "vite build && wrangler dev",
     "build": "vite build",
-    "preview": "vite build && wrangler dev",
     "preview:remote": "vite build && wrangler dev --remote",
     "deploy": "vite build && wrangler deploy"
   },
