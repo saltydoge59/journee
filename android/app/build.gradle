@@ -22,7 +22,7 @@ plugins {
 
 def twaManifest = [
     applicationId: 'dev.workers.curteisyang59.journee.twa',
-    hostName: 'journee.curteisyang59.workers.dev', // The domain being opened in the TWA.
+    hostName: 'journee.curteisyang.uk', // The domain being opened in the TWA.
     launchUrl: '/', // The start path for the TWA. Must be relative to the domain.
     name: 'Journee', // The application name.
     launcherName: 'Journee', // The name shown on the Android Launcher.
@@ -57,8 +57,8 @@ android {
         applicationId "dev.workers.curteisyang59.journee.twa"
         minSdkVersion 21
         targetSdkVersion 36
-        versionCode 1
-        versionName "1"
+        versionCode 3
+        versionName "3"
 
         // The name for the application
         resValue "string", "appName", twaManifest.name
@@ -76,12 +76,12 @@ android {
             // The URL the Web Manifest for the Progressive Web App that the TWA points to. This
             // is used by Chrome OS and Meta Quest to open the Web version of the PWA instead of
             // the TWA, as it will probably give a better user experience for non-mobile devices.
-            resValue "string", "webManifestUrl", 'https://journee.curteisyang59.workers.dev/manifest.webmanifest'
+            resValue "string", "webManifestUrl", 'https://journee.curteisyang.uk/manifest.webmanifest'
         
 
         
             // This is used by Meta Quest.
-            resValue "string", "fullScopeUrl", 'https://journee.curteisyang59.workers.dev/'
+            resValue "string", "fullScopeUrl", 'https://journee.curteisyang.uk/'
         
 
         

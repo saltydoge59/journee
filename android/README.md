@@ -17,6 +17,10 @@ Deploy your changes to production first — the APK just repackages whatever
 the manifest URL currently serves, it doesn't bundle any of this repo's code.
 
 ```bash
+# 0. Update and rebuild app
+bubblewrap update
+bubblewrap build
+
 # 1. Deploy the web app (from repo root)
 npm run deploy
 
