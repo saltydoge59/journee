@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import BlurFade from "@/components/ui/blur-fade";
 
@@ -18,14 +18,11 @@ export default function DayGrid({ daysArray, tripName, logs }: DayGridProps) {
             return (
               <Link
                 key={index}
-                href={{
-                  pathname: '/day',
-                  query: {
-                    day: day.toLocaleDateString("en-us"),
-                    trip: tripName,
-                    num: Number(index) + 1,
-                  }
-                }}
+                to={`/day?${new URLSearchParams({
+                  day: day.toLocaleDateString("en-us"),
+                  trip: tripName,
+                  num: String(Number(index) + 1),
+                })}`}
                 className="group flex items-baseline gap-4 border-b border-border py-3 transition-colors hover:bg-secondary/60"
               >
                 <span className="font-mono-label w-10 shrink-0 text-xs tabular-nums text-muted-foreground">

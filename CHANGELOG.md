@@ -5,6 +5,18 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/), and this
 project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.0.0] - 2026-08-17
+### Changed
+- Migrated the entire app from Next.js 15 (App Router) + OpenNext to Vite + React Router + a Hono API worker, deployed directly via `wrangler`. The app was already a client-only SPA with zero server-side data fetching, so this removes a full SSR framework it wasn't using — `npm run dev` now runs with real local D1/R2/Workers AI bindings and hot reload in one command (`@cloudflare/vite-plugin`), replacing the previous three-mode dev/preview/preview:remote split.
+- All 6 API routes ported from Next `route.ts` handlers to Hono routes (`worker/routes/*.ts`) using `@clerk/hono`.
+- All 9 pages ported from Next App Router to `react-router-dom`.
+- Fonts (Source Serif 4, Special Elite, JetBrains Mono) now self-hosted via `@fontsource` instead of `next/font`.
+- `npm run dev` → `vite`, `npm run build` → `vite build`, `npm run preview(:remote)` → `vite build && wrangler dev(--remote)`, `npm run deploy` → `vite build && wrangler deploy`.
+
+### Removed
+- Next.js, `@clerk/nextjs`, `@opennextjs/cloudflare`, `eslint-config-next`, and all of `src/app/` (the old Next pages/API routes) — fully superseded by the Vite/Hono port.
+- `npm run lint` — no replacement ESLint config exists yet now that `eslint-config-next` is gone; flagged as a gap, not silently dropped.
+
 ## [0.3.2] - 2026-08-16
 ### Fixed
 - Trips/day logs and photos wouldn't load for any trip whose name contained `&` (e.g. "Guangzhou & Guilin"). The `trip_name` query param was getting corrupted before reaching the `/api/logs` and `/api/photos` route handlers — Next/OpenNext's server-side URL re-parsing was splitting on the literal `&` inside the value. Fixed by base64url-encoding `trip_name` before it's placed in the query string, since base64url output can't contain characters that are ever treated as URL/query delimiters.

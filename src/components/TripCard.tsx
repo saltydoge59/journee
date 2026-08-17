@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 interface TripCardProps {
@@ -8,16 +8,13 @@ interface TripCardProps {
     start_date: string;
     end_date: string;
   };
-  href: string | {
-    pathname: string;
-    query: Record<string, string>;
-  };
+  href: string;
   className?: string;
 }
 
 export default function TripCard({ trip, href, className = "" }: TripCardProps) {
   return (
-    <Link href={href} className={cn("mx-auto w-11/12 sm:w-5/6 mt-3 h-1/2 block", className)}>
+    <Link to={href} className={cn("mx-auto w-11/12 sm:w-5/6 mt-3 h-1/2 block", className)}>
       <div
         style={{backgroundImage:`url(${trip.image_url})`}}
         className="group relative flex h-full w-full cursor-pointer flex-col justify-end overflow-hidden rounded-sm border border-border bg-cover shadow-md"

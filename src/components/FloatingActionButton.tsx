@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import { ReactNode } from "react";
 
 interface FloatingActionButtonProps {
@@ -28,7 +28,7 @@ export default function FloatingActionButton({
   if (onClick) {
     return (
       <button onClick={onClick} className={baseClasses}>
-        <Link href={href}>
+        <Link to={href}>
           {children}
         </Link>
       </button>
@@ -36,7 +36,7 @@ export default function FloatingActionButton({
   }
 
   return (
-    <Link href={href} className={baseClasses}>
+    <Link to={href} className={baseClasses}>
       {children}
     </Link>
   );

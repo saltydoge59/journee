@@ -13,8 +13,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { createRoot } from "react-dom/client";
-import { updateLatLong, getCoords } from "../../utils/api";
-import { useAuth } from "@clerk/nextjs";
+import { updateLatLong, getCoords } from "@/api";
+import { useAuth } from "@clerk/react";
 import { useToast } from "@/hooks/use-toast";
 import { useLoadScript } from "@react-google-maps/api";
 import {
@@ -40,10 +40,10 @@ export function Map({ pins, trip_name }: MapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const { userId } = useAuth();
   const { toast } = useToast();
-  const geoapify_key = process.env.NEXT_PUBLIC_GEOAPIFY_API_KEY || "";
+  const geoapify_key = import.meta.env.VITE_GEOAPIFY_API_KEY || "";
 
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "",
     libraries: ["places", "maps", "marker"],
   });
   useEffect(() => {
