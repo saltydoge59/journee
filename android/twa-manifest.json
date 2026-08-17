@@ -1,6 +1,6 @@
 {
   "packageId": "dev.workers.curteisyang59.journee.twa",
-  "host": "journee.curteisyang59.workers.dev",
+  "host": "journee.curteisyang.uk",
   "name": "Journee",
   "launcherName": "Journee",
   "display": "standalone",
@@ -13,17 +13,17 @@
   "backgroundColor": "#000000",
   "enableNotifications": true,
   "startUrl": "/",
-  "iconUrl": "https://journee.curteisyang59.workers.dev/icons/icon-512.png",
+  "iconUrl": "https://journee.curteisyang.uk/icons/icon-512.png",
   "splashScreenFadeOutDuration": 300,
   "signingKey": {
     "path": "/Users/curteisyang/journee/android/android.keystore",
     "alias": "android"
   },
-  "appVersionName": "1",
-  "appVersionCode": 1,
+  "appVersionName": "2",
+  "appVersionCode": 2,
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
-  "webManifestUrl": "https://journee.curteisyang59.workers.dev/manifest.webmanifest",
+  "webManifestUrl": "https://journee.curteisyang.uk/manifest.webmanifest",
   "fallbackType": "customtabs",
   "features": {},
   "alphaDependencies": {
@@ -32,7 +32,7 @@
   "enableSiteSettingsShortcut": true,
   "isChromeOSOnly": false,
   "isMetaQuest": false,
-  "fullScopeUrl": "https://journee.curteisyang59.workers.dev/",
+  "fullScopeUrl": "https://journee.curteisyang.uk/",
   "minSdkVersion": 21,
   "orientation": "default",
   "fingerprints": [],
@@ -42,5 +42,5 @@
   "fileHandlers": [],
   "launchHandlerClientMode": "",
   "displayOverride": [],
-  "appVersion": "1"
+  "appVersion": "2"
 }

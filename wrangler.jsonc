@@ -4,6 +4,12 @@
   "main": "worker/index.ts",
   "compatibility_date": "2025-04-01",
   "compatibility_flags": ["nodejs_compat"],
+  "routes": [
+    {
+      "pattern": "journee.curteisyang.uk",
+      "custom_domain": true,
+    },
+  ],
   "assets": {
     "directory": "dist/client",
     "binding": "ASSETS",
