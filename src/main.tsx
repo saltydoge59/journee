@@ -7,7 +7,7 @@ import "@fontsource-variable/source-serif-4/wght-italic.css";
 import "@fontsource/special-elite/400.css";
 import "@fontsource/jetbrains-mono/400.css";
 import "@fontsource/jetbrains-mono/500.css";
-import "./app/globals.css";
+import "./globals.css";
 
 const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 if (!publishableKey) {

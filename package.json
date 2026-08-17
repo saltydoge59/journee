@@ -5,7 +5,6 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "next lint",
     "preview": "vite build && wrangler dev",
     "preview:remote": "vite build && wrangler dev --remote",
     "deploy": "vite build && wrangler deploy"
@@ -13,7 +12,6 @@
   "dependencies": {
     "@clerk/backend": "^3.16.6",
     "@clerk/hono": "^0.1.67",
-    "@clerk/nextjs": "^6.8.0",
     "@clerk/react": "^6.14.3",
     "@custom-react-hooks/use-media-query": "^1.5.1",
     "@fontsource-variable/source-serif-4": "^5.3.0",
@@ -58,7 +56,6 @@
     "hono": "^4.13.2",
     "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.468.0",
-    "next": "^15.1.0",
     "next-themes": "^0.4.4",
     "react": "^18.3.1",
     "react-autosave": "^0.5.0",
@@ -77,7 +74,6 @@
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.52.1",
-    "@opennextjs/cloudflare": "^1.20.2",
     "@types/google.maps": "^3.58.1",
     "@types/lodash.debounce": "^4.0.9",
     "@types/node": "^20.19.43",
@@ -85,7 +81,6 @@
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^6.0.5",
     "eslint": "^8",
-    "eslint-config-next": "15.0.4",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5",
