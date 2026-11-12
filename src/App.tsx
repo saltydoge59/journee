@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet, Navigate } from "react-router-dom";
 import { Show, RedirectToSignIn } from "@clerk/react";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
@@ -30,7 +30,14 @@ export default function App() {
           </Show>
           <div className="min-h-0 flex-1 overflow-y-auto pb-[60px] sm:pb-0">
             <Routes>
-              <Route path="/" element={<Landing />} />
+              <Route
+                path="/"
+                element={
+                  <Show when="signed-in" fallback={<Landing />}>
+                    <Navigate to="/trips" replace />
+                  </Show>
+                }
+              />
               <Route path="/sign-in/*" element={<SignInPage />} />
               <Route path="/sign-up/*" element={<SignUpPage />} />
               <Route element={<ProtectedLayout />}>

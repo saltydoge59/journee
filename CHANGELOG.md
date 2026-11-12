@@ -5,6 +5,10 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/), and this
 project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.2.1] - 2026-11-12
+### Fixed
+- Opening the app while already signed in now goes straight to your trips instead of showing the landing page's Sign In button.
+
 ## [1.2.0] - 2026-11-12
 ### Added
 - Edit a trip's start and end dates from the pencil button on the trip page. Entries and photos stay on their day number (Day 1 stays Day 1 with its new date). Making the trip longer adds empty days. Making it shorter is blocked if a removed day still has a log entry or photos.
