@@ -76,6 +76,86 @@ trips.patch("/", async (c) => {
   return c.json({ ok: true });
 });
 
+// Logs/photos are keyed by day number, so shifting the range keeps Day N as Day N
+// with a new date. Shrinking is refused if a dropped day has content.
+trips.patch("/dates", async (c) => {
+  const { userId } = getAuth(c) ?? {};
+  if (!userId) return c.text("Unauthorized", 401);
+
+  const { trip_name, daterange } = await c.req.json<{
+    trip_name: string;
+    daterange: { from: string; to: string };
+  }>();
+
+  const start = new Date(daterange?.from);
+  const end = new Date(daterange?.to);
+  if (isNaN(start.getTime()) || isNaN(end.getTime()) || end < start) {
+    return c.json({ error: "Invalid date range." }, 400);
+  }
+
+  const trip = await c.env.DB.prepare("SELECT trip_name FROM trips WHERE user_id = ? AND trip_name = ?")
+    .bind(userId, trip_name)
+    .first();
+  if (!trip) return c.json({ error: "Trip not found." }, 404);
+
+  const dates: string[] = [];
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    dates.push(d.toLocaleDateString("en-us"));
+  }
+  const newLen = dates.length;
+
+  const { results: blocked } = await c.env.DB.prepare(
+    `SELECT day FROM logs WHERE user_id = ? AND trip = ? AND day > ?
+       AND (COALESCE(entry, '') != '' OR COALESCE(title, '') != '' OR COALESCE(location, '') != '')
+     UNION
+     SELECT day FROM photos WHERE user_id = ? AND trip_name = ? AND day > ?
+     ORDER BY day`
+  )
+    .bind(userId, trip_name, newLen, userId, trip_name, newLen)
+    .all<{ day: number }>();
+  if (blocked.length > 0) {
+    const days = blocked.map((r) => r.day).join(", ");
+    return c.json({ error: `Day ${days} still has entries or photos. Clear them first.` }, 409);
+  }
+
+  const { results: existing } = await c.env.DB.prepare("SELECT day FROM logs WHERE user_id = ? AND trip = ?")
+    .bind(userId, trip_name)
+    .all<{ day: number }>();
+  const existingDays = new Set(existing.map((r) => r.day));
+
+  const statements = [
+    c.env.DB.prepare("DELETE FROM logs WHERE user_id = ? AND trip = ? AND day > ?").bind(userId, trip_name, newLen),
+    c.env.DB.prepare("UPDATE trips SET start_date = ?, end_date = ? WHERE user_id = ? AND trip_name = ?").bind(
+      start.toISOString(),
+      end.toISOString(),
+      userId,
+      trip_name
+    ),
+  ];
+  dates.forEach((date, i) => {
+    const day = i + 1;
+    statements.push(
+      existingDays.has(day)
+        ? c.env.DB.prepare("UPDATE logs SET date = ? WHERE user_id = ? AND trip = ? AND day = ?").bind(
+            date,
+            userId,
+            trip_name,
+            day
+          )
+        : c.env.DB.prepare("INSERT INTO logs (user_id, trip, date, day) VALUES (?, ?, ?, ?)").bind(
+            userId,
+            trip_name,
+            date,
+            day
+          )
+    );
+  });
+
+  await c.env.DB.batch(statements);
+
+  return c.json({ ok: true, start_date: start.toISOString(), end_date: end.toISOString() });
+});
+
 trips.delete("/", async (c) => {
   const { userId } = getAuth(c) ?? {};
   if (!userId) return c.text("Unauthorized", 401);

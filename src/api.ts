@@ -45,6 +45,22 @@ export const updateTrip = async ({ trip_name, imageURL }: { trip_name: string; i
   return json(res);
 };
 
+export const updateTripDates = async ({
+  trip_name,
+  daterange,
+}: {
+  trip_name: string;
+  daterange: { from: Date; to: Date };
+}) => {
+  const res = await fetch("/api/trips/dates", {
+    method: "PATCH",
+    body: JSON.stringify({ trip_name, daterange }),
+  });
+  const body = (await res.json().catch(() => ({}))) as { error?: string; start_date: string; end_date: string };
+  if (!res.ok) throw new Error(body.error || "Failed to update dates.");
+  return body;
+};
+
 export const deleteTrip = async ({ trip_name }: { trip_name: string }) => {
   const res = await fetch("/api/trips", {
     method: "DELETE",

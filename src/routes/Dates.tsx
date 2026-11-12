@@ -2,7 +2,7 @@ import BlurFade from "@/components/ui/blur-fade";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/react"
-import { deleteTrip, getAllLogs, updateTrip, uploadBackground } from "@/api";
+import { deleteTrip, getAllLogs, updateTrip, updateTripDates, uploadBackground } from "@/api";
 import { Button } from "@/components/ui/button";
 import { IconPencil, IconTrash } from "@tabler/icons-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -13,6 +13,7 @@ import RingLoader from "react-spinners/ClipLoader";
 import PageHeader from "@/components/PageHeader";
 import DayGrid from "@/components/DayGrid";
 import { CoverPhotoPicker } from "@/components/ui/cover-photo-picker";
+import { DatePicker } from "@/components/daterange/date-picker";
 
 export default function Dates() {
   const { toast } = useToast();
@@ -43,7 +44,7 @@ export default function Dates() {
         }
     };
     fetchLog();
-},[userId, trip_name])
+},[userId, trip_name, start, end])
 
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false)
@@ -54,26 +55,37 @@ export default function Dates() {
     setSelectedFile(files);
   };
 
+  const [startInput, setStartInput] = useState<Date | undefined>(start ? new Date(start) : undefined);
+  const [endInput, setEndInput] = useState<Date | undefined>(end ? new Date(end) : undefined);
+  const datesValid = !!startInput && !!endInput && startInput <= endInput;
+  const datesChanged =
+    datesValid && (startInput.getTime() !== new Date(start).getTime() || endInput.getTime() !== new Date(end).getTime());
+
   async function onSubmit(){
     try{
       if (userId) {
+        if (datesChanged) {
+          const res = await updateTripDates({ trip_name, daterange: { from: startInput, to: endInput } });
+          navigate(`/dates?${new URLSearchParams({ name: trip_name, start: res.start_date, end: res.end_date })}`, { replace: true });
+        }
         if (selectedFile.length > 0) {
           const imageURL = await uploadBackground(selectedFile[0], "backgrounds");
           await updateTrip({ trip_name, imageURL });
-          console.log("Cover photo updated.")
+        }
+        if (datesChanged || selectedFile.length > 0) {
           toast({
             duration:2000,
-            title:"Cover photo updated successfully!",
+            title:"Trip updated successfully!",
           })
           setEditOpen(false);
         }
       }
     }
   catch(error){
-    console.error("Error updating cover photo.", error);
+    console.error("Error updating trip.", error);
     toast({
       variant:"destructive",
-      title:"Failed to update cover photo. Try again."})
+      title: error instanceof Error && error.message ? error.message : "Failed to update trip. Try again."})
     }
   }
 
@@ -147,14 +159,24 @@ export default function Dates() {
             </DialogTrigger>
             <DialogContent className="w-[80vw] lg:w-[50vw] rounded-sm">
               <DialogHeader>
-                <DialogTitle className="font-serif-display italic">Edit Cover Picture</DialogTitle>
+                <DialogTitle className="font-serif-display italic">Edit Trip</DialogTitle>
                 <DialogDescription>
-                    Change your trip's cover picture.
+                    Change your trip's dates or cover picture.
                 </DialogDescription>
               </DialogHeader>
               <div className="flex gap-3 flex-col">
+                  <div className="flex gap-3">
+                    <div className="flex w-full flex-col gap-1">
+                      <span className="font-mono-label text-xs uppercase text-muted-foreground">Start date</span>
+                      <DatePicker value={startInput} onChange={setStartInput} disabled={endInput && { after: endInput }} />
+                    </div>
+                    <div className="flex w-full flex-col gap-1">
+                      <span className="font-mono-label text-xs uppercase text-muted-foreground">End date</span>
+                      <DatePicker value={endInput} onChange={setEndInput} disabled={startInput && { before: startInput }} />
+                    </div>
+                  </div>
                   <CoverPhotoPicker onChange={handleFileChange} />
-                  <Button onClick={onSubmit} className={`font-mono-label mt-3 rounded-sm bg-primary text-xs uppercase text-primary-foreground hover:brightness-95 ${!selectedFile?"disabled":""}`}>Save</Button>
+                  <Button onClick={onSubmit} disabled={!datesValid} className={`font-mono-label mt-3 rounded-sm bg-primary text-xs uppercase text-primary-foreground hover:brightness-95 ${!selectedFile?"disabled":""}`}>Save</Button>
               </div>
             </DialogContent>
           </Dialog>

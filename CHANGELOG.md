@@ -5,6 +5,14 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/), and this
 project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.2.0] - 2026-11-12
+### Added
+- Edit a trip's start and end dates from the pencil button on the trip page. Entries and photos stay on their day number (Day 1 stays Day 1 with its new date). Making the trip longer adds empty days. Making it shorter is blocked if a removed day still has a log entry or photos.
+
+### Changed
+- `npm run dev` now builds with `--mode development`, so local builds don't pick up `.env.production`.
+- `@radix-ui/react-dismissable-layer` is pinned to a single copy via `overrides` (and `@radix-ui/react-dialog` bumped to 1.1.4). Separate copies made dialogs block clicks on popovers opened inside them.
+
 ## [1.1.0] - 2026-08-17
 ### Added
 - Local media rendering: `worker/routes/media.ts` serves uploaded images straight from the Miniflare-emulated R2 binding at `/media/*` in local dev, so `npm run dev` now renders uploaded photos/backgrounds end-to-end with zero real infrastructure. `PUBLIC_BASE` was replaced with a `MEDIA_PUBLIC_BASE` Worker var (`/media` locally, `https://journee-media.curteisyang.uk` in prod) instead of a hardcoded URL.
