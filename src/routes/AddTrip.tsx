@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { DateRange } from "react-day-picker";
 import { DatePickerWithRange } from "@/components/daterange/date-picker-with-range";
 import { createTrip, uploadBackground } from "@/api";
+import { resizeImage } from "@/lib/utils";
 import { useAuth } from "@clerk/react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -73,7 +74,7 @@ export default function AddTrip() {
 
       if (userId) {
         if (selectedFiles.length > 0) {
-          imageURL = await uploadBackground(selectedFiles[0], "backgrounds");
+          imageURL = await uploadBackground(await resizeImage(selectedFiles[0]), "backgrounds");
         }
 
         const result = await createTrip({

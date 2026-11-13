@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn, resizeImage } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import Tiptap from "@/components/Tiptap";
@@ -62,16 +62,20 @@ const EditLog = ({
   // "Upload" step to remember, matching how the entry text already behaves.
   const handleNewFiles = async (newFiles: File[]) => {
     if(!userId) return;
-    for(let f of newFiles){
+    // ponytail: no concurrency cap; add a pool of ~4 if bulk drops hit Workers AI rate limits.
+    await Promise.allSettled(newFiles.map(async (f) => {
       const key = `${f.name}-${f.lastModified}`;
       setPhotoStatuses((prev) => ({ ...prev, [key]: "uploading" }));
       try{
-        const result = await getPhotoLocation(f, locValue);
+        const small = await resizeImage(f);
+        const [result, imageURL] = await Promise.all([
+          getPhotoLocation(small, locValue),
+          uploadPhotos(day, trip_name, small, "photos"),
+        ]);
         const lat = result.coordinates[0];
         const long = result.coordinates[1];
         const area = result.area;
 
-        const imageURL = await uploadPhotos(day, trip_name, f, "photos");
         await insertPhotos({trip_name,day,imageURL,lat,long,area});
 
         setPhotoStatuses((prev) => ({ ...prev, [key]: "done" }));
@@ -81,7 +85,7 @@ const EditLog = ({
         setPhotoStatuses((prev) => ({ ...prev, [key]: "error" }));
         toast({ variant: "destructive", duration: 3000, title: `Couldn't mount ${f.name}. Try again.` });
       }
-    }
+    }));
     onUpload();
   }
 

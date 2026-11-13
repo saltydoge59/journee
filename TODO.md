@@ -27,10 +27,10 @@ uploaded in a sequential `for...await` loop, and each file does 3 sequential
 round-trips (Workers AI vision geo-lookup → R2 upload → D1 insert) before
 finishing. No client-side resize, so full-res phone photos are sent twice.
 
-- [ ] Parallelize the `newFiles` loop (`Promise.allSettled`) in `EditLog.tsx`.
-- [ ] Resize/compress images client-side (canvas/`createImageBitmap`, no new
+- [x] Parallelize the `newFiles` loop (`Promise.allSettled`) in `EditLog.tsx`.
+- [x] Resize/compress images client-side (canvas/`createImageBitmap`, no new
       dependency) before both the geo call and the upload call.
-- [ ] Same resize treatment for cover photo upload in `AddTrip.tsx` /
+- [x] Same resize treatment for cover photo upload in `AddTrip.tsx` /
       `Dates.tsx`.
 - [ ] Verify per-file status UI still reflects progress correctly once
       uploads run in parallel.

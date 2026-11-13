@@ -5,6 +5,11 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/), and this
 project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.2.2] - 2026-11-13
+### Changed
+- Photo uploads on a day's log now run in parallel instead of one at a time, and each photo's location lookup and upload happen at the same time.
+- Photos and cover images are resized on your device (longest edge 2048 px, JPEG) before upload, so phone photos upload much faster. Files the browser can't decode (e.g. HEIC in Chrome) are uploaded unchanged.
+
 ## [1.2.1] - 2026-11-12
 ### Fixed
 - Opening the app while already signed in now goes straight to your trips instead of showing the landing page's Sign In button.

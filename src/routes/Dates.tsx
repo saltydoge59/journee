@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/react"
 import { deleteTrip, getAllLogs, updateTrip, updateTripDates, uploadBackground } from "@/api";
+import { resizeImage } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { IconPencil, IconTrash } from "@tabler/icons-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -69,7 +70,7 @@ export default function Dates() {
           navigate(`/dates?${new URLSearchParams({ name: trip_name, start: res.start_date, end: res.end_date })}`, { replace: true });
         }
         if (selectedFile.length > 0) {
-          const imageURL = await uploadBackground(selectedFile[0], "backgrounds");
+          const imageURL = await uploadBackground(await resizeImage(selectedFile[0]), "backgrounds");
           await updateTrip({ trip_name, imageURL });
         }
         if (datesChanged || selectedFile.length > 0) {
