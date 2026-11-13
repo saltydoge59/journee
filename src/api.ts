@@ -22,7 +22,7 @@ export const createTrip = async ({
 }: {
   trip_name: string;
   daterange: { from: Date; to: Date };
-  image_url: string;
+  image_url?: string;
 }) => {
   const res = await fetch("/api/trips", {
     method: "POST",

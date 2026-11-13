@@ -24,8 +24,10 @@ trips.post("/", async (c) => {
   const { trip_name, daterange, image_url } = await c.req.json<{
     trip_name: string;
     daterange: { from: string; to: string };
-    image_url: string;
+    image_url?: string;
   }>();
+  // No cover picked → default cover from this env's media base (local R2 in dev, custom domain in prod).
+  const cover = image_url || `${c.env.MEDIA_PUBLIC_BASE}/backgrounds/default.webp`;
 
   const existing = await c.env.DB.prepare(
     "SELECT trip_name FROM trips WHERE user_id = ? AND trip_name = ?"
@@ -43,7 +45,7 @@ trips.post("/", async (c) => {
   const statements = [
     c.env.DB.prepare(
       "INSERT INTO trips (user_id, trip_name, start_date, end_date, image_url) VALUES (?, ?, ?, ?, ?)"
-    ).bind(userId, trip_name, start.toISOString(), end.toISOString(), image_url),
+    ).bind(userId, trip_name, start.toISOString(), end.toISOString(), cover),
   ];
 
   let day = 1;

@@ -70,7 +70,7 @@ export default function AddTrip() {
   // Define a submit handler
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      let imageURL = 'https://pub-d8966727b726431389106312061035a7.r2.dev/backgrounds/default.webp';
+      let imageURL: string | undefined; // worker fills in the env's default cover
 
       if (userId) {
         if (selectedFiles.length > 0) {

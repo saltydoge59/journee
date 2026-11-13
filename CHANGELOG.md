@@ -5,6 +5,10 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/), and this
 project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.2.4] - 2026-11-13
+### Fixed
+- Default trip cover now comes from the environment's media base (local R2 in dev, custom domain in prod) instead of a hardcoded legacy `r2.dev` URL.
+
 ## [1.2.3] - 2026-11-13
 ### Fixed
 - Local dev (`npm run dev`) now actually shows uploaded images. `/media/*` requests were served the app's `index.html` instead of reaching the worker's media route, because `run_worker_first` only covered `/api/*`. Production was unaffected (it serves images from the R2 custom domain).
