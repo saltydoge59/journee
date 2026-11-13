@@ -54,6 +54,29 @@ Nothing exists yet.
 - [ ] Security review pass on `worker/routes/upload.ts` (untrusted input)
       and `worker/routes/users.ts` (auth boundary).
 
+## 7. Photo upload stress test + retry failed
+Search-first: no new dependency needed. `FileUpload` already keeps each
+`File` and shows an `"error"` status per file, so a retry just reruns
+that file's task from `EditLog.tsx` `handleNewFiles`.
+
+- [ ] Stress test locally (`npm run dev`, geo stubbed so it's free): drop
+      20, 50 and 100 photos at once, including HEIC and large files. Record
+      failures, browser memory, and total time.
+- [ ] Repeat a small batch (~10) against real Workers AI to find its rate
+      limit. **Costs money: get a yes first.**
+- [ ] If anything fails, add a concurrency cap of ~4 (an inline pool, or
+      `p-limit` at about 1 KB) where the `ponytail:` comment is in
+      `handleNewFiles`.
+- [ ] Retry button: pull the per-file body into `uploadOne(f)`, pass an
+      `onRetry(file)` prop to `FileUpload`, and show it next to "failed".
+- [ ] Don't create a duplicate D1 row if R2 succeeded but
+      `insertPhotos` failed. Retry the D1 insert only, or accept the orphan
+      (see #2).
+
 ---
-Suggested order: 2 → 3 → 4 → 5 → 6, with 1 resolved whenever the D1/R2
-decision above is made.
+Suggested order (#3 done in v1.2.2): **7 → 2 → 5 → 4 → 6**, with 1 resolved
+whenever the D1/R2 decision above is made.
+- 7 first: it stress-tests the parallel uploads #3 just shipped, while that change is fresh.
+- 2 next: it's a data-loss/leak bug, and #7's retry de-dupe touches the same orphan problem.
+- 5 before 4: one `Cache-Control` header is a cheap win, and it changes what #4 will measure.
+- 6 last: it needs a cost check first (rate-limiting rules).
