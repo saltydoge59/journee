@@ -32,7 +32,7 @@ finishing. No client-side resize, so full-res phone photos are sent twice.
       dependency) before both the geo call and the upload call.
 - [x] Same resize treatment for cover photo upload in `AddTrip.tsx` /
       `Dates.tsx`.
-- [ ] Verify per-file status UI still reflects progress correctly once
+- [x] Verify per-file status UI still reflects progress correctly once
       uploads run in parallel.
 
 ## 4. Page load time
